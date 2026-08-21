@@ -10,7 +10,7 @@ p_\theta(y^\star\mid x)
   p_\theta(y^\star,\mathrm{EOS}\mid x,h).
 $$
 
-The full sum is unavailable, so the experiments use a small support of sampled rationales. If $w_i$ is the detached responsibility of trace $h_i$, the joint M-step is
+The latent sum is generally too large to compute directly, so we approximate it with a small support of sampled rationales. If $w_i$ is the detached responsibility of trace $h_i$, the joint M-step is
 
 $$
 \mathcal L(\theta)
@@ -33,7 +33,7 @@ w_i
   \log p_{\theta_k}(y^\star,\mathrm{EOS}\mid x,h_i).
 $$
 
-The selected setting uses eight traces for each of eight questions and holds the weights fixed for four local updates.
+The setting used here has eight traces for each of eight questions and holds the weights fixed for four local updates.
 
 ### Q5
 
@@ -48,9 +48,9 @@ w_i
 \right\}.
 $$
 
-The selected setting uses one local update. Q5-MORE changes only the number of raw proposals from 16 to 32 before compression to the same support size. It remains a development result.
+The setting used here has one local update. Q5-MORE changes only the number of raw proposals from 16 to 32 before compression to the same support size. The available Q5-MORE result is preliminary.
 
-Q5 does not apply a proposal-density correction for the answer-derived prompt. That is part of the executed method and should be stated when interpreting it.
+The Q5 implementation uses this uncorrected posterior with answer-derived proposals.
 
 ### Related EM presets
 
@@ -69,7 +69,7 @@ w_i=\operatorname{softmax}_i
 \right].
 $$
 
-This is a clean proposal change, not a new M-step.
+The M-step is unchanged.
 
 ### Centred trace credit
 
@@ -81,7 +81,7 @@ c_i^{h}=w_i-\frac{1}{K},
 c_i^{y}=w_i.
 $$
 
-The rationale coefficients sum to zero. They can be negative even when every sampled rationale is poor, which was the central risk tested by the experiment.
+The rationale coefficients sum to zero. The experiments examined how these negative coefficients affected training when the sampled support was weak.
 
 ### Null-state abstention
 
@@ -105,7 +105,7 @@ $$
 A_i = \frac{r_i-\bar r}{\operatorname{sd}(r)+10^{-8}}.
 $$
 
-If the group has no reward variation, every advantage is zero. The selected implementation uses the clipped token-level ratio objective
+If the group has no reward variation, every advantage is zero. The implementation here uses the clipped token-level ratio objective
 
 $$
 \min(\rho_{it}A_i,
@@ -120,7 +120,7 @@ K_3 = \exp(\ell^{\mathrm{ref}}_{it}-\ell_{it})
       -(\ell^{\mathrm{ref}}_{it}-\ell_{it})-1.
 $$
 
-The loss is averaged over active response tokens. This is the token-level implementation used in the experiments, not a claim of exact equivalence to every published GRPO recipe.
+The loss is averaged over active response tokens.
 
 ## RLOO
 
@@ -141,7 +141,7 @@ The policy loss is the negative mean of $A_i\log p_\theta(o_i\mid x)$.
 
 ## TRICE
 
-TRICE keeps one persistent trace for each question. The selected run initialises each chain once with an answer-derived prompt, then uses question-only proposals. A correct proposal replaces the chain state; an incorrect proposal is rejected. For valid retained states, the control-variate estimator has terms
+TRICE keeps one persistent trace for each question. The configuration here initialises each chain once with an answer-derived prompt, then uses question-only proposals. A correct proposal replaces the chain state; an incorrect proposal is rejected. For valid retained states, the control-variate estimator has terms
 
 $$
 \frac{1}{\sum_m c'_m}\sum_m c'_m
@@ -159,7 +159,7 @@ $$
      {\sum_{j\ne m}c'_j}.
 $$
 
-The code returns the detached coefficients and roles. A model backend only has to evaluate the corresponding trace log probabilities.
+The function returns detached coefficients and roles. A training loop can then evaluate the corresponding trace log probabilities.
 
 ## Supervised and self-training baselines
 
@@ -170,4 +170,4 @@ All four baselines use ordinary maximum-likelihood training on a selected comple
 - **ReST-EM** repeats Generate and Improve phases, resetting to the original adapter before each Improve phase.
 - **STaR** first tries one greedy rationale. If it fails, it generates a rationale with the known answer as a hint, removes the hint from the training context, and trains the retained completion under the ordinary question prompt.
 
-The self-training module contains only the shared correctness/EOS selection rules. Model generation and token-level maximum-likelihood training remain in the full thesis implementation.
+The self-training module selects traces that can be passed to a token-level maximum-likelihood training loop.

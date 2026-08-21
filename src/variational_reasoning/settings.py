@@ -1,4 +1,4 @@
-"""Settings carried into the selected final comparisons."""
+"""Settings used in the experiments summarised here."""
 
 SELECTED_SETTINGS = {
     "Q5": {
@@ -62,7 +62,7 @@ DEVELOPMENT_SETTINGS = {
     "Q5-MORE": {
         **SELECTED_SETTINGS["Q5"],
         "proposals_per_question": 32,
-        "status": "development nominee; not yet confirmed",
+        "status": "preliminary development setting",
     }
 }
 
@@ -72,19 +72,19 @@ DIAGNOSTIC_SETTINGS = {
         **SELECTED_SETTINGS["PIS"],
         "proposal": "answer-derived",
         "responsibility": "trace + answer - proposal log density",
-        "status": "negative diagnostic",
+        "status": "lower than PIS in the study",
     },
     "CENTERED-TRACE": {
         **SELECTED_SETTINGS["PIS"],
         "rationale_credit": "posterior minus uniform",
         "answer_credit": "posterior",
-        "status": "negative diagnostic",
+        "status": "lower than PIS in the study",
     },
     "NULL-LATENT": {
         **SELECTED_SETTINGS["PIS"],
         "null_prior": 0.5,
         "null_log_evidence": -2.1191687253117015,
-        "status": "seven-seed result inconclusive",
+        "status": "uncertain in the seven-seed comparison",
     },
 }
 

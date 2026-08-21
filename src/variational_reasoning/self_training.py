@@ -40,9 +40,8 @@ def star_examples(
 ) -> tuple[Candidate, ...]:
     """Choose a direct STaR trace, or a valid answer-rationalized fallback.
 
-    The full trainer removes the answer hint and reanchors every selected
-    completion under the ordinary question prompt before maximum-likelihood
-    training.
+    Callers remove the answer hint and evaluate each selected completion under
+    the ordinary question prompt before maximum-likelihood training.
     """
 
     direct_by_question = {}

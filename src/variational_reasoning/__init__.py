@@ -1,4 +1,4 @@
-"""Readable numerical kernels for the thesis algorithms."""
+"""Numerical kernels for variational reasoning experiments."""
 
 from .em import (
     NullLatentPosterior,

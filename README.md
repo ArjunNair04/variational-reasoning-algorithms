@@ -1,13 +1,13 @@
 # Variational reasoning algorithms
 
-This repository contains small reference implementations of the main algorithms used in the thesis experiments. The code is meant to make the update rules easy to inspect. It does not include the Hugging Face training stack, cluster scripts, experiment registry, or result archive.
+This package collects the update rules used in our reasoning experiments in a small NumPy implementation. The functions accept precomputed log probabilities, rewards, and sampled traces, so they can be used with different model-training stacks.
 
-The thesis-native methods are:
+The two main finite-support methods are:
 
-- **Q5**: answer-derived proposals, a persistent finite support, and a joint latent posterior.
+- **Q5**: answer-derived proposals, persistent finite support, and a joint latent posterior.
 - **PIS**: fresh question-only proposals and answer-likelihood importance weights.
 
-The repository also includes the three main comparison methods used in the final study: **TRICE**, **GRPO**, and **RLOO**. A few short diagnostic updates and self-training rules are retained because they explain the path to the final methods.
+It also includes **TRICE**, **GRPO**, and **RLOO**, together with a few short ablations and self-training rules that help explain how the methods developed.
 
 ## Layout
 
@@ -17,12 +17,11 @@ src/variational_reasoning/
   policy_gradient.py  GRPO and RLOO update kernels
   trice.py            persistent-chain transition and control variate
   self_training.py    RFT/ReST/STaR selection rules
-  settings.py         settings used in the selected experiments
+  settings.py         settings used in the reported experiments
 tests/
   test_algorithms.py  direct numerical checks
 ALGORITHMS.md          derivations and method differences
-JOURNEY.md             important ablations and what they showed
-PROVENANCE.md          correspondence with the thesis repository
+JOURNEY.md             notes from the main ablations
 ```
 
 ## Install and test
@@ -32,7 +31,7 @@ python -m pip install -e '.[test]'
 python -m pytest
 ```
 
-## Small example
+## Example
 
 ```python
 import numpy as np
@@ -43,9 +42,22 @@ question_id = np.array([0, 0, 1, 1])
 weights = pis_weights(answer_logp, question_id)
 ```
 
-Responsibilities are normalised separately for each question. They are detached before the model update in the full trainer.
+Responsibilities are normalised separately for each question. The NumPy helper below evaluates the corresponding detached-weight objective:
 
-## Selected settings
+```python
+from variational_reasoning import weighted_joint_loss
+
+loss = weighted_joint_loss(
+    trace_logp=[-2.0, -1.4, -2.8, -2.1],
+    answer_logp=answer_logp,
+    weights=weights,
+    question_ids=question_id,
+)
+```
+
+The remaining modules follow the same pattern. A differentiable PyTorch or JAX training loop can apply the returned weights or advantages to its own model log probabilities.
+
+## Experiment settings
 
 | Method | Support / group | Questions per round | Updates | Learning rate |
 |---|---:|---:|---:|---:|
@@ -55,6 +67,4 @@ Responsibilities are normalised separately for each question. They are detached 
 | GRPO | 16 | 4 | 4 | `1e-5` |
 | RLOO | 16 | 8 | 4 | `2e-5` |
 
-The precise settings, including KL and clipping values, are in `settings.py`. Q5-MORE is included there as a development setting, not as a confirmed replacement for Q5.
-
-The repository is private and currently carries no redistribution licence. The larger research repository remains the authoritative source for training orchestration and experimental records.
+The settings used in the comparisons, including the KL and clipping values, are collected in `settings.py`. Q5-MORE records the preliminary proposal-depth variation explored after the main comparison.
