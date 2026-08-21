@@ -8,6 +8,19 @@ from typing import Sequence
 import numpy as np
 
 
+@dataclass(frozen=True)
+class NullLatentPosterior:
+    """Posterior mass on real traces and one fixed null state."""
+
+    weights: np.ndarray
+    conditional_weights: np.ndarray
+    null_mass: float
+
+    @property
+    def real_coverage(self) -> float:
+        return 1.0 - self.null_mass
+
+
 def _vector(values: Sequence[float], name: str) -> np.ndarray:
     array = np.asarray(values, dtype=np.float64)
     if array.ndim != 1:
@@ -69,19 +82,47 @@ def pis_weights(
     return _group_softmax(answer_logp, question_ids, active)
 
 
-def q5_weights(
+def joint_weights(
     trace_logp: Sequence[float],
     answer_logp: Sequence[float],
     question_ids: Sequence[object],
     active: Sequence[bool] | None = None,
 ) -> np.ndarray:
-    """Q5 responsibilities on its persistent finite support."""
+    """Joint finite-support posterior used by Q5, VIN, and VOUT."""
 
     trace = _vector(trace_logp, "trace_logp")
     answer = _vector(answer_logp, "answer_logp")
     if trace.shape != answer.shape:
         raise ValueError("trace_logp and answer_logp must align")
     return _group_softmax(trace + answer, question_ids, active)
+
+
+def q5_weights(
+    trace_logp: Sequence[float],
+    answer_logp: Sequence[float],
+    question_ids: Sequence[object],
+    active: Sequence[bool] | None = None,
+) -> np.ndarray:
+    """Q5 name for the joint posterior on its persistent support."""
+
+    return joint_weights(trace_logp, answer_logp, question_ids, active)
+
+
+def importance_weights(
+    trace_logp: Sequence[float],
+    answer_logp: Sequence[float],
+    proposal_logp: Sequence[float],
+    question_ids: Sequence[object],
+    active: Sequence[bool] | None = None,
+) -> np.ndarray:
+    """Self-normalised weights for an off-policy rationale proposal."""
+
+    trace = _vector(trace_logp, "trace_logp")
+    answer = _vector(answer_logp, "answer_logp")
+    proposal = _vector(proposal_logp, "proposal_logp")
+    if not (trace.shape == answer.shape == proposal.shape):
+        raise ValueError("trace, answer, and proposal log probabilities must align")
+    return _group_softmax(trace + answer - proposal, question_ids, active)
 
 
 def uniform_weights(
@@ -125,6 +166,79 @@ def weighted_joint_loss(
     if not per_question:
         return 0.0
     return -float(np.mean(per_question))
+
+
+def centered_trace_credit(weights: Sequence[float]) -> tuple[np.ndarray, np.ndarray]:
+    """Return the centred rationale coefficients and ordinary answer weights.
+
+    This is the simple credit ablation used in the focused pilot: rationale
+    tokens receive ``q_i - 1/K`` while answer tokens retain ``q_i``.
+    """
+
+    posterior = _vector(weights, "weights")
+    if len(posterior) == 0:
+        raise ValueError("centered credit requires a non-empty support")
+    if (posterior < 0).any() or not np.isfinite(posterior).all():
+        raise ValueError("weights must be finite and non-negative")
+    if not np.isclose(posterior.sum(), 1.0, atol=1e-8):
+        raise ValueError("weights must sum to one")
+    return posterior - 1.0 / len(posterior), posterior.copy()
+
+
+def _softmax_allowing_infinities(logits: np.ndarray) -> np.ndarray:
+    if np.isnan(logits).any():
+        raise ValueError("logits cannot contain NaN")
+    positive = np.isposinf(logits)
+    if positive.any():
+        return positive.astype(np.float64) / positive.sum()
+    finite = np.isfinite(logits)
+    if not finite.any():
+        return np.zeros_like(logits)
+    mass = np.zeros_like(logits)
+    mass[finite] = np.exp(logits[finite] - logits[finite].max())
+    return mass / mass.sum()
+
+
+def null_latent_weights(
+    real_log_evidence: Sequence[float],
+    *,
+    null_log_evidence: float,
+    null_prior: float = 0.5,
+    temperature: float = 1.0,
+) -> NullLatentPosterior:
+    """Add a frozen null state without renormalising away abstention.
+
+    The returned real weights sum to ``1 - null_mass``. They are the M-step
+    coefficients; ``conditional_weights`` are diagnostic only.
+    """
+
+    evidence = _vector(real_log_evidence, "real_log_evidence")
+    if not 0.0 < null_prior < 1.0:
+        raise ValueError("null_prior must lie strictly between zero and one")
+    if not np.isfinite(null_log_evidence):
+        raise ValueError("null_log_evidence must be finite")
+    if not np.isfinite(temperature) or temperature <= 0:
+        raise ValueError("temperature must be finite and positive")
+    if np.isnan(evidence).any():
+        raise ValueError("real_log_evidence cannot contain NaN")
+    if len(evidence) == 0:
+        return NullLatentPosterior(np.empty(0), np.empty(0), 1.0)
+
+    real_logits = (
+        evidence / temperature
+        + np.log1p(-null_prior)
+        - np.log(len(evidence))
+    )
+    null_logit = np.log(null_prior) + null_log_evidence / temperature
+    posterior = _softmax_allowing_infinities(
+        np.concatenate((real_logits, [null_logit]))
+    )
+    conditional = _softmax_allowing_infinities(evidence / temperature)
+    return NullLatentPosterior(
+        weights=posterior[:-1],
+        conditional_weights=conditional,
+        null_mass=float(posterior[-1]),
+    )
 
 
 @dataclass

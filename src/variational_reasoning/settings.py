@@ -67,6 +67,67 @@ DEVELOPMENT_SETTINGS = {
 }
 
 
+DIAGNOSTIC_SETTINGS = {
+    "AC-PIS": {
+        **SELECTED_SETTINGS["PIS"],
+        "proposal": "answer-derived",
+        "responsibility": "trace + answer - proposal log density",
+        "status": "negative diagnostic",
+    },
+    "CENTERED-TRACE": {
+        **SELECTED_SETTINGS["PIS"],
+        "rationale_credit": "posterior minus uniform",
+        "answer_credit": "posterior",
+        "status": "negative diagnostic",
+    },
+    "NULL-LATENT": {
+        **SELECTED_SETTINGS["PIS"],
+        "null_prior": 0.5,
+        "null_log_evidence": -2.1191687253117015,
+        "status": "seven-seed result inconclusive",
+    },
+}
+
+
+SELF_TRAINING_SETTINGS = {
+    "Gold-CoT-SFT": {
+        "learning_rate": 3e-6,
+        "epochs": 2,
+        "questions_per_round": 8,
+        "answer_target_termination": "EOS",
+    },
+    "RFT": {
+        "learning_rate": 1e-5,
+        "epochs": 2,
+        "iterations": 1,
+        "group_size": 16,
+        "questions_per_round": 4,
+        "accepted_per_question": 10,
+        "reward_requires_eos": True,
+    },
+    "ReST-EM": {
+        "learning_rate": 1e-5,
+        "epochs": 1,
+        "iterations": 4,
+        "group_size": 4,
+        "questions_per_round": 16,
+        "accepted_per_question": 10,
+        "reset_before_improve": True,
+        "reward_requires_eos": True,
+    },
+    "STaR": {
+        "learning_rate": 3e-6,
+        "epochs": 2,
+        "iterations": 4,
+        "group_size": 1,
+        "questions_per_round": 16,
+        "accepted_per_question": 1,
+        "reset_before_improve": True,
+        "reward_requires_eos": True,
+    },
+}
+
+
 EM_FAMILY_PRESETS = {
     "VIN": {
         "proposal": "question-only",

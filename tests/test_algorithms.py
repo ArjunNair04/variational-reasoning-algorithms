@@ -3,6 +3,10 @@ import pytest
 
 from variational_reasoning.em import (
     UniqueFIFOSupport,
+    centered_trace_credit,
+    importance_weights,
+    joint_weights,
+    null_latent_weights,
     pis_weights,
     q5_weights,
     uniform_weights,
@@ -14,8 +18,11 @@ from variational_reasoning.policy_gradient import (
     rloo_advantages,
     rloo_loss,
 )
+from variational_reasoning.self_training import Candidate, select_correct, star_examples
 from variational_reasoning.settings import (
     DEVELOPMENT_SETTINGS,
+    DIAGNOSTIC_SETTINGS,
+    SELF_TRAINING_SETTINGS,
     SELECTED_SETTINGS,
 )
 from variational_reasoning.trice import (
@@ -40,6 +47,19 @@ def test_pis_and_q5_normalise_by_question():
     assert q5[2:].sum() == pytest.approx(1.0)
     assert pis[1] > pis[0]
     assert q5[0] > q5[1]
+    np.testing.assert_allclose(q5, joint_weights(trace, answer, question))
+
+
+def test_answer_conditioned_importance_correction():
+    weights = importance_weights(
+        trace_logp=[-1.0, -2.0],
+        answer_logp=[-3.0, -1.0],
+        proposal_logp=[-4.0, -1.0],
+        question_ids=[0, 0],
+    )
+    expected = np.exp([0.0, -2.0])
+    expected /= expected.sum()
+    np.testing.assert_allclose(weights, expected)
 
 
 def test_inactive_rows_receive_no_mass():
@@ -70,6 +90,24 @@ def test_unique_fifo_support_deduplicates_and_evicts_oldest():
     assert support.add([3])
     assert support.add([4])
     assert support.items == [(3,), (4,)]
+
+
+def test_centered_trace_credit_preserves_positive_answer_weights():
+    trace, answer = centered_trace_credit([0.7, 0.2, 0.1])
+    np.testing.assert_allclose(trace, [0.7 - 1 / 3, 0.2 - 1 / 3, 0.1 - 1 / 3])
+    assert trace.sum() == pytest.approx(0.0)
+    np.testing.assert_allclose(answer, [0.7, 0.2, 0.1])
+
+
+def test_null_latent_keeps_unconditional_real_mass():
+    posterior = null_latent_weights(
+        [-2.0, -2.0],
+        null_log_evidence=-2.0,
+        null_prior=0.5,
+    )
+    assert posterior.null_mass == pytest.approx(0.5)
+    assert posterior.weights.sum() == pytest.approx(0.5)
+    np.testing.assert_allclose(posterior.conditional_weights, [0.5, 0.5])
 
 
 def test_grpo_group_standardisation_and_dead_group():
@@ -169,3 +207,27 @@ def test_selected_settings_are_the_executed_coordinates():
     assert SELECTED_SETTINGS["RLOO"]["kl_coef"] == pytest.approx(0.03)
     assert DEVELOPMENT_SETTINGS["Q5-MORE"]["proposals_per_question"] == 32
     assert DEVELOPMENT_SETTINGS["Q5-MORE"]["support_size"] == 16
+    assert DIAGNOSTIC_SETTINGS["NULL-LATENT"]["null_prior"] == pytest.approx(0.5)
+    assert SELF_TRAINING_SETTINGS["ReST-EM"]["iterations"] == 4
+
+
+def test_correct_selection_is_eos_gated_and_capped():
+    candidates = [
+        Candidate(0, "a", True, True),
+        Candidate(0, "b", True, True),
+        Candidate(1, "c", True, False),
+        Candidate(1, "d", False, True),
+    ]
+    assert select_correct(candidates, 1) == (candidates[0],)
+
+
+def test_star_uses_rationalization_only_after_direct_failure():
+    direct = [
+        Candidate(0, "direct-0", True, True, "direct"),
+        Candidate(1, "direct-1", False, True, "direct"),
+    ]
+    rationalized = [
+        Candidate(1, "hinted-1", True, True, "answer_rationalized")
+    ]
+    selected = star_examples(direct, rationalized)
+    assert [candidate.completion for candidate in selected] == ["direct-0", "hinted-1"]

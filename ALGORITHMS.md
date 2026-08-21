@@ -56,6 +56,47 @@ Q5 does not apply a proposal-density correction for the answer-derived prompt. T
 
 VIN and VOUT use the same joint posterior with persistent question-only support. VIN refreshes responsibilities at each local update; VOUT freezes them for the outer round. POLD uses fresh question-only support with uniform empirical weights. These are settings of the same update, not separate implementations.
 
+### Answer-conditioned importance correction
+
+The AC-PIS diagnostic samples from an answer-conditioned proposal $g(h\mid x,y^\star)$ and applies the exact self-normalised correction
+
+$$
+w_i=\operatorname{softmax}_i
+\left[
+\log p_{\theta_k}(h_i\mid x)
++\log p_{\theta_k}(y^\star,\mathrm{EOS}\mid x,h_i)
+-\log g(h_i\mid x,y^\star)
+\right].
+$$
+
+This is a clean proposal change, not a new M-step.
+
+### Centred trace credit
+
+The centred diagnostic keeps ordinary positive answer training but gives the rationale a signed relative coefficient:
+
+$$
+c_i^{h}=w_i-\frac{1}{K},
+\qquad
+c_i^{y}=w_i.
+$$
+
+The rationale coefficients sum to zero. They can be negative even when every sampled rationale is poor, which was the central risk tested by the experiment.
+
+### Null-state abstention
+
+The smooth abstention diagnostic adds one fixed null state. For $K$ real traces,
+
+$$
+q_i=
+\frac{(1-\pi_0)K^{-1}\exp(\ell_i/\tau)}{Z},
+\qquad
+q_0=
+\frac{\pi_0\exp(b_0/\tau)}{Z}.
+$$
+
+The real M-step coefficients are the unconditional $q_i$, so $\sum_i q_i=1-q_0$. Renormalising them back to one would remove the abstention mechanism.
+
 ## GRPO
 
 For the responses to one question, GRPO standardises the verifier reward:
@@ -119,3 +160,14 @@ $$
 $$
 
 The code returns the detached coefficients and roles. A model backend only has to evaluate the corresponding trace log probabilities.
+
+## Supervised and self-training baselines
+
+All four baselines use ordinary maximum-likelihood training on a selected completion and an explicit EOS target.
+
+- **Gold-CoT SFT** trains directly on the supplied human rationale.
+- **RFT** generates once, retains answer-correct naturally terminated traces, then trains on them.
+- **ReST-EM** repeats Generate and Improve phases, resetting to the original adapter before each Improve phase.
+- **STaR** first tries one greedy rationale. If it fails, it generates a rationale with the known answer as a hint, removes the hint from the training context, and trains the retained completion under the ordinary question prompt.
+
+The self-training module contains only the shared correctness/EOS selection rules. Model generation and token-level maximum-likelihood training remain in the full thesis implementation.

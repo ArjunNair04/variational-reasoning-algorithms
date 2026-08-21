@@ -7,7 +7,7 @@ The thesis-native methods are:
 - **Q5**: answer-derived proposals, a persistent finite support, and a joint latent posterior.
 - **PIS**: fresh question-only proposals and answer-likelihood importance weights.
 
-The repository also includes the three main comparison methods used in the final study: **TRICE**, **GRPO**, and **RLOO**.
+The repository also includes the three main comparison methods used in the final study: **TRICE**, **GRPO**, and **RLOO**. A few short diagnostic updates and self-training rules are retained because they explain the path to the final methods.
 
 ## Layout
 
@@ -16,10 +16,12 @@ src/variational_reasoning/
   em.py               Q5, PIS, uniform credit, and finite support
   policy_gradient.py  GRPO and RLOO update kernels
   trice.py            persistent-chain transition and control variate
+  self_training.py    RFT/ReST/STaR selection rules
   settings.py         settings used in the selected experiments
 tests/
   test_algorithms.py  direct numerical checks
 ALGORITHMS.md          derivations and method differences
+JOURNEY.md             important ablations and what they showed
 PROVENANCE.md          correspondence with the thesis repository
 ```
 
