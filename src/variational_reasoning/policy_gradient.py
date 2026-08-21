@@ -50,7 +50,7 @@ def grpo_loss(
     clip: float = 0.2,
     kl_coef: float = 0.02,
 ) -> float:
-    """Selected token-level clipped GRPO loss with the k3 KL estimator."""
+    """Token-level clipped GRPO loss with the k3 KL estimator."""
 
     current = np.asarray(token_logp, dtype=np.float64)
     old = np.asarray(old_token_logp, dtype=np.float64)

@@ -171,8 +171,7 @@ def weighted_joint_loss(
 def centered_trace_credit(weights: Sequence[float]) -> tuple[np.ndarray, np.ndarray]:
     """Return the centred rationale coefficients and ordinary answer weights.
 
-    This is the simple credit ablation used in the focused pilot: rationale
-    tokens receive ``q_i - 1/K`` while answer tokens retain ``q_i``.
+    Rationale tokens receive ``q_i - 1/K`` while answer tokens retain ``q_i``.
     """
 
     posterior = _vector(weights, "weights")
