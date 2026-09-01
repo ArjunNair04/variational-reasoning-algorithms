@@ -56,3 +56,28 @@ bash submit_qwen3_17b_pis_temperature_posterity_ucl.sh
 The array scripts omit `-tc`; SGE resource availability controls concurrency.
 Disappearance from `qstat` is not evidence of success. Completion requires all
 task receipts, artifacts, logs and validator markers.
+
+## Thesis evidence gate
+
+The run is provisional until the independent evidence gate succeeds. The gate
+checks the immutable model and dataset revisions, YAML checksums, exact task
+coverage, task logs, completion-receipt hashes, runtime package/GPU provenance,
+validator marker and frozen analysis before writing `THESIS_EVIDENCE.json`.
+The full AMN dependency graph is retained with package hashes in
+`requirements/cluster_qwen3_glibc217.lock`; its checksum is part of the
+reproducibility manifest.
+
+```bash
+python analysis/verify_thesis_reproduction.py \
+  --study selected_methods \
+  --validate-contract-only
+python analysis/verify_thesis_reproduction.py \
+  --study temperature_mixture \
+  --validate-contract-only
+```
+
+For a completed run, supply the result root, validator marker, log directory
+and a new analysis output directory. A selected-method replay may also receive
+the checksum-bound historical `method_summary.csv` through `--source-summary`.
+Without that source summary, the replay result may be cited after the gate
+passes, but it must not be described as reproducing the historical estimate.

@@ -15,6 +15,17 @@
 
 ## Change record
 
+- **2026-09-01, thesis reproduction evidence gate:** added an immutable
+  model/dataset/config/job manifest and a fail-closed verifier for the two AMN
+  posterity studies. The verifier requires exact task/log coverage,
+  receipt-bound artifact hashes, consistent runtime provenance, structured
+  validator markers, frozen analysis and the registered metric order before it
+  writes `THESIS_EVIDENCE.json`. The exact glibc-2.17 AMN dependency lock is
+  retained and checksum-bound. This changes no model, data, prompt, method,
+  seed, training or evaluation behavior. Verification covers manifest/config/
+  environment-lock consistency and rejection tests for incomplete or mixed
+  runtime provenance.
+
 - **2026-09-01, AMN batch Python resolution repair:** changed the two posterity
   payload runners to invoke the experiment virtual environment's Python by
   absolute path. AMN's login shell had cached `/usr/bin/python` 2.7 before
