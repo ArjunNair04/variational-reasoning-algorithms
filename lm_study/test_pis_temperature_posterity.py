@@ -40,3 +40,5 @@ def test_temperature_runner_is_uncapped_and_resource_safe() -> None:
     assert "#$ -l h_vmem" not in runner
     assert "cell_count=2" in runner
     assert "seed_count=7" in runner
+    assert runner.count('"$VENV/bin/python"') == 2
+    assert "\npython " not in runner

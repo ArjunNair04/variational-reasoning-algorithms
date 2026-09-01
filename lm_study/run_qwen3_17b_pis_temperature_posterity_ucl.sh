@@ -30,7 +30,7 @@ test ! -f "$CUDA_SOURCE" || source "$CUDA_SOURCE"
 
 cd "$PROJ/lm_study"
 source "$VENV/bin/activate"
-actual_sha=$(python -c 'import hashlib,sys; print(hashlib.sha256(open(sys.argv[1],"rb").read()).hexdigest())' "$YAML")
+actual_sha=$("$VENV/bin/python" -c 'import hashlib,sys; print(hashlib.sha256(open(sys.argv[1],"rb").read()).hexdigest())' "$YAML")
 test "$actual_sha" = "$EXPECTED_CONFIG_SHA256" || exit 2
 
 task_id=${SGE_TASK_ID:-0}
@@ -42,4 +42,4 @@ cell_index=$((zero_index / seed_count))
 seed_index=$((zero_index % seed_count))
 echo "== PIS temperature posterity | cell $((cell_index + 1))/$cell_count | seed $((seed_index + 1))/$seed_count | $(hostname) | $(date) =="
 nvidia-smi --query-gpu=index,name,memory.total,memory.used,utilization.gpu --format=csv,noheader || true
-python run_yaml.py "$YAML" --seed "$seed_index" --shard "$cell_index" --nshard "$cell_count" --expect-cells 1
+"$VENV/bin/python" run_yaml.py "$YAML" --seed "$seed_index" --shard "$cell_index" --nshard "$cell_count" --expect-cells 1

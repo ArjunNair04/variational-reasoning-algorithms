@@ -217,6 +217,8 @@ def test_scheduler_is_uncapped_and_uses_exact_task_mapping() -> None:
     assert "#$ -l h_vmem" not in runner
     assert "cell_count=13" in runner
     assert "seed_count=7" in runner
+    assert runner.count('"$VENV/bin/python"') == 3
+    assert "\npython " not in runner
     assert "qsub -h -v" in submitter
     assert "user_held_pending_release" in submitter
     assert "user_held_pending_herring_and_quota_gates" not in submitter

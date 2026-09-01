@@ -55,12 +55,12 @@ test ! -f "$CUDA_SOURCE" || source "$CUDA_SOURCE"
 
 cd "$PROJ/lm_study"
 source "$VENV/bin/activate"
-actual_config_sha256=$(python -c 'import hashlib,sys; print(hashlib.sha256(open(sys.argv[1],"rb").read()).hexdigest())' "$YAML")
+actual_config_sha256=$("$VENV/bin/python" -c 'import hashlib,sys; print(hashlib.sha256(open(sys.argv[1],"rb").read()).hexdigest())' "$YAML")
 test "$actual_config_sha256" = "$EXPECTED_CONFIG_SHA256" || {
   echo "ERROR: configuration drift: expected $EXPECTED_CONFIG_SHA256, found $actual_config_sha256" >&2
   exit 2
 }
-python -c 'from importlib.metadata import version; from packaging.version import Version; assert Version(version("transformers")) >= Version("4.51.0")'
+"$VENV/bin/python" -c 'from importlib.metadata import version; from packaging.version import Version; assert Version(version("transformers")) >= Version("4.51.0")'
 
 task_id=${SGE_TASK_ID:-0}
 cell_count=13
@@ -73,7 +73,7 @@ seed_index=$((zero_index % seed_count))
 
 echo "== selected-method posterity replay | cell $((cell_index + 1))/$cell_count | seed $((seed_index + 1))/$seed_count | $(hostname) | $(date) =="
 nvidia-smi --query-gpu=index,name,memory.total,memory.used,utilization.gpu --format=csv,noheader || true
-python run_yaml.py "$YAML" \
+"$VENV/bin/python" run_yaml.py "$YAML" \
   --seed "$seed_index" \
   --shard "$cell_index" \
   --nshard "$cell_count" \

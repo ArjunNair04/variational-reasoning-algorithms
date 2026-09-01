@@ -15,6 +15,16 @@
 
 ## Change record
 
+- **2026-09-01, AMN batch Python resolution repair:** changed the two posterity
+  payload runners to invoke the experiment virtual environment's Python by
+  absolute path. AMN's login shell had cached `/usr/bin/python` 2.7 before
+  `PATH` and virtual-environment setup, causing tasks to fail before training
+  at the `importlib.metadata` dependency gate. This is an infrastructure-only
+  repair; YAML, task mapping, model, prompts, objectives and training code are
+  unchanged. Verification covers a batch-order reproduction, focused runner
+  tests, shell syntax, Python compilation, all-coordinate dry runs and a clean
+  GPU smoke start before releasing the replacement arrays.
+
 - **2026-09-01, AMN posterity execution port:** imported the minimal frozen
   Qwen3/GSM8K execution, SGE, validation and analysis surface from source
   revision `3472a14`. Added AMN Python-runtime initialisation and an independent
