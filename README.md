@@ -20,6 +20,8 @@ src/variational_reasoning/
   settings.py         settings used in the reported experiments
 tests/
   test_algorithms.py  direct numerical checks
+lm_study/              frozen Qwen3/GSM8K training and SGE harness
+analysis/              preregistered result validators and analyzers
 ALGORITHMS.md          derivations and method differences
 JOURNEY.md             notes from the main ablations
 ```
@@ -68,3 +70,15 @@ The remaining modules follow the same pattern. A differentiable PyTorch or JAX t
 | RLOO | 16 | 8 | 4 | `2e-5` |
 
 The settings used in the comparisons, including the KL and clipping values, are collected in `settings.py`. Q5-MORE records the preliminary proposal-depth variation explored after the main comparison.
+
+## Reproducibility replay
+
+The repository includes two frozen Qwen3-1.7B/GSM8K replay studies:
+
+- `68078ecc`: 13 selected methods or controls across seven paired seeds, 91 tasks.
+- `f3950b2e`: two PIS proposal-temperature conditions across seven paired seeds, 14 tasks.
+
+The execution layer is preserved from the original implementation revision. It
+uses the compact package as an independent numerical oracle during deployment;
+training arithmetic is not rewritten by the port. See
+`docs/POSTERITY_REPLAY.md` for the protocol, checks and AMN commands.

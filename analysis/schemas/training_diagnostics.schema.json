@@ -1,0 +1,1680 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/vigneshmohan2002/VaritionalReinforcementLearningUCLThesis/schemas/training_diagnostics.schema.json",
+  "title": "AC-ALG1 per-round training diagnostics",
+  "description": "Schema for one line of training_diagnostics_<task>__<tag>__AC-ALG1_s<seed>.jsonl.gz. Standard diagnostics reuse training values; deep diagnostics explicitly record their additional evaluation and gradient-probe cost.",
+  "type": "object",
+  "required": [
+    "run_id",
+    "model",
+    "task",
+    "method",
+    "seed",
+    "tag",
+    "schema_version",
+    "round",
+    "completed_rounds",
+    "minibatch",
+    "generation",
+    "buffer",
+    "buffer_evictions_cumulative",
+    "responsibilities",
+    "optimizer",
+    "gradient_geometry",
+    "update_geometry",
+    "objective"
+  ],
+  "properties": {
+    "run_id": {"type": ["string", "null"]},
+    "model": {"type": "string", "minLength": 1},
+    "task": {"type": "string", "minLength": 1},
+    "method": {"const": "AC-ALG1"},
+    "seed": {"type": "integer", "minimum": 0},
+    "tag": {"type": "string", "minLength": 1},
+    "schema_version": {"enum": [6, 7, 8, 9, 10, 11, 12]},
+    "algorithm_profile": {
+      "enum": [
+        "legacy", "barber_source", "barber_fixed_kl_ablation",
+        "l2r_common_factorial", "barber_stability_ablation",
+        "barber_reader_ablation", "barber_importance_ablation",
+        "barber_persistent_bridge", "barber_verifier",
+        "l2r_reader_ess_closure", "l2r_credit_pilot",
+        "l2r_abstention_pilot", "l2r_two_witness_pilot",
+        "l2r_multi_verifier_pilot", "l2r_bayesian_fusion_pilot",
+        "l2r_uncertainty_allocation_pilot", "l2r_age_one_reuse_pilot",
+        "l2r_curated_buffer_pilot", "l2r_small_group_replay_pilot",
+        "l2r_exact_signed_factorial"
+      ]
+    },
+    "answer_event_mode": {"enum": ["legacy", "strict_terminal_marker"]},
+    "answer_target_termination": {"enum": ["none", "eos"]},
+    "diagnostics_level": {"enum": ["standard", "deep"]},
+    "round": {"type": "integer", "minimum": 0},
+    "completed_rounds": {"type": "integer", "minimum": 1},
+    "minibatch": {
+      "type": "object",
+      "required": ["labelled_pids", "answer_only_pids"],
+      "properties": {
+        "labelled_pids": {"$ref": "#/$defs/pids"},
+        "answer_only_pids": {"$ref": "#/$defs/pids"}
+      },
+      "additionalProperties": false
+    },
+    "generation": {
+      "type": "object",
+      "required": [
+        "proposal_prompt", "proposal_filter", "proposal_policy", "trace_representation", "filter", "this_round", "cumulative",
+        "samples", "diagnostic_verifier_calls_cumulative"
+      ],
+      "properties": {
+        "proposal_prompt": {"$ref": "#/$defs/proposalPrompt"},
+        "labelled_proposal_prompt": {"$ref": "#/$defs/proposalPrompt"},
+        "answer_only_proposal_prompt": {"$ref": "#/$defs/proposalPrompt"},
+        "proposal_mixture": {"$ref": "#/$defs/proposalMixture"},
+        "proposal_filter": {"enum": ["all", "answer_correct"]},
+        "proposal_policy": {"$ref": "#/$defs/adapterPolicy"},
+        "proposal_temperature": {"type": "number", "exclusiveMinimum": 0},
+        "trace_representation": {"enum": ["reasoning", "calculation_graph"]},
+        "filter": {"$ref": "#/$defs/proposalFilterDiagnostics"},
+        "this_round": {"type": "integer", "minimum": 0},
+        "cumulative": {"type": "integer", "minimum": 0},
+        "diagnostic_verifier_calls_cumulative": {"type": "integer", "minimum": 0},
+        "samples": {"$ref": "#/$defs/sampleDiagnostics"},
+        "sampling_intervention": {"type": ["object", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "buffer": {"$ref": "#/$defs/bufferDiagnostics"},
+    "buffer_evictions_cumulative": {"type": "integer", "minimum": 0},
+    "buffer_semantics": {
+      "enum": ["multiset_legacy", "unique_set"]
+    },
+    "buffer_lifecycle": {
+      "enum": ["persistent", "fresh_round", "fixed_bank"]
+    },
+    "buffer_set_duplicates_this_round": {"type": "integer", "minimum": 0},
+    "buffer_set_duplicates_cumulative": {"type": "integer", "minimum": 0},
+    "responsibilities": {"$ref": "#/$defs/responsibilityDiagnostics"},
+    "posterior_dynamics": {"$ref": "#/$defs/posteriorDynamics"},
+    "inner_m_step": {"$ref": "#/$defs/innerMStepDiagnostics"},
+    "optimizer": {"$ref": "#/$defs/optimizerDiagnostics"},
+    "gradient_geometry": {"$ref": "#/$defs/nullableGradientGeometry"},
+    "update_geometry": {"$ref": "#/$defs/nullableUpdateGeometry"},
+    "objective": {"$ref": "#/$defs/objectiveDiagnostics"},
+    "behavioural_utility": {"$ref": "#/$defs/behaviouralUtility"},
+    "compute": {"$ref": "#/$defs/computeDiagnostics"}
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"schema_version": {"enum": [7, 8, 9, 10, 11, 12]}},
+        "required": ["schema_version"]
+      },
+      "then": {
+        "required": [
+          "diagnostics_level", "posterior_dynamics", "inner_m_step",
+          "behavioural_utility", "compute"
+        ]
+      }
+    }
+  ],
+  "$defs": {
+    "nullableNumber": {"type": ["number", "null"]},
+    "nullableNonnegativeNumber": {"type": ["number", "null"], "minimum": 0},
+    "nullableUnitInterval": {
+      "type": ["number", "null"],
+      "minimum": -0.000001,
+      "maximum": 1.000001
+    },
+    "proposalPrompt": {
+      "enum": [
+        "question", "derive_only", "answer_hint", "answer_derive", "answer_graph_derive",
+        "tagged_zero_shot", "tagged_gold_rationale"
+      ]
+    },
+    "proposalMixture": {
+      "enum": ["single", "question_answer", "question_answer_graph"]
+    },
+    "adapterPolicy": {"enum": ["current", "frozen_base"]},
+    "proposalFilterDiagnostics": {
+      "type": "object",
+      "required": [
+        "attempted", "accepted", "rejected", "acceptance_fraction",
+        "verifier_calls_this_round", "verifier_calls_cumulative"
+      ],
+      "properties": {
+        "attempted": {"type": "integer", "minimum": 0},
+        "accepted": {"type": "integer", "minimum": 0},
+        "rejected": {"type": "integer", "minimum": 0},
+        "acceptance_fraction": {"$ref": "#/$defs/nullableUnitInterval"},
+        "verifier_calls_this_round": {"type": "integer", "minimum": 0},
+        "verifier_calls_cumulative": {"type": "integer", "minimum": 0},
+        "boundary_rejected_this_round": {"type": "integer", "minimum": 0},
+        "labelled_component_attempted": {
+          "type": "object",
+          "additionalProperties": {"type": "integer", "minimum": 0}
+        },
+        "labelled_component_accepted": {
+          "type": "object",
+          "additionalProperties": {"type": "integer", "minimum": 0}
+        },
+        "answer_only_component_attempted": {
+          "type": "object",
+          "additionalProperties": {"type": "integer", "minimum": 0}
+        },
+        "answer_only_component_accepted": {
+          "type": "object",
+          "additionalProperties": {"type": "integer", "minimum": 0}
+        }
+      },
+      "additionalProperties": false
+    },
+    "pids": {
+      "type": "array",
+      "items": {"type": "integer", "minimum": 0}
+    },
+    "sampleDiagnostics": {
+      "type": "object",
+      "required": [
+        "count",
+        "verifier_calls",
+        "correct_fraction",
+        "format_fraction",
+        "mean_tokens",
+        "mean_characters",
+        "mean_words",
+        "unique_fraction_within_question",
+        "duplicate_fraction_within_question",
+        "question_outcomes",
+        "samples"
+      ],
+      "properties": {
+        "count": {"type": "integer", "minimum": 0},
+        "verifier_calls": {"type": "integer", "minimum": 0},
+        "correct_fraction": {"$ref": "#/$defs/nullableUnitInterval"},
+        "format_fraction": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_tokens": {"$ref": "#/$defs/nullableNumber"},
+        "mean_characters": {"$ref": "#/$defs/nullableNumber"},
+        "mean_words": {"$ref": "#/$defs/nullableNumber"},
+        "unique_fraction_within_question": {"$ref": "#/$defs/nullableUnitInterval"},
+        "duplicate_fraction_within_question": {"$ref": "#/$defs/nullableUnitInterval"},
+        "question_outcomes": {
+          "type": "object",
+          "required": ["all_wrong", "mixed", "all_correct"],
+          "properties": {
+            "all_wrong": {"type": "integer", "minimum": 0},
+            "mixed": {"type": "integer", "minimum": 0},
+            "all_correct": {"type": "integer", "minimum": 0}
+          },
+          "additionalProperties": false
+        },
+        "samples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "pid", "trace_id", "source", "text", "reward", "correct", "admitted",
+              "retained_after_insertion", "has_answer_marker", "tokens", "characters", "words"
+            ],
+            "properties": {
+              "pid": {"type": "integer", "minimum": 0},
+              "trace_id": {"type": ["string", "null"]},
+              "source": {"type": "string"},
+              "text": {"type": "string"},
+              "reward": {"$ref": "#/$defs/nullableNumber"},
+              "correct": {"type": "boolean"},
+              "admitted": {"type": "boolean"},
+              "retained_after_insertion": {"type": "boolean"},
+              "has_answer_marker": {"type": "boolean"},
+              "tokens": {"type": "integer", "minimum": 0},
+              "characters": {"type": "integer", "minimum": 0},
+              "words": {"type": "integer", "minimum": 0},
+              "gold_answer": {"type": ["integer", "null"]},
+              "parsed_answer": {"type": ["integer", "null"]},
+              "parse_mode": {
+                "enum": ["marker", "fallback_last_integer", "unparsed"]
+              },
+              "format_compliant": {"type": "boolean"},
+              "trailing_numeric_contradiction": {"type": "boolean"},
+              "repeated_token_fraction": {"$ref": "#/$defs/nullableUnitInterval"},
+              "repeated_fourgram_fraction": {"$ref": "#/$defs/nullableUnitInterval"},
+              "eos_reached": {"type": ["boolean", "null"]},
+              "truncated": {"type": ["boolean", "null"]},
+              "termination": {"type": "string"}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "bufferDiagnostics": {
+      "type": "object",
+      "required": [
+        "strategy", "limit_per_question", "rows", "gold_rows", "model_rows",
+        "active_questions", "mean_rows_per_active_question", "max_rows_per_question",
+        "saturated_question_fraction", "exact_duplicate_fraction", "source_counts",
+        "rows_added_this_round", "rows_evicted_this_round"
+      ],
+      "properties": {
+        "strategy": {"enum": ["fifo", "hybrid", "calculation_diverse"]},
+        "limit_per_question": {"type": "integer", "minimum": 0},
+        "rows": {"type": "integer", "minimum": 0},
+        "gold_rows": {"type": "integer", "minimum": 0},
+        "model_rows": {"type": "integer", "minimum": 0},
+        "active_questions": {"type": "integer", "minimum": 0},
+        "mean_rows_per_active_question": {"$ref": "#/$defs/nullableNumber"},
+        "max_rows_per_question": {"type": "integer", "minimum": 0},
+        "saturated_question_fraction": {"$ref": "#/$defs/nullableUnitInterval"},
+        "exact_duplicate_fraction": {"$ref": "#/$defs/nullableUnitInterval"},
+        "source_counts": {
+          "type": "object",
+          "additionalProperties": {"type": "integer", "minimum": 0}
+        },
+        "rows_added_this_round": {"type": "integer", "minimum": 0},
+        "rows_evicted_this_round": {"type": "integer", "minimum": 0},
+        "rows_retained": {"type": "integer", "minimum": 0},
+        "unique_trace_fraction": {"$ref": "#/$defs/nullableUnitInterval"},
+        "calculation_path_clusters": {"type": "integer", "minimum": 0},
+        "mean_calculation_path_clusters_per_question": {
+          "$ref": "#/$defs/nullableNonnegativeNumber"
+        },
+        "mean_calculation_path_diversity_fraction": {
+          "$ref": "#/$defs/nullableUnitInterval"
+        },
+        "mean_trace_age": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+        "max_trace_age": {"type": ["integer", "null"], "minimum": 0},
+        "age_counts": {
+          "type": "object",
+          "additionalProperties": {"type": "integer", "minimum": 0}
+        },
+        "correctness_by_age": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["rows", "correct", "incorrect", "unknown"],
+            "properties": {
+              "rows": {"type": "integer", "minimum": 0},
+              "correct": {"type": "integer", "minimum": 0},
+              "incorrect": {"type": "integer", "minimum": 0},
+              "unknown": {"type": "integer", "minimum": 0}
+            },
+            "additionalProperties": false
+          }
+        },
+        "per_question": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["pid", "rows", "saturated", "unique_fraction"],
+            "properties": {
+              "pid": {"type": "integer", "minimum": 0},
+              "rows": {"type": "integer", "minimum": 0},
+              "saturated": {"type": "boolean"},
+              "unique_fraction": {"$ref": "#/$defs/nullableUnitInterval"},
+              "calculation_path_clusters": {"type": "integer", "minimum": 0},
+              "calculation_path_diversity_fraction": {
+                "$ref": "#/$defs/nullableUnitInterval"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "questionResponsibility": {
+      "type": "object",
+      "required": [
+        "pid", "partition", "trace_count", "gold_mass", "gold_mass_before_potential",
+        "gold_mass_change_from_potential", "responsibility_total_variation_from_potential",
+        "gold_is_top1",
+        "max_responsibility", "entropy", "normalized_entropy", "effective_sample_size",
+        "effective_sample_size_fraction", "responsibility_temperature_used",
+        "responsibility_weighted_age", "nonfinite_responsibilities",
+        "numeric_audited_model_traces", "numeric_valid_mass", "numeric_invalid_mass",
+        "numeric_unparsed_mass", "numeric_graph_available_mass",
+        "numeric_graph_compatible_mass", "numeric_graph_incomplete_mass",
+        "numeric_graph_unavailable_mass", "numeric_graph_node_coverage",
+        "numeric_graph_edge_coverage", "numeric_hard_rejected_traces",
+        "numeric_graph_rejected_traces", "structured_traces",
+        "structured_well_formed_fraction", "structured_well_formed_mass",
+        "counterfactuals"
+      ],
+      "properties": {
+        "pid": {"type": "integer", "minimum": 0},
+        "partition": {"enum": ["labelled", "answer_only"]},
+        "trace_count": {"type": "integer", "minimum": 1},
+        "real_coverage": {"$ref": "#/$defs/nullableUnitInterval"},
+        "null_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "real_log_mean_evidence": {"$ref": "#/$defs/nullableNumber"},
+        "insufficient_witness": {"type": "boolean"},
+        "latent_verifier": {
+          "anyOf": [
+            {"$ref": "#/$defs/latentVerifierQuestion"},
+            {"type": "null"}
+          ]
+        },
+        "gold_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "gold_mass_before_potential": {"$ref": "#/$defs/nullableUnitInterval"},
+        "gold_mass_change_from_potential": {"$ref": "#/$defs/nullableNumber"},
+        "responsibility_total_variation_from_potential": {
+          "$ref": "#/$defs/nullableUnitInterval"
+        },
+        "gold_is_top1": {"type": ["boolean", "null"]},
+        "max_responsibility": {"$ref": "#/$defs/nullableUnitInterval"},
+        "top_one_two_margin": {"$ref": "#/$defs/nullableUnitInterval"},
+        "gini_coefficient": {"$ref": "#/$defs/nullableUnitInterval"},
+        "entropy": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+        "normalized_entropy": {"$ref": "#/$defs/nullableUnitInterval"},
+        "effective_sample_size": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+        "effective_sample_size_fraction": {"$ref": "#/$defs/nullableUnitInterval"},
+        "responsibility_temperature_used": {
+          "$ref": "#/$defs/nullableNonnegativeNumber"
+        },
+        "responsibility_weighted_age": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+        "answer_correct_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "calculation_path_clusters": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "calculation_path_effective_sample_size": {
+          "$ref": "#/$defs/nullableNonnegativeNumber"
+        },
+        "calculation_path_effective_sample_size_fraction": {
+          "$ref": "#/$defs/nullableUnitInterval"
+        },
+        "responsibility_weighted_verifier_value": {
+          "$ref": "#/$defs/nullableUnitInterval"
+        },
+        "weighted_joint_plus_entropy": {"$ref": "#/$defs/nullableNumber"},
+        "joint_support_logsumexp": {"$ref": "#/$defs/nullableNumber"},
+        "nonfinite_responsibilities": {"type": "integer", "minimum": 0},
+        "numeric_audited_model_traces": {"type": "integer", "minimum": 0},
+        "numeric_valid_mass": {"type": "number", "minimum": 0, "maximum": 1},
+        "numeric_invalid_mass": {"type": "number", "minimum": 0, "maximum": 1},
+        "numeric_unparsed_mass": {"type": "number", "minimum": 0, "maximum": 1},
+        "numeric_graph_available_mass": {"type": "number", "minimum": 0, "maximum": 1},
+        "numeric_graph_compatible_mass": {"type": "number", "minimum": 0, "maximum": 1},
+        "numeric_graph_incomplete_mass": {"type": "number", "minimum": 0, "maximum": 1},
+        "numeric_graph_unavailable_mass": {"type": "number", "minimum": 0, "maximum": 1},
+        "numeric_graph_node_coverage": {"$ref": "#/$defs/nullableUnitInterval"},
+        "numeric_graph_edge_coverage": {"$ref": "#/$defs/nullableUnitInterval"},
+        "numeric_hard_rejected_traces": {"type": "integer", "minimum": 0},
+        "numeric_graph_rejected_traces": {"type": "integer", "minimum": 0},
+        "structured_traces": {"type": "integer", "minimum": 0},
+        "structured_well_formed_fraction": {"$ref": "#/$defs/nullableUnitInterval"},
+        "structured_well_formed_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "equation_valid_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "graph_valid_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "correlations": {"$ref": "#/$defs/responsibilityCorrelations"},
+        "counterfactuals": {"$ref": "#/$defs/counterfactualMap"}
+      },
+      "additionalProperties": false
+    },
+    "traceResponsibility": {
+      "type": "object",
+      "required": [
+        "pid", "partition", "buffer_index", "source", "is_gold", "round_added", "age",
+        "joint_logprob", "trace_logprob", "answer_logprob",
+        "responsibility", "rank", "total_tokens", "objective_tokens", "answer_tokens",
+        "trace_id", "proposal_correct", "proposal_tokens", "responsibility_logit",
+        "responsibility_before_potential", "responsibility_temperature_used",
+        "trace_representation", "structured_audit",
+        "numeric_audit"
+      ],
+      "properties": {
+        "pid": {"type": "integer", "minimum": 0},
+        "partition": {"enum": ["labelled", "answer_only"]},
+        "buffer_index": {"type": "integer", "minimum": 0},
+        "trace_id": {"type": ["string", "null"]},
+        "source": {"type": "string"},
+        "is_gold": {"type": "boolean"},
+        "proposal_correct": {"type": ["boolean", "null"]},
+        "proposal_tokens": {"type": ["integer", "null"], "minimum": 0},
+        "calculation_path_signature": {
+          "type": "string",
+          "pattern": "^(graph|skeleton):[0-9a-f]{64}$"
+        },
+        "round_added": {"type": "integer", "minimum": 0},
+        "age": {"type": "integer", "minimum": 0},
+        "joint_logprob": {"$ref": "#/$defs/nullableNumber"},
+        "trace_logprob": {"$ref": "#/$defs/nullableNumber"},
+        "answer_logprob": {"$ref": "#/$defs/nullableNumber"},
+        "proposal_trace_logprob": {"$ref": "#/$defs/nullableNumber"},
+        "log_importance_correction": {"$ref": "#/$defs/nullableNumber"},
+        "sampled_support_prior_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "sampled_support_log_marginal": {"$ref": "#/$defs/nullableNumber"},
+        "sampled_support_outer_initial": {"type": ["boolean", "null"]},
+        "responsibility_logit": {"$ref": "#/$defs/nullableNumber"},
+        "responsibility_before_potential": {"$ref": "#/$defs/nullableUnitInterval"},
+        "responsibility_temperature_used": {
+          "$ref": "#/$defs/nullableNonnegativeNumber"
+        },
+        "verifier_successes": {"type": ["integer", "null"], "minimum": 0},
+        "verifier_trials": {"type": ["integer", "null"], "minimum": 1},
+        "verifier_raw_rate": {"$ref": "#/$defs/nullableUnitInterval"},
+        "verifier_value": {"$ref": "#/$defs/nullableUnitInterval"},
+        "verifier_policy": {
+          "enum": [null, "current", "frozen_base"]
+        },
+        "verifier_generated_tokens": {"type": "integer", "minimum": 0},
+        "verifier_outputs": {
+          "type": ["array", "null"],
+          "items": {"type": "string"}
+        },
+        "verifier_correct": {
+          "type": ["array", "null"],
+          "items": {"type": "boolean"}
+        },
+        "responsibility": {"$ref": "#/$defs/nullableUnitInterval"},
+        "responsibility_real_coverage": {"$ref": "#/$defs/nullableUnitInterval"},
+        "responsibility_null_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "responsibility_real_log_mean_evidence": {"$ref": "#/$defs/nullableNumber"},
+        "responsibility_insufficient_witness": {"type": "boolean"},
+        "latent_verifier": {
+          "anyOf": [
+            {"$ref": "#/$defs/latentVerifierTrace"},
+            {"type": "null"}
+          ]
+        },
+        "rank": {"type": "integer", "minimum": 1},
+        "total_tokens": {"type": "integer", "minimum": 1},
+        "objective_tokens": {"type": "integer", "minimum": 0},
+        "answer_tokens": {"type": "integer", "minimum": 0},
+        "reasoning_token_count": {"type": ["integer", "null"], "minimum": 0},
+        "segment_responsibility_deltas": {
+          "type": "array",
+          "items": {"type": ["number", "null"]}
+        },
+        "trace_representation": {"enum": ["reasoning", "calculation_graph"]},
+        "structured_audit": {
+          "anyOf": [
+            {"$ref": "#/$defs/structuredTraceAudit"},
+            {"type": "null"}
+          ]
+        },
+        "numeric_audit": {
+          "anyOf": [
+            {"$ref": "#/$defs/numericAudit"},
+            {"type": "null"}
+          ]
+        },
+        "trace_tape": {
+          "type": "object",
+          "required": [
+            "full_token_ids", "objective_token_indices", "answer_token_indices",
+            "decoded_sequence", "decoded_objective", "decoded_answer"
+          ],
+          "properties": {
+            "full_token_ids": {
+              "type": "array",
+              "items": {"type": "integer", "minimum": 0}
+            },
+            "objective_token_indices": {
+              "type": "array",
+              "items": {"type": "integer", "minimum": 0}
+            },
+            "answer_token_indices": {
+              "type": "array",
+              "items": {"type": "integer", "minimum": 0}
+            },
+            "decoded_sequence": {"type": ["string", "null"]},
+            "decoded_objective": {"type": ["string", "null"]},
+            "decoded_answer": {"type": ["string", "null"]}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "structuredTraceAudit": {
+      "type": "object",
+      "required": [
+        "has_calculation_block", "has_reasoning_block",
+        "calculation_precedes_reasoning", "well_formed",
+        "calculation_characters", "reasoning_characters"
+      ],
+      "properties": {
+        "has_calculation_block": {"type": "boolean"},
+        "has_reasoning_block": {"type": "boolean"},
+        "calculation_precedes_reasoning": {"type": "boolean"},
+        "well_formed": {"type": "boolean"},
+        "calculation_characters": {"type": "integer", "minimum": 0},
+        "reasoning_characters": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "latentVerifierQuestion": {
+      "type": "object",
+      "required": [
+        "mode", "raw_question", "target_answer",
+        "mean_validity_probability", "global_null_mass",
+        "verifier_invalid_mass", "arithmetic_observation_counts",
+        "graph_observation_counts", "shuffled_trace_fraction",
+        "changed_validity_fraction"
+      ],
+      "properties": {
+        "mode": {"$ref": "#/$defs/multiVerifierPosterior"},
+        "raw_question": {"type": "string"},
+        "target_answer": {"type": "string"},
+        "mean_validity_probability": {"$ref": "#/$defs/nullableUnitInterval"},
+        "global_null_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "verifier_invalid_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "arithmetic_observation_counts": {"$ref": "#/$defs/verifierObservationCounts"},
+        "graph_observation_counts": {"$ref": "#/$defs/verifierObservationCounts"},
+        "shuffled_trace_fraction": {"$ref": "#/$defs/nullableUnitInterval"},
+        "changed_validity_fraction": {"$ref": "#/$defs/nullableUnitInterval"}
+      },
+      "additionalProperties": false
+    },
+    "latentVerifierTrace": {
+      "type": "object",
+      "required": [
+        "mode", "raw_rationale", "raw_arithmetic_observation",
+        "raw_graph_observation",
+        "applied_arithmetic_observation", "applied_graph_observation",
+        "validity_probability", "source_buffer_index", "global_null_mass",
+        "verifier_invalid_mass", "equation_mentions", "parsed_equations",
+        "invalid_equations", "candidate_graph_nodes", "candidate_graph_edges",
+        "target_nodes", "target_ancestor_nodes", "binary_operations",
+        "question_numbers", "input_leaf_numbers",
+        "grounded_input_leaf_numbers"
+      ],
+      "properties": {
+        "mode": {"$ref": "#/$defs/multiVerifierPosterior"},
+        "raw_rationale": {"type": "string"},
+        "raw_arithmetic_observation": {"$ref": "#/$defs/verifierObservation"},
+        "raw_graph_observation": {"$ref": "#/$defs/verifierObservation"},
+        "applied_arithmetic_observation": {"$ref": "#/$defs/verifierObservation"},
+        "applied_graph_observation": {"$ref": "#/$defs/verifierObservation"},
+        "validity_probability": {"$ref": "#/$defs/nullableUnitInterval"},
+        "source_buffer_index": {"type": "integer", "minimum": 0},
+        "global_null_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "verifier_invalid_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "equation_mentions": {"type": "integer", "minimum": 0},
+        "parsed_equations": {"type": "integer", "minimum": 0},
+        "invalid_equations": {"type": "integer", "minimum": 0},
+        "candidate_graph_nodes": {"type": "integer", "minimum": 0},
+        "candidate_graph_edges": {"type": "integer", "minimum": 0},
+        "target_nodes": {"type": "integer", "minimum": 0},
+        "target_ancestor_nodes": {"type": "integer", "minimum": 0},
+        "binary_operations": {"type": "integer", "minimum": 0},
+        "question_numbers": {"type": "integer", "minimum": 0},
+        "input_leaf_numbers": {"type": "integer", "minimum": 0},
+        "grounded_input_leaf_numbers": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "verifierObservation": {"enum": ["pass", "fail", "missing"]},
+    "verifierObservationCounts": {
+      "type": "object",
+      "required": ["pass", "fail", "missing"],
+      "properties": {
+        "pass": {"type": "integer", "minimum": 0},
+        "fail": {"type": "integer", "minimum": 0},
+        "missing": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "multiVerifierPosterior": {
+      "enum": [
+        "verifier_arithmetic", "verifier_graph", "verifier_joint",
+        "verifier_joint_shuffled", "verifier_bayesian"
+      ]
+    },
+    "numericAudit": {
+      "type": "object",
+      "required": [
+        "equation_mentions", "parsed_equations", "parse_failures",
+        "invalid_equations", "gold_matches", "gold_contradictions",
+        "gold_graph_available", "gold_graph_nodes", "gold_graph_edges",
+        "candidate_graph_nodes", "candidate_graph_edges", "graph_node_matches",
+        "graph_edge_matches", "graph_node_coverage", "graph_edge_coverage",
+        "graph_fully_covered", "equations", "invalid", "contradictions",
+        "missing_graph_nodes", "missing_graph_edges", "log_potential", "hard_rejected"
+      ],
+      "properties": {
+        "equation_mentions": {"type": "integer", "minimum": 0},
+        "parsed_equations": {"type": "integer", "minimum": 0},
+        "parse_failures": {"type": "integer", "minimum": 0},
+        "invalid_equations": {"type": "integer", "minimum": 0},
+        "gold_matches": {"type": "integer", "minimum": 0},
+        "gold_contradictions": {"type": "integer", "minimum": 0},
+        "gold_graph_available": {"type": "boolean"},
+        "gold_graph_nodes": {"type": "integer", "minimum": 0},
+        "gold_graph_edges": {"type": "integer", "minimum": 0},
+        "candidate_graph_nodes": {"type": "integer", "minimum": 0},
+        "candidate_graph_edges": {"type": "integer", "minimum": 0},
+        "graph_node_matches": {"type": "integer", "minimum": 0},
+        "graph_edge_matches": {"type": "integer", "minimum": 0},
+        "graph_node_coverage": {"$ref": "#/$defs/nullableUnitInterval"},
+        "graph_edge_coverage": {"$ref": "#/$defs/nullableUnitInterval"},
+        "graph_fully_covered": {"type": ["boolean", "null"]},
+        "equations": {"type": "array", "items": {"type": "string"}},
+        "invalid": {"type": "array", "items": {"type": "string"}},
+        "contradictions": {"type": "array", "items": {"type": "string"}},
+        "missing_graph_nodes": {"type": "array", "items": {"type": "string"}},
+        "missing_graph_edges": {"type": "array", "items": {"type": "string"}},
+        "log_potential": {"$ref": "#/$defs/nullableNumber"},
+        "hard_rejected": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "partitionSummary": {
+      "type": "object",
+      "required": [
+        "question_count", "mean_trace_count", "mean_gold_mass",
+        "mean_gold_mass_before_potential", "mean_gold_mass_change_from_potential",
+        "mean_responsibility_total_variation_from_potential", "gold_top1_fraction",
+        "mean_max_responsibility", "mean_effective_sample_size_fraction",
+        "mean_normalized_entropy", "mean_responsibility_weighted_age", "nonfinite_responsibilities",
+        "mean_numeric_valid_mass", "mean_numeric_invalid_mass", "mean_numeric_unparsed_mass",
+        "mean_numeric_graph_available_mass", "mean_numeric_graph_compatible_mass",
+        "mean_numeric_graph_incomplete_mass", "mean_numeric_graph_unavailable_mass",
+        "mean_numeric_graph_node_coverage", "mean_numeric_graph_edge_coverage",
+        "numeric_hard_rejected_traces", "numeric_graph_rejected_traces",
+        "structured_traces", "mean_structured_well_formed_fraction",
+        "mean_structured_well_formed_mass",
+        "counterfactuals"
+      ],
+      "properties": {
+        "question_count": {"type": "integer", "minimum": 0},
+        "mean_real_coverage": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_null_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_real_log_mean_evidence": {"$ref": "#/$defs/nullableNumber"},
+        "mean_trace_count": {"$ref": "#/$defs/nullableNumber"},
+        "mean_gold_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_gold_mass_before_potential": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_gold_mass_change_from_potential": {"$ref": "#/$defs/nullableNumber"},
+        "mean_responsibility_total_variation_from_potential": {
+          "$ref": "#/$defs/nullableUnitInterval"
+        },
+        "gold_top1_fraction": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_max_responsibility": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_top_one_two_margin": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_gini_coefficient": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_answer_correct_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_weighted_joint_plus_entropy": {"$ref": "#/$defs/nullableNumber"},
+        "mean_joint_support_logsumexp": {"$ref": "#/$defs/nullableNumber"},
+        "mean_effective_sample_size_fraction": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_normalized_entropy": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_responsibility_weighted_age": {"$ref": "#/$defs/nullableNumber"},
+        "nonfinite_responsibilities": {"type": "integer", "minimum": 0},
+        "mean_numeric_valid_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_numeric_invalid_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_numeric_unparsed_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_numeric_graph_available_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_numeric_graph_compatible_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_numeric_graph_incomplete_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_numeric_graph_unavailable_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_numeric_graph_node_coverage": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_numeric_graph_edge_coverage": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_equation_valid_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_graph_valid_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "numeric_hard_rejected_traces": {"type": "integer", "minimum": 0},
+        "numeric_graph_rejected_traces": {"type": "integer", "minimum": 0},
+        "structured_traces": {"type": "integer", "minimum": 0},
+        "mean_structured_well_formed_fraction": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_structured_well_formed_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "correlations": {"$ref": "#/$defs/responsibilityCorrelations"},
+        "reader_calibration": {"$ref": "#/$defs/readerCalibration"},
+        "counterfactuals": {"$ref": "#/$defs/counterfactualSummaryMap"}
+      },
+      "additionalProperties": false
+    },
+    "responsibilityCorrelations": {
+      "type": "object",
+      "required": [
+        "responsibility_vs_length_spearman",
+        "responsibility_vs_correctness_spearman",
+        "responsibility_vs_age_spearman",
+        "responsibility_vs_trace_logprob_spearman"
+      ],
+      "properties": {
+        "responsibility_vs_length_spearman": {
+          "type": ["number", "null"], "minimum": -1, "maximum": 1
+        },
+        "responsibility_vs_correctness_spearman": {
+          "type": ["number", "null"], "minimum": -1, "maximum": 1
+        },
+        "responsibility_vs_age_spearman": {
+          "type": ["number", "null"], "minimum": -1, "maximum": 1
+        },
+        "responsibility_vs_trace_logprob_spearman": {
+          "type": ["number", "null"], "minimum": -1, "maximum": 1
+        },
+        "responsibility_vs_verifier_value_spearman": {
+          "type": ["number", "null"], "minimum": -1, "maximum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "readerCalibration": {
+      "type": "object",
+      "required": [
+        "count", "positive_count", "auroc", "auprc", "brier", "ece"
+      ],
+      "properties": {
+        "count": {"type": "integer", "minimum": 0},
+        "positive_count": {"type": "integer", "minimum": 0},
+        "auroc": {"$ref": "#/$defs/nullableUnitInterval"},
+        "auprc": {"$ref": "#/$defs/nullableUnitInterval"},
+        "brier": {"$ref": "#/$defs/nullableUnitInterval"},
+        "ece": {"$ref": "#/$defs/nullableUnitInterval"}
+      },
+      "additionalProperties": false
+    },
+    "responsibilityDiagnostics": {
+      "type": "object",
+      "required": [
+        "score", "temperature", "ess_floor_fraction", "policy",
+        "answer_policy", "refresh",
+        "inter_refresh_total_variation_mean",
+        "inter_refresh_total_variation_max",
+        "labelled_numeric_constraint", "numeric_penalty",
+        "numeric_contradiction_penalty", "numeric_missing_penalty",
+        "partitions", "questions", "traces"
+      ],
+      "properties": {
+        "score": {"enum": ["joint", "token_mean", "rollout_value"]},
+        "posterior": {
+          "enum": [
+            "softmax_entropy", "hard_delta_no_entropy", "two_witness",
+            "verifier_arithmetic", "verifier_graph", "verifier_joint",
+            "verifier_joint_shuffled", "verifier_bayesian"
+          ]
+        },
+        "temperature": {"type": "number", "exclusiveMinimum": 0},
+        "ess_floor_fraction": {"type": "number", "minimum": 0, "maximum": 1},
+        "abstention": {
+          "type": "object",
+          "required": [
+            "mode", "rejection_threshold", "null_log_evidence", "null_prior"
+          ],
+          "properties": {
+            "mode": {"enum": ["none", "hard_threshold", "null_latent"]},
+            "rejection_threshold": {"type": "number"},
+            "null_log_evidence": {"type": "number"},
+            "null_prior": {"type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1}
+          },
+          "additionalProperties": false
+        },
+        "policy": {"$ref": "#/$defs/adapterPolicy"},
+        "answer_policy": {"$ref": "#/$defs/adapterPolicy"},
+        "refresh": {"enum": ["inner_step", "outer_round"]},
+        "verifier": {
+          "type": "object",
+          "required": [
+            "rollouts_per_trace", "temperature", "max_new_tokens",
+            "batch_size", "smoothing_alpha", "policy",
+            "calls_this_round", "calls_cumulative", "traces_this_round",
+            "successes_this_round", "generated_tokens_this_round",
+            "generated_tokens_cumulative"
+          ],
+          "properties": {
+            "rollouts_per_trace": {"type": "integer", "minimum": 0},
+            "temperature": {"type": "number", "exclusiveMinimum": 0},
+            "max_new_tokens": {"type": "integer", "minimum": 1},
+            "batch_size": {"type": "integer", "minimum": 1},
+            "smoothing_alpha": {"type": "number", "exclusiveMinimum": 0},
+            "policy": {"enum": ["off", "current", "frozen_base"]},
+            "calls_this_round": {"type": "integer", "minimum": 0},
+            "calls_cumulative": {"type": "integer", "minimum": 0},
+            "traces_this_round": {"type": "integer", "minimum": 0},
+            "successes_this_round": {"type": "integer", "minimum": 0},
+            "generated_tokens_this_round": {"type": "integer", "minimum": 0},
+            "generated_tokens_cumulative": {"type": "integer", "minimum": 0}
+          },
+          "additionalProperties": false
+        },
+        "variational_estimator": {
+          "enum": [
+            "delta_joint", "uniform_mc", "prior_importance",
+            "frozen_prior_importance", "answer_conditioned_importance",
+            "persistent_answer_conditioned_importance",
+            "persistent_prior_importance", "sampled_support_importance"
+          ]
+        },
+        "inter_refresh_total_variation_mean": {
+          "$ref": "#/$defs/nullableUnitInterval"
+        },
+        "inter_refresh_total_variation_max": {
+          "$ref": "#/$defs/nullableUnitInterval"
+        },
+        "labelled_numeric_constraint": {
+          "enum": ["off", "hard", "soft", "graph_hard"]
+        },
+        "numeric_penalty": {"type": "number", "minimum": 0},
+        "numeric_contradiction_penalty": {"type": "number", "minimum": 0},
+        "numeric_missing_penalty": {"type": "number", "minimum": 0},
+        "partitions": {
+          "type": "object",
+          "required": ["labelled", "answer_only"],
+          "properties": {
+            "labelled": {"$ref": "#/$defs/partitionSummary"},
+            "answer_only": {"$ref": "#/$defs/partitionSummary"}
+          },
+          "additionalProperties": false
+        },
+        "questions": {"type": "array", "items": {"$ref": "#/$defs/questionResponsibility"}},
+        "traces": {"type": "array", "items": {"$ref": "#/$defs/traceResponsibility"}},
+        "trace_tape": {
+          "type": "object",
+          "required": [
+            "enabled", "contains_full_token_ids",
+            "contains_per_token_proposal_logprobs",
+            "contains_per_token_reader_logprobs"
+          ],
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "contains_full_token_ids": {"type": "boolean"},
+            "contains_per_token_proposal_logprobs": {"type": "boolean"},
+            "contains_per_token_reader_logprobs": {"type": "boolean"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "counterfactual": {
+      "type": "object",
+      "required": ["available"],
+      "properties": {
+        "available": {"type": "boolean"},
+        "score": {"enum": ["joint", "token_mean"]},
+        "temperature": {"type": "number", "exclusiveMinimum": 0},
+        "weights": {
+          "type": "array",
+          "items": {"type": "number", "minimum": 0, "maximum": 1}
+        },
+        "gold_mass": {"type": "number", "minimum": 0, "maximum": 1},
+        "gold_rank": {"type": ["integer", "null"], "minimum": 1},
+        "gold_is_top1": {"type": "boolean"},
+        "top1_index": {"type": "integer", "minimum": 0},
+        "top1_trace_id": {"type": ["string", "null"]},
+        "top1_source": {"type": "string"},
+        "max_responsibility": {"type": "number", "minimum": 0, "maximum": 1},
+        "normalized_entropy": {"type": "number", "minimum": 0, "maximum": 1},
+        "effective_sample_size_fraction": {"type": "number", "minimum": 0, "maximum": 1},
+        "numeric_valid_mass": {"type": "number", "minimum": 0, "maximum": 1},
+        "numeric_invalid_mass": {"type": "number", "minimum": 0, "maximum": 1},
+        "numeric_unparsed_mass": {"type": "number", "minimum": 0, "maximum": 1},
+        "numeric_graph_available_mass": {"type": "number", "minimum": 0, "maximum": 1},
+        "numeric_graph_compatible_mass": {"type": "number", "minimum": 0, "maximum": 1},
+        "numeric_graph_incomplete_mass": {"type": "number", "minimum": 0, "maximum": 1},
+        "numeric_graph_unavailable_mass": {"type": "number", "minimum": 0, "maximum": 1},
+        "numeric_graph_node_coverage": {"$ref": "#/$defs/nullableUnitInterval"},
+        "numeric_graph_edge_coverage": {"$ref": "#/$defs/nullableUnitInterval"},
+        "top1_changed_from_joint_tau1": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "counterfactualMap": {
+      "type": "object",
+      "required": ["joint_tau1", "joint_tau2", "token_mean_tau1", "token_mean_tau2"],
+      "properties": {
+        "joint_tau1": {"$ref": "#/$defs/counterfactual"},
+        "joint_tau2": {"$ref": "#/$defs/counterfactual"},
+        "token_mean_tau1": {"$ref": "#/$defs/counterfactual"},
+        "token_mean_tau2": {"$ref": "#/$defs/counterfactual"}
+      },
+      "additionalProperties": false
+    },
+    "counterfactualSummary": {
+      "type": "object",
+      "required": [
+        "question_count", "mean_gold_mass", "gold_top1_fraction", "mean_gold_rank",
+        "mean_effective_sample_size_fraction", "top1_change_fraction_from_joint_tau1",
+        "mean_numeric_valid_mass", "mean_numeric_invalid_mass", "mean_numeric_unparsed_mass",
+        "mean_numeric_graph_available_mass", "mean_numeric_graph_compatible_mass",
+        "mean_numeric_graph_incomplete_mass", "mean_numeric_graph_unavailable_mass",
+        "mean_numeric_graph_node_coverage", "mean_numeric_graph_edge_coverage"
+      ],
+      "properties": {
+        "question_count": {"type": "integer", "minimum": 0},
+        "mean_gold_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "gold_top1_fraction": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_gold_rank": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+        "mean_effective_sample_size_fraction": {"$ref": "#/$defs/nullableUnitInterval"},
+        "top1_change_fraction_from_joint_tau1": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_numeric_valid_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_numeric_invalid_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_numeric_unparsed_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_numeric_graph_available_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_numeric_graph_compatible_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_numeric_graph_incomplete_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_numeric_graph_unavailable_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_numeric_graph_node_coverage": {"$ref": "#/$defs/nullableUnitInterval"},
+        "mean_numeric_graph_edge_coverage": {"$ref": "#/$defs/nullableUnitInterval"}
+      },
+      "additionalProperties": false
+    },
+    "counterfactualSummaryMap": {
+      "type": "object",
+      "required": ["joint_tau1", "joint_tau2", "token_mean_tau1", "token_mean_tau2"],
+      "properties": {
+        "joint_tau1": {"$ref": "#/$defs/counterfactualSummary"},
+        "joint_tau2": {"$ref": "#/$defs/counterfactualSummary"},
+        "token_mean_tau1": {"$ref": "#/$defs/counterfactualSummary"},
+        "token_mean_tau2": {"$ref": "#/$defs/counterfactualSummary"}
+      },
+      "additionalProperties": false
+    },
+    "posteriorChurnQuestion": {
+      "type": "object",
+      "required": [
+        "pid", "trace_count", "total_variation", "forward_kl", "reverse_kl",
+        "rank_correlation", "top_trace_replaced", "top_trace_before",
+        "top_trace_after"
+      ],
+      "properties": {
+        "pid": {"type": "integer", "minimum": 0},
+        "trace_count": {"type": "integer", "minimum": 1},
+        "total_variation": {"$ref": "#/$defs/nullableUnitInterval"},
+        "forward_kl": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+        "reverse_kl": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+        "rank_correlation": {
+          "type": ["number", "null"], "minimum": -1, "maximum": 1
+        },
+        "top_trace_replaced": {"type": "boolean"},
+        "top_trace_before": {"type": ["string", "null"]},
+        "top_trace_after": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "posteriorChurn": {
+      "type": "object",
+      "required": ["questions", "summary"],
+      "properties": {
+        "questions": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/posteriorChurnQuestion"}
+        },
+        "summary": {
+          "type": "object",
+          "required": [
+            "question_count", "mean_total_variation", "mean_forward_kl",
+            "mean_reverse_kl", "mean_rank_correlation",
+            "top_trace_replacement_fraction"
+          ],
+          "properties": {
+            "question_count": {"type": "integer", "minimum": 0},
+            "mean_total_variation": {"$ref": "#/$defs/nullableUnitInterval"},
+            "mean_forward_kl": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "mean_reverse_kl": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "mean_rank_correlation": {
+              "type": ["number", "null"], "minimum": -1, "maximum": 1
+            },
+            "top_trace_replacement_fraction": {
+              "$ref": "#/$defs/nullableUnitInterval"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "posteriorRefresh": {
+      "type": "object",
+      "required": ["inner_step", "labelled", "answer_only"],
+      "properties": {
+        "inner_step": {"type": "integer", "minimum": 0},
+        "labelled": {"$ref": "#/$defs/posteriorChurn"},
+        "answer_only": {"$ref": "#/$defs/posteriorChurn"}
+      },
+      "additionalProperties": false
+    },
+    "posteriorDynamics": {
+      "type": "object",
+      "required": ["refreshes", "refresh_count"],
+      "properties": {
+        "refreshes": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/posteriorRefresh"}
+        },
+        "refresh_count": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "fixedObjectiveValues": {
+      "type": "object",
+      "required": ["B_sup", "B_prime_unsup", "B_unsup"],
+      "properties": {
+        "B_sup": {"type": "number"},
+        "B_prime_unsup": {"type": "number"},
+        "B_unsup": {"type": "number"},
+        "total": {"type": "number"}
+      },
+      "additionalProperties": false
+    },
+    "innerStepAttempt": {
+      "type": "object",
+      "required": [
+        "attempt", "learning_rate_scale", "accepted", "failed_gates",
+        "rejection_reason", "objective_after", "elapsed_seconds",
+        "parameter_update_norm"
+      ],
+      "properties": {
+        "attempt": {"type": "integer", "minimum": 0},
+        "learning_rate_scale": {"type": "number", "minimum": 0},
+        "accepted": {"type": "boolean"},
+        "failed_gates": {
+          "type": "array",
+          "items": {"type": "string"},
+          "uniqueItems": true
+        },
+        "rejection_reason": {"type": ["string", "null"]},
+        "objective_after": {
+          "anyOf": [
+            {"$ref": "#/$defs/fixedObjectiveValues"},
+            {"type": "null"}
+          ]
+        },
+        "objective_deltas": {"$ref": "#/$defs/componentNumberMap"},
+        "objective_total_delta": {"type": "number"},
+        "elapsed_seconds": {"type": "number", "minimum": 0},
+        "parameter_update_norm": {"$ref": "#/$defs/nullableNonnegativeNumber"}
+      },
+      "additionalProperties": false
+    },
+    "gradientAttribution": {
+      "type": "object",
+      "required": ["enabled", "selection", "question_limit", "questions"],
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "selection": {
+          "enum": ["disabled", "highest_max_responsibility"]
+        },
+        "question_limit": {"type": "integer", "minimum": 0},
+        "questions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "pid", "partition", "trace_count", "max_responsibility",
+              "correct_trace_mass", "gradient_l2_norm",
+              "cosine_with_aggregate"
+            ],
+            "properties": {
+              "pid": {"type": "integer", "minimum": 0},
+              "partition": {"enum": ["labelled", "answer_only"]},
+              "trace_count": {"type": "integer", "minimum": 1},
+              "max_responsibility": {"$ref": "#/$defs/nullableUnitInterval"},
+              "correct_trace_mass": {"$ref": "#/$defs/nullableUnitInterval"},
+              "gradient_l2_norm": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+              "cosine_with_aggregate": {
+                "type": ["number", "null"], "minimum": -1, "maximum": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "sampledSupportQuestion": {
+      "type": "object",
+      "required": [
+        "pid", "support_size", "trace_ids", "outer_initial", "q", "r", "q_minus_r",
+        "behaviour_trace_logprobs", "current_trace_logprobs", "answer_logprobs",
+        "log_marginal", "q_sum_error", "r_sum_error", "signed_sum_error",
+        "initial_uniform_error"
+      ],
+      "properties": {
+        "pid": {"type": "integer", "minimum": 0},
+        "support_size": {"type": "integer", "minimum": 1},
+        "trace_ids": {"type": "array", "items": {"type": ["string", "null"]}},
+        "outer_initial": {"type": "boolean"},
+        "q": {"type": "array", "items": {"type": "number", "minimum": 0, "maximum": 1}},
+        "r": {"type": "array", "items": {"type": "number", "minimum": 0, "maximum": 1}},
+        "q_minus_r": {"type": "array", "items": {"type": "number", "minimum": -1, "maximum": 1}},
+        "behaviour_trace_logprobs": {"type": "array", "items": {"type": "number"}},
+        "current_trace_logprobs": {"type": "array", "items": {"type": "number"}},
+        "answer_logprobs": {"type": "array", "items": {"type": "number", "maximum": 0.000001}},
+        "log_marginal": {"type": "number", "maximum": 0.000001},
+        "q_sum_error": {"type": "number", "minimum": 0, "maximum": 0.000001},
+        "r_sum_error": {"type": "number", "minimum": 0, "maximum": 0.000001},
+        "signed_sum_error": {"type": "number", "minimum": 0, "maximum": 0.000001},
+        "initial_uniform_error": {"type": "number", "minimum": 0, "maximum": 0.0000001}
+      },
+      "additionalProperties": false
+    },
+    "sampledSupportSnapshot": {
+      "type": "object",
+      "required": [
+        "question_count", "questions", "maximum_q_sum_error",
+        "maximum_r_sum_error", "maximum_signed_sum_error",
+        "maximum_initial_uniform_error", "positive_rationale_coefficients",
+        "negative_rationale_coefficients", "zero_rationale_coefficients"
+      ],
+      "properties": {
+        "question_count": {"type": "integer", "minimum": 0},
+        "questions": {"type": "array", "items": {"$ref": "#/$defs/sampledSupportQuestion"}},
+        "maximum_q_sum_error": {"type": "number", "minimum": 0, "maximum": 0.000001},
+        "maximum_r_sum_error": {"type": "number", "minimum": 0, "maximum": 0.000001},
+        "maximum_signed_sum_error": {"type": "number", "minimum": 0, "maximum": 0.000001},
+        "maximum_initial_uniform_error": {"type": "number", "minimum": 0, "maximum": 0.0000001},
+        "positive_rationale_coefficients": {"type": "integer", "minimum": 0},
+        "negative_rationale_coefficients": {"type": "integer", "minimum": 0},
+        "zero_rationale_coefficients": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "sampledSupportStep": {
+      "type": "object",
+      "required": ["before", "after"],
+      "properties": {
+        "before": {"$ref": "#/$defs/sampledSupportSnapshot"},
+        "after": {"$ref": "#/$defs/sampledSupportSnapshot"}
+      },
+      "additionalProperties": false
+    },
+    "innerMStep": {
+      "type": "object",
+      "required": [
+        "inner_step", "status", "rejection_reason", "objective", "trust",
+        "policy_kl", "gradient", "update", "anchor", "support",
+        "gradient_attribution", "behavioural_probe", "attempts", "elapsed_seconds",
+        "rejected_attempt_elapsed_seconds", "consecutive_rejections",
+        "cumulative_accepted_steps", "posterior_churn"
+      ],
+      "properties": {
+        "inner_step": {"type": "integer", "minimum": 0},
+        "status": {"enum": ["accepted", "rejected"]},
+        "rejection_reason": {"type": ["string", "null"]},
+        "objective": {
+          "type": "object",
+          "required": [
+            "weighted_before", "weighted_after", "marginal_gain",
+            "gain_per_backward_token", "gain_per_gpu_second",
+            "unweighted_trace_nll_before", "unweighted_trace_nll_after"
+          ],
+          "properties": {
+            "weighted_before": {"$ref": "#/$defs/fixedObjectiveValues"},
+            "weighted_after": {
+              "anyOf": [
+                {"$ref": "#/$defs/fixedObjectiveValues"},
+                {"type": "null"}
+              ]
+            },
+            "marginal_gain": {"$ref": "#/$defs/nullableNumber"},
+            "gain_per_backward_token": {"$ref": "#/$defs/nullableNumber"},
+            "gain_per_gpu_second": {"$ref": "#/$defs/nullableNumber"},
+            "unweighted_trace_nll_before": {"$ref": "#/$defs/nullableNumber"},
+            "unweighted_trace_nll_after": {"$ref": "#/$defs/nullableNumber"}
+          },
+          "additionalProperties": false
+        },
+        "trust": {
+          "type": "object",
+          "required": [
+            "safety_nll_before", "safety_nll_after", "history_nll_before",
+            "history_nll_after", "availability"
+          ],
+          "properties": {
+            "safety_nll_before": {"$ref": "#/$defs/nullableNumber"},
+            "safety_nll_after": {"$ref": "#/$defs/nullableNumber"},
+            "history_nll_before": {"$ref": "#/$defs/nullableNumber"},
+            "history_nll_after": {"$ref": "#/$defs/nullableNumber"},
+            "availability": {"type": "string"}
+          },
+          "additionalProperties": false
+        },
+        "policy_kl": {
+          "type": "object",
+          "required": [
+            "nonnegative_before", "signed_after", "nonnegative_after",
+            "after_availability"
+          ],
+          "properties": {
+            "nonnegative_before": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "signed_after": {"$ref": "#/$defs/nullableNumber"},
+            "nonnegative_after": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "after_availability": {"type": "string"}
+          },
+          "additionalProperties": false
+        },
+        "gradient": {
+          "type": "object",
+          "required": [
+            "raw_objective_l2_norm", "projected_objective_l2_norm",
+            "raw_anchor_l2_norm", "applied_anchor_l2_norm", "combined_l2_norm",
+            "policy_anchor_cosine", "clipping_fraction", "clipping_mode"
+          ],
+          "properties": {
+            "raw_objective_l2_norm": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "projected_objective_l2_norm": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "raw_anchor_l2_norm": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "applied_anchor_l2_norm": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "combined_l2_norm": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "policy_anchor_cosine": {
+              "type": ["number", "null"], "minimum": -1, "maximum": 1
+            },
+            "clipping_fraction": {"$ref": "#/$defs/nullableUnitInterval"},
+            "clipping_mode": {"type": "string"}
+          },
+          "additionalProperties": false
+        },
+        "component_gradient_geometry": {
+          "$ref": "#/$defs/nullableGradientGeometry"
+        },
+        "update": {
+          "type": "object",
+          "required": [
+            "applied_parameter_l2_norm", "effective_step_size",
+            "update_to_gradient_ratio", "state_parameter_tensors",
+            "first_moment_l2_norm", "second_moment_l2_norm", "minimum_step",
+            "maximum_step", "learning_rate_min", "learning_rate_max"
+          ],
+          "properties": {
+            "applied_parameter_l2_norm": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "effective_step_size": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "update_to_gradient_ratio": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "state_parameter_tensors": {"type": "integer", "minimum": 0},
+            "first_moment_l2_norm": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "second_moment_l2_norm": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "minimum_step": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "maximum_step": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "learning_rate_min": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "learning_rate_max": {"$ref": "#/$defs/nullableNonnegativeNumber"}
+          },
+          "additionalProperties": false
+        },
+        "anchor": {
+          "type": "object",
+          "required": [
+            "coefficient", "unclipped_coefficient", "coefficient_clipped",
+            "target_gradient_ratio", "achieved_gradient_ratio"
+          ],
+          "properties": {
+            "coefficient": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "unclipped_coefficient": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "coefficient_clipped": {"type": "boolean"},
+            "target_gradient_ratio": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "achieved_gradient_ratio": {"$ref": "#/$defs/nullableNonnegativeNumber"}
+          },
+          "additionalProperties": false
+        },
+        "support": {
+          "type": "object",
+          "required": [
+            "active_questions", "active_labelled_questions",
+            "active_answer_only_questions", "active_traces",
+            "supervised_backward_tokens", "buffer_backward_tokens",
+            "backward_tokens"
+          ],
+          "properties": {
+            "active_questions": {"type": "integer", "minimum": 0},
+            "active_labelled_questions": {"type": "integer", "minimum": 0},
+            "active_answer_only_questions": {"type": "integer", "minimum": 0},
+            "active_traces": {"type": "integer", "minimum": 0},
+            "supervised_backward_tokens": {"type": "integer", "minimum": 0},
+            "supervised_backward_eos_tokens": {"type": "integer", "minimum": 0},
+            "buffer_backward_tokens": {"type": "integer", "minimum": 0},
+            "buffer_backward_eos_tokens": {"type": "integer", "minimum": 0},
+            "backward_tokens": {"type": "integer", "minimum": 0},
+            "backward_eos_tokens": {"type": "integer", "minimum": 0}
+          },
+          "additionalProperties": false
+        },
+        "gradient_attribution": {"$ref": "#/$defs/gradientAttribution"},
+        "behavioural_probe": {
+          "type": "object",
+          "required": [
+            "evaluated", "accuracy", "change_from_previous",
+            "elapsed_seconds"
+          ],
+          "properties": {
+            "evaluated": {"type": "boolean"},
+            "accuracy": {"$ref": "#/$defs/nullableUnitInterval"},
+            "change_from_previous": {"$ref": "#/$defs/nullableNumber"},
+            "elapsed_seconds": {"type": "number", "minimum": 0}
+          },
+          "additionalProperties": false
+        },
+        "attempts": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/innerStepAttempt"}
+        },
+        "elapsed_seconds": {"type": "number", "minimum": 0},
+        "rejected_attempt_elapsed_seconds": {"type": "number", "minimum": 0},
+        "consecutive_rejections": {"type": "integer", "minimum": 0},
+        "cumulative_accepted_steps": {"type": "integer", "minimum": 0},
+        "posterior_churn": {
+          "anyOf": [
+            {"$ref": "#/$defs/posteriorRefresh"},
+            {"type": "null"}
+          ]
+        },
+        "sampled_support": {"$ref": "#/$defs/sampledSupportStep"}
+      },
+      "additionalProperties": false
+    },
+    "innerMStepDiagnostics": {
+      "type": "object",
+      "required": [
+        "steps", "attempted_steps", "accepted_steps", "rejected_steps",
+        "cumulative_accepted_steps", "consecutive_rejections",
+        "rejected_attempt_elapsed_seconds"
+      ],
+      "properties": {
+        "steps": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/innerMStep"}
+        },
+        "attempted_steps": {"type": "integer", "minimum": 0},
+        "accepted_steps": {"type": "integer", "minimum": 0},
+        "rejected_steps": {"type": "integer", "minimum": 0},
+        "cumulative_accepted_steps": {"type": "integer", "minimum": 0},
+        "consecutive_rejections": {"type": "integer", "minimum": 0},
+        "rejected_attempt_elapsed_seconds": {"type": "number", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "behaviouralUtility": {
+      "type": "object",
+      "required": [
+        "fixed_probe_baseline_accuracy", "fixed_probe_latest_accuracy",
+        "fixed_probe_evaluations_this_round",
+        "full_validation_accuracy", "full_validation_evaluated",
+        "full_validation_policy"
+      ],
+      "properties": {
+        "fixed_probe_baseline_accuracy": {"$ref": "#/$defs/nullableUnitInterval"},
+        "fixed_probe_latest_accuracy": {"$ref": "#/$defs/nullableUnitInterval"},
+        "fixed_probe_evaluations_this_round": {
+          "type": "integer", "minimum": 0
+        },
+        "fixed_probe_size": {"type": "integer", "minimum": 0},
+        "fixed_probe_question_ids": {
+          "type": "array",
+          "items": {"type": "integer", "minimum": 0},
+          "uniqueItems": true
+        },
+        "full_validation_accuracy": {"$ref": "#/$defs/nullableUnitInterval"},
+        "full_validation_evaluated": {"type": "boolean"},
+        "full_validation_policy": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "computeDiagnostics": {
+      "type": "object",
+      "required": [
+        "timings_seconds", "tokens", "throughput", "cuda_memory",
+        "gpu_utilization_percent", "power_watts", "energy_joules"
+      ],
+      "properties": {
+        "timings_seconds": {
+          "type": "object",
+          "required": [
+            "generation", "e_step", "m_step",
+            "m_step_excluding_diagnostic_probe", "diagnostic_probe",
+            "diagnostic_probe_baseline", "evaluation",
+            "round_total_before_serialization", "rejected_attempts"
+          ],
+          "properties": {
+            "generation": {"type": "number", "minimum": 0},
+            "e_step": {"type": "number", "minimum": 0},
+            "m_step": {"type": "number", "minimum": 0},
+            "m_step_excluding_diagnostic_probe": {
+              "type": "number", "minimum": 0
+            },
+            "diagnostic_probe": {"type": "number", "minimum": 0},
+            "diagnostic_probe_baseline": {"type": "number", "minimum": 0},
+            "evaluation": {"type": "number", "minimum": 0},
+            "round_total_before_serialization": {"type": "number", "minimum": 0},
+            "rejected_attempts": {"type": "number", "minimum": 0}
+          },
+          "additionalProperties": false
+        },
+        "tokens": {
+          "type": "object",
+          "required": ["generated", "scored", "backward", "forward"],
+          "properties": {
+            "generated": {"type": "integer", "minimum": 0},
+            "verifier_generated": {"type": "integer", "minimum": 0},
+            "llm_generated_total": {"type": "integer", "minimum": 0},
+            "scored": {"type": "integer", "minimum": 0},
+            "backward": {"type": "integer", "minimum": 0},
+            "backward_eos": {"type": "integer", "minimum": 0},
+            "forward": {"type": ["integer", "null"], "minimum": 0}
+          },
+          "additionalProperties": false
+        },
+        "throughput": {
+          "type": "object",
+          "required": [
+            "generated_tokens_per_second", "backward_tokens_per_second"
+          ],
+          "properties": {
+            "generated_tokens_per_second": {
+              "$ref": "#/$defs/nullableNonnegativeNumber"
+            },
+            "verifier_tokens_per_second": {
+              "$ref": "#/$defs/nullableNonnegativeNumber"
+            },
+            "backward_tokens_per_second": {
+              "$ref": "#/$defs/nullableNonnegativeNumber"
+            }
+          },
+          "additionalProperties": false
+        },
+        "cuda_memory": {
+          "type": "object",
+          "required": [
+            "allocated_gib", "reserved_gib", "peak_allocated_gib",
+            "peak_reserved_gib"
+          ],
+          "properties": {
+            "allocated_gib": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "reserved_gib": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "peak_allocated_gib": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "peak_reserved_gib": {"$ref": "#/$defs/nullableNonnegativeNumber"}
+          },
+          "additionalProperties": false
+        },
+        "gpu_utilization_percent": {
+          "type": ["number", "null"], "minimum": 0, "maximum": 100
+        },
+        "power_watts": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+        "energy_joules": {"$ref": "#/$defs/nullableNonnegativeNumber"}
+      },
+      "additionalProperties": false
+    },
+    "optimizerDiagnostics": {
+      "type": "object",
+      "required": [
+        "trainable_parameter_tensors", "trainable_parameters", "parameter_l2_norm",
+        "parameter_l2_drift_from_initial",
+        "gradient_tensors", "gradient_l2_norm", "nonfinite_parameter_values",
+        "nonfinite_gradient_values"
+      ],
+      "properties": {
+        "trainable_parameter_tensors": {"type": "integer", "minimum": 0},
+        "trainable_parameters": {"type": "integer", "minimum": 0},
+        "parameter_l2_norm": {"$ref": "#/$defs/nullableNumber"},
+        "parameter_l2_drift_from_initial": {"$ref": "#/$defs/nullableNumber"},
+        "gradient_tensors": {"type": "integer", "minimum": 0},
+        "gradient_l2_norm": {"$ref": "#/$defs/nullableNumber"},
+        "nonfinite_parameter_values": {"type": "integer", "minimum": 0},
+        "nonfinite_gradient_values": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "gradientGeometry": {
+      "type": "object",
+      "required": ["norms", "cosines"],
+      "properties": {
+        "norms": {
+          "type": "object",
+          "required": ["B_sup", "B_prime_unsup", "B_unsup", "total"],
+          "properties": {
+            "B_sup": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "B_prime_unsup": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "B_unsup": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "total": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "policy_anchor": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+            "optimized_total": {"$ref": "#/$defs/nullableNonnegativeNumber"}
+          },
+          "additionalProperties": false
+        },
+        "cosines": {
+          "type": "object",
+          "required": ["B_sup__B_prime_unsup", "B_sup__B_unsup", "B_prime_unsup__B_unsup"],
+          "properties": {
+            "B_sup__B_prime_unsup": {"type": ["number", "null"], "minimum": -1, "maximum": 1},
+            "B_sup__B_unsup": {"type": ["number", "null"], "minimum": -1, "maximum": 1},
+            "B_prime_unsup__B_unsup": {"type": ["number", "null"], "minimum": -1, "maximum": 1},
+            "total__policy_anchor": {"type": ["number", "null"], "minimum": -1, "maximum": 1}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "nullableGradientGeometry": {
+      "anyOf": [
+        {"$ref": "#/$defs/gradientGeometry"},
+        {"type": "null"}
+      ]
+    },
+    "componentNumberMap": {
+      "type": "object",
+      "properties": {
+        "B_sup": {"type": "number"},
+        "B_prime_unsup": {"type": "number"},
+        "B_unsup": {"type": "number"}
+      },
+      "additionalProperties": false
+    },
+    "updateGeometry": {
+      "type": "object",
+      "required": ["mode", "active_components", "coefficients", "direction_norm"],
+      "properties": {
+        "mode": {"enum": ["sum", "mgda", "normalized_mgda", "answer_primary"]},
+        "active_components": {
+          "type": "array",
+          "items": {"enum": ["B_sup", "B_prime_unsup", "B_unsup"]},
+          "uniqueItems": true
+        },
+        "component_norms": {"$ref": "#/$defs/componentNumberMap"},
+        "coefficients": {"$ref": "#/$defs/componentNumberMap"},
+        "direction_norm": {"type": "number", "minimum": 0},
+        "projection_coefficients": {"$ref": "#/$defs/componentNumberMap"},
+        "auxiliary_scale": {"type": "number", "minimum": 0},
+        "skipped_reason": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "nullableUpdateGeometry": {
+      "anyOf": [
+        {"$ref": "#/$defs/updateGeometry"},
+        {"type": "null"}
+      ]
+    },
+    "objectiveDiagnostics": {
+      "type": "object",
+      "required": [
+        "B_sup", "B_prime_unsup", "B_unsup", "F", "policy_kl", "policy_kl_penalty",
+        "F_anchored", "policy_kl_coef", "policy_kl_measured", "policy_anchor_mode",
+        "policy_anchor_target_ratio", "policy_anchor_beta", "policy_anchor_beta_unclipped",
+        "policy_anchor_beta_clip_fraction", "policy_anchor_objective_grad_norm",
+        "policy_anchor_raw_grad_norm", "policy_anchor_applied_grad_norm",
+        "policy_anchor_achieved_ratio", "policy_anchor_ema_objective_grad_norm",
+        "policy_anchor_ema_raw_grad_norm", "policy_anchor_beta_min",
+        "policy_anchor_beta_max", "policy_anchor_ema", "optimizer_state_scope",
+        "labelled_em_weight", "answer_only_em_weight", "supervised_weight",
+        "labelled_supervision", "compact_gold_weight", "digit_token_weight",
+        "trace_representation", "update_geometry", "step_acceptance",
+        "rollback_tolerance", "rollback_max_backtracks", "rollback_shrink",
+        "update_direction_norm", "update_B_sup_coefficient",
+        "update_B_prime_unsup_coefficient", "update_B_unsup_coefficient",
+        "candidate_steps", "rolled_back_candidates", "rollback_backtracks",
+        "safeguard_acceptance_fraction", "accepted_step_scale",
+        "accepted_surrogate_total_delta", "accepted_B_sup_delta",
+        "accepted_B_prime_unsup_delta", "accepted_B_unsup_delta",
+        "gradient_steps_this_round", "gradient_steps_cumulative", "test_acc"
+      ],
+      "properties": {
+        "B_sup": {"$ref": "#/$defs/nullableNumber"},
+        "B_prime_unsup": {"$ref": "#/$defs/nullableNumber"},
+        "B_unsup": {"$ref": "#/$defs/nullableNumber"},
+        "F": {"$ref": "#/$defs/nullableNumber"},
+        "policy_kl": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+        "policy_kl_penalty": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+        "F_anchored": {"$ref": "#/$defs/nullableNumber"},
+        "policy_kl_coef": {"type": ["number", "null"], "minimum": 0},
+        "policy_kl_measured": {"type": "boolean"},
+        "policy_anchor_mode": {"enum": ["fixed", "grad_ratio"]},
+        "policy_anchor_token_scope": {"enum": ["objective", "reasoning"]},
+        "policy_anchor_target_ratio": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+        "policy_anchor_beta": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+        "policy_anchor_beta_unclipped": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+        "policy_anchor_beta_clip_fraction": {"$ref": "#/$defs/nullableUnitInterval"},
+        "policy_anchor_objective_grad_norm": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+        "policy_anchor_raw_grad_norm": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+        "policy_anchor_applied_grad_norm": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+        "policy_anchor_achieved_ratio": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+        "policy_anchor_ema_objective_grad_norm": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+        "policy_anchor_ema_raw_grad_norm": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+        "policy_anchor_beta_min": {"type": "number", "minimum": 0},
+        "policy_anchor_beta_max": {"type": "number", "minimum": 0},
+        "policy_anchor_ema": {"type": "number", "minimum": 0, "exclusiveMaximum": 1},
+        "optimizer_state_scope": {"enum": ["persistent", "outer_round"]},
+        "labelled_em_weight": {"type": "number", "minimum": 0},
+        "answer_only_em_weight": {"type": "number", "minimum": 0},
+        "supervised_weight": {"type": "number", "minimum": 0},
+        "labelled_supervision": {
+          "enum": [
+            "gold", "gold_answer", "gold_compact_mix", "gold_compact_set",
+            "gold_graph_factorized"
+          ]
+        },
+        "compact_gold_weight": {"type": "number", "minimum": 0, "maximum": 1},
+        "digit_token_weight": {"type": "number", "minimum": 1},
+        "trace_representation": {"enum": ["reasoning", "calculation_graph"]},
+        "latent_mstep_objective": {
+          "enum": [
+            "joint", "answer", "rationale", "centered_trace_answer",
+            "segment_responsibility_flow", "exact_signed_trace_answer"
+          ]
+        },
+        "update_geometry": {
+          "enum": ["sum", "mgda", "normalized_mgda", "answer_primary"]
+        },
+        "step_acceptance": {
+          "enum": ["none", "total", "componentwise", "answer_primary"]
+        },
+        "rollback_tolerance": {"type": "number", "minimum": 0},
+        "rollback_max_backtracks": {"type": "integer", "minimum": 0},
+        "rollback_shrink": {
+          "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1
+        },
+        "update_direction_norm": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+        "update_B_sup_coefficient": {"$ref": "#/$defs/nullableNumber"},
+        "update_B_prime_unsup_coefficient": {"$ref": "#/$defs/nullableNumber"},
+        "update_B_unsup_coefficient": {"$ref": "#/$defs/nullableNumber"},
+        "candidate_steps": {"type": "integer", "minimum": 0},
+        "rolled_back_candidates": {"type": "integer", "minimum": 0},
+        "rollback_backtracks": {"type": "integer", "minimum": 0},
+        "safeguard_acceptance_fraction": {"$ref": "#/$defs/nullableUnitInterval"},
+        "accepted_step_scale": {"$ref": "#/$defs/nullableNonnegativeNumber"},
+        "accepted_surrogate_total_delta": {"$ref": "#/$defs/nullableNumber"},
+        "accepted_B_sup_delta": {"$ref": "#/$defs/nullableNumber"},
+        "accepted_B_prime_unsup_delta": {"$ref": "#/$defs/nullableNumber"},
+        "accepted_B_unsup_delta": {"$ref": "#/$defs/nullableNumber"},
+        "gradient_steps_this_round": {"type": "integer", "minimum": 0},
+        "gradient_steps_cumulative": {"type": "integer", "minimum": 0},
+        "test_acc": {"$ref": "#/$defs/nullableUnitInterval"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "x-jsonl": {
+    "filenamePattern": "^training_diagnostics_[a-z0-9_-]+__.+__AC-ALG1_s[0-9]+\\.jsonl\\.gz$",
+    "recordUnit": "one completed AC-ALG1 outer round",
+    "compression": "gzip"
+  }
+}

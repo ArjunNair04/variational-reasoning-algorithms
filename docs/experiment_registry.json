@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "studies": [
+    {
+      "registry_id": "qwen3_selected_method_posterity_20260829",
+      "run_id": "68078ecc",
+      "status": "ready_for_submission",
+      "source_revision": "3472a144ce7059c660f640a56c6e0e4a132eee34",
+      "execution_revision": null,
+      "account": "amanojna",
+      "scheduler_jobs": [],
+      "config": "lm_study/experiments_qwen3_17b_selected_method_posterity.yaml",
+      "submitter": "lm_study/submit_qwen3_17b_selected_method_posterity_ucl.sh",
+      "analyzer": "analysis/analyze_qwen3_selected_method_posterity.py",
+      "expected_tasks": 91,
+      "official_test_used": false
+    },
+    {
+      "registry_id": "qwen3_pis_temperature_posterity_20260829",
+      "run_id": "f3950b2e",
+      "status": "ready_for_submission",
+      "source_revision": "3472a144ce7059c660f640a56c6e0e4a132eee34",
+      "execution_revision": null,
+      "account": "amanojna",
+      "scheduler_jobs": [],
+      "config": "lm_study/experiments_qwen3_17b_pis_temperature_posterity.yaml",
+      "submitter": "lm_study/submit_qwen3_17b_pis_temperature_posterity_ucl.sh",
+      "analyzer": "analysis/analyze_l2r_temperature_mixture.py",
+      "expected_tasks": 14,
+      "official_test_used": false
+    }
+  ]
+}

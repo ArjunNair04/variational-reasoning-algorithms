@@ -1,5 +1,7 @@
 __pycache__/
 .pytest_cache/
+*.pyc
 *.egg-info/
 build/
 dist/
+lm_study/logs/

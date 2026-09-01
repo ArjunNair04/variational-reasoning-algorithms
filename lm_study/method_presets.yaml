@@ -1,0 +1,257 @@
+schema_version: 1
+
+# Method names remain stable result identities. Their implementation and bound
+# scientific defaults live here so a historical YAML never depends on an
+# undocumented functools.partial in Python.
+methods:
+  VRO-Full:
+    implementation: run_conditional_vro
+    parameters: {}
+  VRO-Current:
+    implementation: run_conditional_vro
+    parameters: {window: 1}
+  VRO-RewardOnly:
+    implementation: run_conditional_vro
+    parameters: {policy_factor: false}
+  VRO-TokenMean:
+    implementation: run_conditional_vro
+    parameters: {responsibility_score: token_mean}
+  Conditional-VRO:
+    implementation: run_conditional_vro
+    parameters: {}
+
+  AC-EM:
+    implementation: run_ac_em
+    parameters: {}
+  AC-ALG1:
+    implementation: _run_ac_alg1_sweep
+    parameters: {}
+
+  L2R:
+    implementation: run_l2r
+    parameters: {}
+  L2R-Moving:
+    implementation: run_l2r
+    parameters: {reader_mode: moving, gold_in_buffer: true}
+  L2R-Frozen:
+    implementation: run_l2r
+    parameters: {reader_mode: frozen, gold_in_buffer: true}
+  L2R-Frozen-LN:
+    implementation: run_l2r
+    parameters:
+      reader_mode: frozen
+      gold_in_buffer: true
+      responsibility_score: token_mean
+      length_norm: true
+  L2R-Frozen-Decode:
+    implementation: run_l2r
+    parameters:
+      reader_mode: frozen
+      gold_in_buffer: true
+      reader_decode_filter: true
+  L2R-Frozen-NoGold:
+    implementation: run_l2r
+    parameters: {reader_mode: frozen, gold_in_buffer: false}
+  L2R-Frozen-NoGold-LN:
+    implementation: run_l2r
+    parameters:
+      reader_mode: frozen
+      gold_in_buffer: false
+      responsibility_score: token_mean
+      length_norm: true
+  L2R-UIA-M:
+    implementation: run_l2r
+    parameters: &uia_common_m
+      reader_mode: moving
+      gold_in_buffer: false
+      responsibility_score: prior_corrected
+      l2r_buffer_semantics: fresh_multiset
+      archive_limit: 0
+      replay_limit: 0
+      trace_segmentation: validated
+      mstep_objective: joint
+      policy_anchor_mode: grad_ratio
+      policy_anchor_target_ratio: 0.03
+      policy_anchor_beta_min: 0.0
+      policy_anchor_beta_max: 10.0
+      policy_anchor_ema: 0.9
+      policy_anchor_scope: generator_and_reader
+      trust_kl_budget: 0.03
+      trust_safety_questions: 64
+      trust_safety_tolerance: 0.01
+      trust_boundary_failure_ceiling: 0.5
+      trust_max_backtracks: 3
+      trust_backtrack_shrink: 0.5
+  L2R-UIA-F:
+    implementation: run_l2r
+    parameters:
+      <<: *uia_common_m
+      reader_mode: frozen
+      mstep_objective: generator
+  L2R-UMIA-M:
+    implementation: run_l2r
+    parameters: &umia_common_m
+      <<: *uia_common_m
+      responsibility_score: mixed_prior_corrected
+      proposal_mixture: question_answer
+      proposal_prompt: answer_derive_first
+      proposal_prior_fraction: 0.5
+  L2R-UMIA-F:
+    implementation: run_l2r
+    parameters:
+      <<: *umia_common_m
+      reader_mode: frozen
+      mstep_objective: generator
+
+  AC-EM-anchor:
+    implementation: run_ac_em
+    parameters: {anchor: 1.0}
+  AC-AW:
+    implementation: run_ac_em
+    parameters: {weight: AW}
+  AC-AW-anchor:
+    implementation: run_ac_em
+    parameters: {weight: AW, anchor: 1.0}
+  AC-AAW:
+    implementation: run_ac_em
+    parameters: {weight: AAW}
+  AC-AAW-anchor:
+    implementation: run_ac_em
+    parameters: {weight: AAW, anchor: 1.0}
+  AC-SFT:
+    implementation: run_ac_em
+    parameters: {sup: 1.0}
+  AC-CW:
+    implementation: run_ac_em
+    parameters: {weight: RW, causal: 1.0}
+  AC-CW-anchor:
+    implementation: run_ac_em
+    parameters: {weight: RW, causal: 1.0, anchor: 1.0}
+  AC-EM-hs:
+    implementation: run_ac_em
+    parameters: {hindsight: true}
+  AC-CW-hs:
+    implementation: run_ac_em
+    parameters: {weight: RW, causal: 1.0, hindsight: true}
+  AC-EM-kl:
+    implementation: run_ac_em
+    parameters: {}
+  AC-EM-ln:
+    implementation: run_ac_em
+    parameters: {length_norm: true}
+  AC-EM-fresh:
+    implementation: run_ac_em
+    parameters: {window: 1}
+  AC-EM-hspan:
+    implementation: run_ac_em
+    parameters: {train_span: h}
+  AC-EM-aspan:
+    implementation: run_ac_em
+    parameters: {train_span: ans}
+  AC-EM-top1:
+    implementation: run_ac_em
+    parameters: {select: top1}
+  AC-PG:
+    implementation: run_ac_em
+    parameters: {centered: true}
+  AC-EM-dc:
+    implementation: run_ac_em
+    parameters: {dconsist: true}
+  AC-DPO:
+    implementation: run_ac_dpo
+    parameters: {}
+  AC-EM-lr:
+    implementation: run_ac_em
+    parameters: {}
+  AC-EM-gate:
+    implementation: run_ac_em
+    parameters: {}
+  AC-EM-kl-fresh:
+    implementation: run_ac_em
+    parameters: {window: 1, kl_coef: 0.02}
+  AC-EM-hs-dc:
+    implementation: run_ac_em
+    parameters: {hindsight: true, dconsist: true}
+  AC-EM-curr:
+    implementation: run_ac_em
+    parameters: {sup: 0.0}
+  AC-EM-rest:
+    implementation: run_ac_em
+    parameters: {sup: 0.0, dconsist: true}
+  AC-EM-fc:
+    implementation: run_ac_em
+    parameters: {sup: 0.0, frozen_critic: true}
+  AC-EM-fch:
+    implementation: run_ac_em
+    parameters: {sup: 0.0, frozen_critic: true, train_span: h}
+  AC-EM-alg1:
+    implementation: run_ac_em
+    parameters: {gold_in_buffer: true}
+  AC-EM-alg1fc:
+    implementation: run_ac_em
+    parameters: {gold_in_buffer: true, frozen_critic: true}
+
+  AW-EM:
+    implementation: run_weighted_em
+    parameters: {weight: AW}
+  AW-EM-anchor:
+    implementation: run_weighted_em
+    parameters: {weight: AW, anchor: 1.0}
+  AAW-EM:
+    implementation: run_weighted_em
+    parameters: {weight: AAW}
+  AAW-EM-anchor:
+    implementation: run_weighted_em
+    parameters: {weight: AAW, anchor: 1.0}
+  RW-EM:
+    implementation: run_weighted_em
+    parameters: {weight: RW}
+  RW-EM-anchor:
+    implementation: run_weighted_em
+    parameters: {weight: RW, anchor: 1.0}
+
+  RFT:
+    implementation: run_raft
+    parameters: {}
+  RAFT:
+    implementation: run_raft
+    parameters: {}
+  Gold-CoT-SFT:
+    implementation: run_gold_cot_sft
+    description: Human-rationale SFT with an explicit terminal EOS target.
+    parameters: {}
+  RFT-Source:
+    implementation: run_source_self_training
+    description: One source-structured Generate/Improve rejection-SFT phase under the common protocol.
+    parameters: {self_training_mode: rft_source, self_train_iterations: 1}
+  ReST-EM:
+    implementation: run_source_self_training
+    description: Iterative Generate/Improve rejection SFT, resetting each Improve phase to base.
+    parameters: {self_training_mode: rest_em}
+  STaR:
+    implementation: run_source_self_training
+    description: Greedy direct generation plus answer-hinted rationalization, retrained from base.
+    parameters: {self_training_mode: star, self_train_iterations: 4}
+  TRICE:
+    implementation: _run_trice_sweep
+    description: Persistent one-state chain with the rejected-proposal control variate.
+    parameters: {trice_estimator: control_variate}
+  Q5-MP:
+    implementation: _run_q5_multichain_sweep
+    description: Constant-budget Q5 with a soft posterior over persistent strict-correct particles.
+    parameters: {}
+  RLOO:
+    implementation: run_rloo
+    parameters: {}
+  GRPO:
+    implementation: run_grpo
+    parameters: {}
+  DPO:
+    implementation: run_dpo
+    parameters: {offline: false}
+  DPO-offline:
+    implementation: run_dpo
+    parameters: {offline: true}
+  APL:
+    implementation: run_apl
+    parameters: {}

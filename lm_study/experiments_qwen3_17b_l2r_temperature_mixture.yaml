@@ -1,0 +1,143 @@
+run_id: 5c7a10e2
+tag_prefix: q3_l2r_temperature_mixture
+
+diagnostic:
+  stage: answer_blind_temperature_support_test
+  evidence_class: preregistered_seven_seed_mechanism_test
+  scientific_question: >
+    Does broadening fresh rationale support with a fixed fifty-fifty mixture of
+    ordinary temperature-one draws and hotter temperature-1.2 draws improve
+    PIS, when the exact autoregressive mixture density is used in the E-step?
+  design:
+    cells: [PIS-T1, PIS-TMIX1.2]
+    seed_values: [1481, 1483, 1487, 1489, 1499, 1511, 1523]
+    array_tasks: 14
+  fixed_contract:
+    model_id: Qwen/Qwen3-1.7B-Base
+    optimization_questions: 128
+    development_validation_questions: 400
+    prompt_shots: 3
+    support_size: 8
+    questions_per_round: 8
+    outer_rounds: 32
+    update_passes: 4
+    proposals_per_trained_cell: 2048
+    adapter_rank: 16
+    adapter_alpha: 32
+    adapter_surface: attention_and_mlp_projections
+    answer_event: one_terminal_marker_followed_by_tokenizer_eos
+    official_test_used: false
+  estimator_contract:
+    PIS-T1: >
+      Eight current-policy question-only draws at temperature one; detached
+      responsibilities proportional to answer likelihood; joint M-step.
+    PIS-TMIX1.2: >
+      Four temperature-one and four temperature-1.2 question-only draws. For
+      every retained rationale h, use m(h)=0.5*p_T1(h)+0.5*p_T1.2(h) and
+      responsibilities proportional to p_T1(h)*p(a*,EOS|h)/m(h).
+  reporting_order:
+    - final_extracted_answer_accuracy
+    - final_strict_terminal_accuracy
+    - normalized_extracted_accuracy_auc
+  decision_rules:
+    - Treat paired training seed as the independent unit.
+    - Advance the temperature mixture only if its mean final extracted-accuracy gain is at least one point, its one-sided paired 95 percent lower bound is above zero, and at least five of seven seed effects are positive.
+    - Require one-sided lower bounds above minus one point for strict final accuracy and normalized extracted AUC, mean late decline at most three points, format-failure increase at most three points, and natural-EOS change at least minus two points.
+    - Verify exactly four draws from each component per question, eight total draws, the exact autoregressive mixture-density identity, finite normalized responsibilities, unchanged question schedules and equal update budgets.
+    - Report correct-trace coverage, all-wrong question groups, responsibility ESS, component posterior mass, generated and backward tokens, optimizer steps and accelerator-hours.
+    - Do not tune the temperature or mixture fraction from these outcomes, and do not access the official GSM8K test split.
+
+defaults:
+  task: gsm8k
+  model: qwen3-1.7b-base
+  rounds: 32
+  seeds: 7
+  seed_values: [1481, 1483, 1487, 1489, 1499, 1511, 1523]
+  n_test: 400
+  train_partition: train
+  eval_partition: validation
+  answer_event_mode: strict_terminal_marker
+  evaluation_prompt: question
+  batch: 64
+  eval_batch: 32
+  G: 8
+  prompts: 128
+  shots: 3
+  shot_bank_size: 5
+  task_seed_from_run_seed: true
+  question_sampling: epoch_shuffle
+  grad_checkpoint: false
+  lora_r: 16
+  lora_alpha: 32
+  lora_target_set: attention_mlp
+  out: ~/po_results/2026-08-22/l2r/temperature-mixture__5c7a10e2
+  eval_rounds: [1, 2, 4, 8, 16, 24, 32]
+  dump_completions: 100
+  save_adapter: false
+  save_training_diagnostics: true
+  training_diagnostics_level: standard
+  training_diagnostics_trace_tape: false
+  training_diagnostics_gradient_questions: 0
+  training_diagnostics_probe_size: 0
+  l2r_candidate_utility_questions: 0
+  checkpoint_every: 0
+  l2r_exact_cache: false
+  l2r_state_checkpoint_every: 0
+  passk: 8
+  passk_n: 100
+
+algos:
+  L2R:
+    - &pis
+      cell_id: PIS-T1
+      lr: 1.0e-5
+      iters: 4
+      micro: 4
+      reader_mode: moving
+      answer_target_termination: eos
+      gold_in_buffer: false
+      l2r_buffer_semantics: fresh_multiset
+      proposal_prompt: question
+      proposal_mixture: single
+      proposal_prior_fraction: 1.0
+      proposal_temperature: 1.0
+      trace_segmentation: validated
+      responsibility_score: prior_corrected
+      responsibility_temperature: 1.0
+      responsibility_projection: none
+      responsibility_ess_floor: 0.0
+      responsibility_max_weight: 1.0
+      length_norm: false
+      mstep_objective: joint
+      archive_limit: 0
+      replay_limit: 0
+      adaptive_max_g: 8
+      adaptive_batch_g: 2
+      adaptive_min_correct: 1
+      reader_decode_filter: false
+      kl_coef: 0.0
+      policy_anchor_mode: fixed
+      policy_anchor_target_ratio: null
+      policy_anchor_beta_min: 0.0
+      policy_anchor_beta_max: 10.0
+      policy_anchor_ema: 0.9
+      policy_anchor_scope: generator_and_reader
+      trust_kl_budget: null
+      trust_safety_questions: 0
+      trust_safety_tolerance: 0.0
+      trust_boundary_failure_ceiling: 1.0
+      trust_max_backtracks: 0
+      trust_backtrack_shrink: 0.5
+      historical_replay_fraction: 0.0
+      lora_trainable: all
+      gradient_projection: none
+      gradient_projection_rank: 0
+      buffer_replicates: 1
+      question_schedule: cyclic
+      schedule_exploration: 0.0
+    - <<: *pis
+      cell_id: PIS-TMIX1.2
+      proposal_mixture: question_temperature
+      proposal_prior_fraction: 0.5
+      proposal_temperature: 1.2
+      responsibility_score: mixed_prior_corrected
