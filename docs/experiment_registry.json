@@ -103,11 +103,25 @@
     {
       "registry_id": "qwen3_posterity_followups_20260901",
       "run_id": "f20c9e17",
-      "status": "prepared",
+      "status": "dependency_held",
       "source_revision": "a8e746bdedc2f82617d24e2fe77454665a70e92c",
-      "execution_revision": null,
+      "execution_revision": "682f5d7da33ab8d2f28330329489800daf0fc2cd",
       "account": "amanojna",
-      "scheduler_jobs": [],
+      "scheduler_jobs": [
+        {
+          "role": "payload",
+          "job_id": "7330284",
+          "tasks": 42,
+          "depends_on": "7330196",
+          "state": "dependency_held"
+        },
+        {
+          "role": "validator",
+          "job_id": "7330285",
+          "depends_on": "7330284",
+          "state": "dependency_held"
+        }
+      ],
       "dependency": {
         "registry_id": "qwen3_selected_method_posterity_20260829",
         "validator_job_id": "7330196",
@@ -119,8 +133,8 @@
       "expected_tasks": 42,
       "official_test_used": false,
       "next_actions": [
-        "Submit user-held payload and dependency-held validator from an immutable commit.",
-        "Release only after task mapping, dependency hold and array concurrency are verified.",
+        "Wait for selected-method posterity validator job 7330196 to complete successfully and release payload job 7330284 automatically.",
+        "Reconcile all 42 payload tasks and validator job 7330285 before treating the study as complete.",
         "After validation, analyse against the selected-method posterity controls on the paired seeds."
       ]
     }
