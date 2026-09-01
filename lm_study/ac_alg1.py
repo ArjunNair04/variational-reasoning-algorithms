@@ -152,7 +152,9 @@ ALGORITHM_PROFILES = (
     "barber_source",
     "barber_fixed_kl_ablation",
     "barber_q5_control",
+    "barber_q5_token_mean_followup",
     "l2r_common_factorial",
+    "l2r_pis_rationale_kl_followup",
     "l2r_answer_conditioned_importance",
     "barber_stability_ablation",
     "barber_reader_ablation",
@@ -8246,10 +8248,13 @@ def _validate_ac_alg1_run_config(
         )
     if (
         policy_anchor_token_scope == "reasoning"
-        and algorithm_profile != "barber_q5_control"
+        and algorithm_profile not in {
+            "barber_q5_control",
+            "l2r_pis_rationale_kl_followup",
+        }
     ):
         raise ValueError(
-            "reasoning-only AC-ALG1 anchoring is isolated to barber_q5_control"
+            "reasoning-only AC-ALG1 anchoring is isolated to registered Q5/PIS profiles"
         )
     if policy_anchor_mode == "fixed":
         if policy_anchor_target_ratio is not None:
@@ -9339,7 +9344,15 @@ def _validate_ac_alg1_run_config(
                 "barber_stability_ablation uses only the gradient-ratio KL "
                 "controller; policy_kl_coef must be omitted"
             )
-    elif algorithm_profile == "barber_q5_control":
+    elif algorithm_profile in {
+        "barber_q5_control",
+        "barber_q5_token_mean_followup",
+    }:
+        expected_responsibility_score = (
+            "token_mean"
+            if algorithm_profile == "barber_q5_token_mean_followup"
+            else "joint"
+        )
         q5_requirements = {
             "answer_event_mode": (answer_event_mode, "strict_terminal_marker"),
             "answer_target_termination": (answer_target_termination, "eos"),
@@ -9361,7 +9374,10 @@ def _validate_ac_alg1_run_config(
             "proposal_mixture": (proposal_mixture, "single"),
             "proposal_filter": (proposal_filter, "all"),
             "proposal_policy": (proposal_policy, "current"),
-            "responsibility_score": (responsibility_score, "joint"),
+            "responsibility_score": (
+                responsibility_score,
+                expected_responsibility_score,
+            ),
             "responsibility_posterior": (
                 responsibility_posterior,
                 "softmax_entropy",
@@ -9403,9 +9419,21 @@ def _validate_ac_alg1_run_config(
         }
         if mismatches:
             raise ValueError(
-                "barber_q5_control rejected a non-Q5 change: "
+                f"{algorithm_profile} rejected a non-Q5 change: "
                 f"{mismatches}"
             )
+        if algorithm_profile == "barber_q5_token_mean_followup":
+            if responsibility_answer_policy != "current":
+                raise ValueError("token-mean Q5 requires the moving answer reader")
+            if responsibility_ess_floor != 0.0 or proposal_temperature != 1.0:
+                raise ValueError("token-mean Q5 forbids simultaneous ESS or temperature changes")
+            if (
+                policy_kl_coef is not None
+                or policy_anchor_mode != "fixed"
+                or policy_anchor_target_ratio is not None
+                or policy_anchor_token_scope != "objective"
+            ):
+                raise ValueError("token-mean Q5 forbids simultaneous policy anchoring")
         if responsibility_answer_policy not in {"current", "frozen_base"}:
             raise ValueError(
                 "barber_q5_control permits only current or frozen_base readers"
@@ -9446,6 +9474,64 @@ def _validate_ac_alg1_run_config(
             or policy_anchor_token_scope != "objective"
         ):
             raise ValueError("unanchored Q5 controls must disable every anchor setting")
+    elif algorithm_profile == "l2r_pis_rationale_kl_followup":
+        pis_requirements = {
+            "rounds": (int(config.rounds), 32),
+            "inner_steps": (int(config.inner_steps), 4),
+            "buffer_limit": (int(config.buffer_limit), 8),
+            "candidate_size": (int(config.G_answer_only), 8),
+            "questions_per_round": (int(config.U_batch), 8),
+            "answer_event_mode": (answer_event_mode, "strict_terminal_marker"),
+            "answer_target_termination": (answer_target_termination, "eos"),
+            "labelled_frac": (config.labelled_frac, 0.0),
+            "labelled_em_weight": (labelled_em_weight, 0.0),
+            "answer_only_em_weight": (answer_only_em_weight, 1.0),
+            "supervised_weight": (supervised_weight, 0.0),
+            "buffer_strategy": (buffer_strategy, "fifo"),
+            "buffer_semantics": (buffer_semantics, "multiset_legacy"),
+            "buffer_lifecycle": (buffer_lifecycle, "fresh_round"),
+            "labelled_proposal_prompt": (labelled_proposal_prompt, "question"),
+            "answer_only_proposal_prompt": (answer_only_proposal_prompt, "question"),
+            "proposal_mixture": (proposal_mixture, "single"),
+            "proposal_filter": (proposal_filter, "all"),
+            "proposal_policy": (proposal_policy, "current"),
+            "responsibility_score": (responsibility_score, "joint"),
+            "responsibility_posterior": (responsibility_posterior, "softmax_entropy"),
+            "responsibility_temperature": (responsibility_temperature, 1.0),
+            "responsibility_ess_floor": (responsibility_ess_floor, 0.0),
+            "responsibility_policy": (responsibility_policy, "current"),
+            "responsibility_answer_policy": (responsibility_answer_policy, "current"),
+            "responsibility_refresh": (responsibility_refresh, "outer_round"),
+            "responsibility_verifier_rollouts": (responsibility_verifier_rollouts, 0),
+            "variational_estimator": (variational_estimator, "prior_importance"),
+            "labelled_numeric_constraint": (labelled_numeric_constraint, "off"),
+            "labelled_supervision": (labelled_supervision, "gold"),
+            "digit_token_weight": (digit_token_weight, 1.0),
+            "trace_representation": (trace_representation, "reasoning"),
+            "latent_mstep_objective": (latent_mstep_objective, "joint"),
+            "update_geometry": (update_geometry, "sum"),
+            "step_acceptance": (step_acceptance, "none"),
+            "optimizer_state_scope": (optimizer_state_scope, "persistent"),
+            "question_sampling": (config.question_sampling, "epoch_shuffle"),
+        }
+        mismatches = {
+            name: {"actual": actual, "required": required}
+            for name, (actual, required) in pis_requirements.items()
+            if actual != required
+        }
+        if mismatches:
+            raise ValueError(
+                "l2r_pis_rationale_kl_followup rejected an undeclared change: "
+                f"{mismatches}"
+            )
+        if policy_kl_coef is not None:
+            raise ValueError("adaptive PIS anchoring forbids policy_kl_coef")
+        if policy_anchor_mode != "grad_ratio":
+            raise ValueError("PIS KL follow-up requires adaptive gradient-ratio anchoring")
+        if policy_anchor_target_ratio != 0.03:
+            raise ValueError("PIS KL follow-up requires target ratio 0.03")
+        if policy_anchor_token_scope != "reasoning":
+            raise ValueError("PIS KL follow-up must anchor rationale tokens only")
     elif algorithm_profile in {
         "barber_reader_ablation",
         "barber_refresh_ablation",

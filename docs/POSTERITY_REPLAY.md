@@ -14,8 +14,9 @@ numerical oracle.
 |---|---|---:|---:|
 | `68078ecc` | Frozen base; Q5 prompt, reader, ESS, KL and temperature controls; PIS prompt controls; ReST-EM; STaR; TRICE-CV; RLOO | 91 | 7 |
 | `f3950b2e` | PIS temperature-one control versus exact 50:50 temperature-one/temperature-1.2 mixture | 14 | 7 |
+| `f20c9e17` | Q5 support-depth and token-mean follow-ups; PIS update-reuse and rationale-only KL; exact signed sampled-support updates | 42 | 7 |
 
-Both studies use the fixed training-derived 400-question validation partition.
+All studies use the fixed training-derived 400-question validation partition.
 The official GSM8K test split remains unused. Results are reported as Final
 Acc@1, strict final accuracy and normalized trajectory AUC, in that order.
 
@@ -39,6 +40,8 @@ python lm_study/generate_qwen3_17b_selected_method_posterity.py \
   --check lm_study/experiments_qwen3_17b_selected_method_posterity.yaml
 python lm_study/generate_qwen3_17b_pis_temperature_posterity.py \
   --check lm_study/experiments_qwen3_17b_pis_temperature_posterity.yaml
+python lm_study/generate_qwen3_17b_posterity_followups.py \
+  --check lm_study/experiments_qwen3_17b_posterity_followups.yaml
 PYTHONPATH=src:lm_study python lm_study/reference_kernel_audit.py
 ```
 
@@ -51,6 +54,8 @@ Inspect the returned job IDs and array contracts before releasing the payloads.
 cd "$HOME/vrl_hpc/checkouts/<immutable-checkout>/lm_study"
 bash submit_qwen3_17b_selected_method_posterity_ucl.sh
 bash submit_qwen3_17b_pis_temperature_posterity_ucl.sh
+CONTROL_VALIDATOR_JOB_ID=<selected-method-validator-job> \
+  bash submit_qwen3_17b_posterity_followups_ucl.sh
 ```
 
 The array scripts omit `-tc`; SGE resource availability controls concurrency.

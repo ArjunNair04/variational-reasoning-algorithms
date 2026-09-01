@@ -99,6 +99,30 @@
           "repair": "invoke $VENV/bin/python explicitly in the payload runner"
         }
       ]
+    },
+    {
+      "registry_id": "qwen3_posterity_followups_20260901",
+      "run_id": "f20c9e17",
+      "status": "prepared",
+      "source_revision": "a8e746bdedc2f82617d24e2fe77454665a70e92c",
+      "execution_revision": null,
+      "account": "amanojna",
+      "scheduler_jobs": [],
+      "dependency": {
+        "registry_id": "qwen3_selected_method_posterity_20260829",
+        "validator_job_id": "7330196",
+        "completion_criterion": "structured selected-method posterity validator marker"
+      },
+      "config": "lm_study/experiments_qwen3_17b_posterity_followups.yaml",
+      "submitter": "lm_study/submit_qwen3_17b_posterity_followups_ucl.sh",
+      "analyzer": "analysis/analyze_qwen3_posterity_followups.py",
+      "expected_tasks": 42,
+      "official_test_used": false,
+      "next_actions": [
+        "Submit user-held payload and dependency-held validator from an immutable commit.",
+        "Release only after task mapping, dependency hold and array concurrency are verified.",
+        "After validation, analyse against the selected-method posterity controls on the paired seeds."
+      ]
     }
   ]
 }

@@ -15,6 +15,17 @@
 
 ## Change record
 
+- **2026-09-01, posterior-update posterity follow-ups:** added a generated
+  six-cell, seven-seed study for Q5 support depth, Q5 token-mean
+  responsibilities, PIS update reuse, rationale-only adaptive PIS KL, and the
+  exact signed sampled-support update at one and four passes. New validation
+  profiles isolate the two previously unsupported interventions without
+  loosening historical profiles. The 42-task array is dependency-gated on the
+  selected-method posterity validator and has no concurrency cap. Verification
+  covers generated-YAML equality, direct runtime-profile validation, every
+  cell/seed dry run, frozen paired analysis, fail-closed artifact validation,
+  shell syntax and the repository test suite.
+
 - **2026-09-01, thesis reproduction evidence gate:** added an immutable
   model/dataset/config/job manifest and a fail-closed verifier for the two AMN
   posterity studies. The verifier requires exact task/log coverage,
