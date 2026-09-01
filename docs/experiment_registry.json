@@ -4,9 +4,9 @@
     {
       "registry_id": "qwen3_selected_method_posterity_20260829",
       "run_id": "68078ecc",
-      "status": "retry_pending",
+      "status": "running",
       "source_revision": "3472a144ce7059c660f640a56c6e0e4a132eee34",
-      "execution_revision": "50acc0db6b5f5582b8e6cffa187f76b6d0e4de46",
+      "execution_revision": "4a9a9cafc6b17cc18e7c1da8a422e847daeb4746",
       "account": "amanojna",
       "scheduler_jobs": [
         {
@@ -20,6 +20,18 @@
           "job_id": "7330184",
           "depends_on": "7330183",
           "state": "deleted_with_invalid_payload"
+        },
+        {
+          "role": "payload_retry",
+          "job_id": "7330195",
+          "tasks": 91,
+          "state": "running"
+        },
+        {
+          "role": "validator_retry",
+          "job_id": "7330196",
+          "depends_on": "7330195",
+          "state": "dependency_held"
         }
       ],
       "config": "lm_study/experiments_qwen3_17b_selected_method_posterity.yaml",
@@ -43,9 +55,9 @@
     {
       "registry_id": "qwen3_pis_temperature_posterity_20260829",
       "run_id": "f3950b2e",
-      "status": "retry_pending",
+      "status": "submitted",
       "source_revision": "3472a144ce7059c660f640a56c6e0e4a132eee34",
-      "execution_revision": "50acc0db6b5f5582b8e6cffa187f76b6d0e4de46",
+      "execution_revision": "4a9a9cafc6b17cc18e7c1da8a422e847daeb4746",
       "account": "amanojna",
       "scheduler_jobs": [
         {
@@ -59,6 +71,18 @@
           "job_id": "7330186",
           "depends_on": "7330185",
           "state": "deleted_with_invalid_payload"
+        },
+        {
+          "role": "payload_retry",
+          "job_id": "7330197",
+          "tasks": 14,
+          "state": "queued"
+        },
+        {
+          "role": "validator_retry",
+          "job_id": "7330198",
+          "depends_on": "7330197",
+          "state": "dependency_held"
         }
       ],
       "config": "lm_study/experiments_qwen3_17b_pis_temperature_posterity.yaml",
