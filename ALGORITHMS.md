@@ -52,6 +52,30 @@ The setting used here has one local update. Q5-MORE changes only the number of r
 
 The Q5 implementation uses this uncorrected posterior with answer-derived proposals.
 
+#### Large-support posterior-sampled M-step
+
+The buffer-sampling follow-up separates the support retained for posterior
+estimation from the traces used by one M-step.  It retains up to 32 unique Q5
+traces for each selected question.  The full-support cell applies the ordinary
+weighted objective to all retained traces.  The sampled cell instead draws 16
+indices independently from the detached posterior,
+
+$$
+i_j \sim \operatorname{Categorical}(w_1,\ldots,w_K),
+\qquad j=1,\ldots,16,
+$$
+
+and applies the M-step to their empirical multiplicities.  Conditional on the
+finite support, this is an unbiased Monte Carlo estimate of the same weighted
+objective.  Duplicate draws are aggregated before the forward and backward
+passes, while the next responsibility calculation still uses the complete
+retained support.  A sample size of zero is the behavior-locked full-support
+path.
+
+Because the fixed question schedule visits each optimisation question once,
+this study changes within-question support depth rather than testing replay of
+the same question across outer rounds.
+
 ### Related EM presets
 
 VIN and VOUT use the same joint posterior with persistent question-only support. VIN refreshes responsibilities at each local update; VOUT freezes them for the outer round. POLD uses fresh question-only support with uniform empirical weights. These are settings of the same update, not separate implementations.

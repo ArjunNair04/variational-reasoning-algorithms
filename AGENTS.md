@@ -15,6 +15,18 @@
 
 ## Change record
 
+- **2026-09-02, Q5 large-support M-step sampling:** added a generated,
+  seven-seed comparison that retains 32 unique answer-guided Q5 traces and
+  either updates over the full posterior or 16 categorical posterior draws.
+  The zero-sample path preserves the existing full-support objective by object
+  identity; positive sampling is isolated to one fail-closed profile and does
+  not alter proposal generation, responsibility refresh or question order.
+  The study reuses the validated support-16 Q5-MORE control, remains
+  validation-only and records support coverage, M-step uniqueness and compute.
+  Verification covers deterministic sampling tests, identity-path regression,
+  runtime-profile rejection, generated YAML, all task coordinates, frozen
+  analysis, validator contracts, Python compilation and shell syntax.
+
 - **2026-09-02, same-seed reproducibility audit:** added a fail-closed
   historical-versus-posterity analyzer that checks complete paired-seed
   coverage, reports Final Acc@1 before strict final and AUC, verifies identical

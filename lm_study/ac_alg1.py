@@ -163,6 +163,7 @@ ALGORITHM_PROFILES = (
     "barber_persistent_bridge",
     "barber_verifier",
     "q5_support_reallocation",
+    "q5_buffer_sampling",
     "q5_revisit_concise",
     "l2r_reader_ess_closure",
     "l2r_credit_pilot",
@@ -5175,6 +5176,87 @@ def _m_step_support_diagnostics(
     }
 
 
+def _posterior_sampled_mstep_support(
+    buffers: dict[int, list[TraceRow]],
+    weights_by_pid: dict[int, torch.Tensor],
+    pids: list[int],
+    *,
+    sample_size: int,
+    seed: int,
+    outer_round: int,
+    inner_step: int,
+) -> tuple[dict[int, list[TraceRow]], dict[int, torch.Tensor], dict[str, object]]:
+    """Draw an unbiased finite M-step support from fixed responsibilities.
+
+    Repeated categorical draws are represented by multiplicity weights over
+    unique rows.  The deterministic per-question seed makes the draw stable
+    across process restarts without consuming the proposal/question RNG.
+    """
+
+    if sample_size <= 0:
+        return buffers, weights_by_pid, {
+            "mode": "full_posterior",
+            "configured_draws_per_question": 0,
+            "questions": [],
+        }
+
+    sampled_buffers = dict(buffers)
+    sampled_weights: dict[int, torch.Tensor] = {}
+    questions: list[dict[str, object]] = []
+    for pid in pids:
+        pid = int(pid)
+        rows = buffers[pid]
+        weights = weights_by_pid.get(pid)
+        if weights is None or not rows:
+            continue
+        if len(rows) != int(weights.numel()):
+            raise ValueError("M-step weights do not match their trace support")
+        values = weights.detach().to(dtype=torch.float64, device="cpu").numpy()
+        real_mass = float(values.sum())
+        if not math.isfinite(real_mass) or real_mass <= 0:
+            raise ValueError("M-step posterior must have positive finite real mass")
+        probabilities = values / real_mass
+        generator = np.random.default_rng(
+            np.random.SeedSequence(
+                [int(seed), int(outer_round), int(inner_step), pid, 0x4D535445]
+            )
+        )
+        draws = generator.choice(
+            len(rows), size=int(sample_size), replace=True, p=probabilities
+        )
+        counts = np.bincount(draws, minlength=len(rows))
+        selected = np.flatnonzero(counts)
+        empirical = counts[selected].astype(np.float64) / float(sample_size)
+        empirical *= real_mass
+        sampled_buffers[pid] = [rows[int(index)] for index in selected]
+        sampled_weights[pid] = weights.new_tensor(empirical)
+        covered_mass = float(values[selected].sum())
+        questions.append({
+            "pid": pid,
+            "posterior_support_size": len(rows),
+            "draw_count": int(sample_size),
+            "unique_draw_count": int(len(selected)),
+            "posterior_mass_covered": covered_mass,
+            "empirical_ess": float(1.0 / np.square(empirical / real_mass).sum()),
+            "selected_indices": [int(index) for index in selected],
+            "multiplicities": [int(counts[index]) for index in selected],
+        })
+    return sampled_buffers, sampled_weights, {
+        "mode": "posterior_categorical",
+        "configured_draws_per_question": int(sample_size),
+        "questions": questions,
+        "mean_unique_draws": _mean_or_none(
+            [float(row["unique_draw_count"]) for row in questions]
+        ),
+        "mean_posterior_mass_covered": _mean_or_none(
+            [float(row["posterior_mass_covered"]) for row in questions]
+        ),
+        "mean_empirical_ess": _mean_or_none(
+            [float(row["empirical_ess"]) for row in questions]
+        ),
+    }
+
+
 def _unweighted_trace_nll(
     model,
     tok,
@@ -5256,6 +5338,9 @@ def _inner_weighted_em_steps(
     digit_token_weight: float = 1.0,
     answer_target_termination: str = "none",
     latent_mstep_objective: str = "joint",
+    mstep_sample_size: int = 0,
+    run_seed: int = 0,
+    outer_round: int = 0,
     update_geometry: str = "sum",
     step_acceptance: str = "none",
     rollback_tolerance: float = 1e-6,
@@ -5319,6 +5404,10 @@ def _inner_weighted_em_steps(
         digit_token_weight: Scale-preserving relative weight on digit tokens.
         latent_mstep_objective: Joint, answer-only, or rationale-only target
             span for both latent objective terms.
+        mstep_sample_size: Posterior draws per question for the latent M-step;
+            zero preserves the exact full-support objective.
+        run_seed: Training seed used only to derive isolated M-step draws.
+        outer_round: Zero-based outer round used only to derive those draws.
         update_geometry: ``sum`` for the original gradient, ``mgda`` for a
             raw common-descent direction, ``normalized_mgda`` for its
             scale-invariant counterpart, or ``answer_primary`` for a
@@ -5383,6 +5472,8 @@ def _inner_weighted_em_steps(
     diagnostics_level = validate_diagnostic_level(diagnostics_level)
     if diagnostics_gradient_questions < 0:
         raise ValueError("diagnostics_gradient_questions must be nonnegative")
+    if mstep_sample_size < 0:
+        raise ValueError("mstep_sample_size must be nonnegative")
     diagnostic_state = diagnostic_state if diagnostic_state is not None else {}
     diagnostic_state.setdefault("accepted_steps", 0)
     diagnostic_state.setdefault("consecutive_rejections", 0)
@@ -5435,39 +5526,59 @@ def _inner_weighted_em_steps(
         "ema_objective_grad_norm": 0.0,
         "ema_raw_anchor_grad_norm": 0.0,
     }
-    support_diagnostics = (
-        _m_step_support_diagnostics(
-            tok,
-            task,
-            buffers,
-            labelled_pids,
-            answer_only_pids,
-            labelled_weights,
-            answer_only_weights,
-            supervised_weight=supervised_weight,
-            labelled_em_weight=labelled_em_weight,
-            answer_only_em_weight=answer_only_em_weight,
-            labelled_supervision=labelled_supervision,
-            answer_target_termination=answer_target_termination,
-            latent_mstep_objective=latent_mstep_objective,
-        )
-        if record_gradient_geometry
-        else {
-            "active_questions": 0,
-            "active_labelled_questions": 0,
-            "active_answer_only_questions": 0,
-            "active_traces": 0,
-            "backward_tokens": 0,
-            "supervised_backward_tokens": 0,
-            "supervised_backward_eos_tokens": 0,
-            "buffer_backward_tokens": 0,
-            "buffer_backward_eos_tokens": 0,
-            "backward_eos_tokens": 0,
-        }
-    )
-
     for inner_index in range(inner_steps):
         step_started = time.perf_counter()
+        mstep_buffers, mstep_combined_weights, mstep_sampling = (
+            _posterior_sampled_mstep_support(
+                buffers,
+                {**labelled_weights, **answer_only_weights},
+                [*labelled_pids, *answer_only_pids],
+                sample_size=mstep_sample_size,
+                seed=run_seed,
+                outer_round=outer_round,
+                inner_step=inner_index,
+            )
+        )
+        mstep_labelled_weights = {
+            int(pid): mstep_combined_weights[int(pid)]
+            for pid in labelled_pids
+            if int(pid) in mstep_combined_weights
+        }
+        mstep_answer_only_weights = {
+            int(pid): mstep_combined_weights[int(pid)]
+            for pid in answer_only_pids
+            if int(pid) in mstep_combined_weights
+        }
+        support_diagnostics = (
+            _m_step_support_diagnostics(
+                tok,
+                task,
+                mstep_buffers,
+                labelled_pids,
+                answer_only_pids,
+                mstep_labelled_weights,
+                mstep_answer_only_weights,
+                supervised_weight=supervised_weight,
+                labelled_em_weight=labelled_em_weight,
+                answer_only_em_weight=answer_only_em_weight,
+                labelled_supervision=labelled_supervision,
+                answer_target_termination=answer_target_termination,
+                latent_mstep_objective=latent_mstep_objective,
+            )
+            if record_gradient_geometry
+            else {
+                "active_questions": 0,
+                "active_labelled_questions": 0,
+                "active_answer_only_questions": 0,
+                "active_traces": 0,
+                "backward_tokens": 0,
+                "supervised_backward_tokens": 0,
+                "supervised_backward_eos_tokens": 0,
+                "buffer_backward_tokens": 0,
+                "buffer_backward_eos_tokens": 0,
+                "backward_eos_tokens": 0,
+            }
+        )
         sampled_support_before = (
             _sampled_support_diagnostics(
                 buffers,
@@ -5521,9 +5632,9 @@ def _inner_weighted_em_steps(
             B_prime_unsup_value, B_prime_took_grad = _backward_B_unsup_for_questions(
                 model,
                 tok,
-                buffers,
+                mstep_buffers,
                 labelled_pids,
-                labelled_weights,
+                mstep_labelled_weights,
                 coefficient=labelled_em_weight,
                 latent_mstep_objective=latent_mstep_objective,
             )
@@ -5540,9 +5651,9 @@ def _inner_weighted_em_steps(
             B_unsup_value, B_unsup_took_grad = _backward_B_unsup_for_questions(
                 model,
                 tok,
-                buffers,
+                mstep_buffers,
                 answer_only_pids,
-                answer_only_weights,
+                mstep_answer_only_weights,
                 coefficient=answer_only_em_weight,
                 latent_mstep_objective=latent_mstep_objective,
             )
@@ -5625,11 +5736,13 @@ def _inner_weighted_em_steps(
                 else float(policy_kl_coef)
             )
             labelled_buffer_available = any(
-                buffers[int(pid)] and labelled_weights.get(int(pid)) is not None
+                mstep_buffers[int(pid)]
+                and mstep_labelled_weights.get(int(pid)) is not None
                 for pid in labelled_pids
             )
             answer_only_buffer_available = any(
-                buffers[int(pid)] and answer_only_weights.get(int(pid)) is not None
+                mstep_buffers[int(pid)]
+                and mstep_answer_only_weights.get(int(pid)) is not None
                 for pid in answer_only_pids
             )
             component_weight = (
@@ -5661,9 +5774,9 @@ def _inner_weighted_em_steps(
                     _backward_reference_policy_kl_for_questions(
                         model,
                         tok,
-                        buffers,
+                        mstep_buffers,
                         labelled_pids,
-                        labelled_weights,
+                        mstep_labelled_weights,
                         backward_scale=(
                             beta * labelled_em_weight / component_weight
                             if labelled_buffer_available else 0.0
@@ -5676,9 +5789,9 @@ def _inner_weighted_em_steps(
                     _backward_reference_policy_kl_for_questions(
                         model,
                         tok,
-                        buffers,
+                        mstep_buffers,
                         answer_only_pids,
-                        answer_only_weights,
+                        mstep_answer_only_weights,
                         backward_scale=(
                             beta * answer_only_em_weight / component_weight
                             if answer_only_buffer_available else 0.0
@@ -5722,11 +5835,11 @@ def _inner_weighted_em_steps(
                 model,
                 tok,
                 task,
-                buffers,
+                mstep_buffers,
                 labelled_pids,
                 answer_only_pids,
-                labelled_weights,
-                answer_only_weights,
+                mstep_labelled_weights,
+                mstep_answer_only_weights,
                 applied_gradients,
                 limit=diagnostics_gradient_questions,
                 supervised_weight=supervised_weight,
@@ -5787,11 +5900,11 @@ def _inner_weighted_em_steps(
                         model,
                         tok,
                         task,
-                        buffers,
+                        mstep_buffers,
                         labelled_pids,
                         answer_only_pids,
-                        labelled_weights,
-                        answer_only_weights,
+                        mstep_labelled_weights,
+                        mstep_answer_only_weights,
                         supervised_weight=supervised_weight,
                         labelled_em_weight=labelled_em_weight,
                         answer_only_em_weight=answer_only_em_weight,
@@ -5809,11 +5922,11 @@ def _inner_weighted_em_steps(
                         model,
                         tok,
                         task,
-                        buffers,
+                        mstep_buffers,
                         labelled_pids,
                         answer_only_pids,
-                        labelled_weights,
-                        answer_only_weights,
+                        mstep_labelled_weights,
+                        mstep_answer_only_weights,
                         supervised_weight=supervised_weight,
                         labelled_em_weight=labelled_em_weight,
                         answer_only_em_weight=answer_only_em_weight,
@@ -5851,11 +5964,11 @@ def _inner_weighted_em_steps(
                     model,
                     tok,
                     task,
-                    buffers,
+                    mstep_buffers,
                     labelled_pids,
                     answer_only_pids,
-                    labelled_weights,
-                    answer_only_weights,
+                    mstep_labelled_weights,
+                    mstep_answer_only_weights,
                     supervised_weight=supervised_weight,
                     labelled_em_weight=labelled_em_weight,
                     answer_only_em_weight=answer_only_em_weight,
@@ -5882,11 +5995,11 @@ def _inner_weighted_em_steps(
                         model,
                         tok,
                         task,
-                        buffers,
+                        mstep_buffers,
                         labelled_pids,
                         answer_only_pids,
-                        labelled_weights,
-                        answer_only_weights,
+                        mstep_labelled_weights,
+                        mstep_answer_only_weights,
                         supervised_weight=supervised_weight,
                         labelled_em_weight=labelled_em_weight,
                         answer_only_em_weight=answer_only_em_weight,
@@ -6186,6 +6299,7 @@ def _inner_weighted_em_steps(
                     ),
                 },
                 "support": dict(support_diagnostics),
+                "mstep_sampling": mstep_sampling,
                 "gradient_attribution": question_gradient_attribution,
                 "behavioural_probe": behavioural_probe,
                 "attempts": step_attempts,
@@ -7741,6 +7855,7 @@ def _validate_ac_alg1_run_config(
     digit_token_weight = config.digit_token_weight
     trace_representation = config.trace_representation
     latent_mstep_objective = config.latent_mstep_objective
+    mstep_sample_size = config.mstep_sample_size
     answer_event_mode = config.answer_event_mode
     answer_target_termination = config.answer_target_termination
     update_geometry = config.update_geometry
@@ -8371,6 +8486,12 @@ def _validate_ac_alg1_run_config(
     if latent_mstep_objective not in LATENT_MSTEP_OBJECTIVES:
         raise ValueError(
             f"unknown AC-ALG1 latent_mstep_objective {latent_mstep_objective!r}"
+        )
+    if mstep_sample_size < 0:
+        raise ValueError("mstep_sample_size must be nonnegative")
+    if mstep_sample_size > 0 and algorithm_profile != "q5_buffer_sampling":
+        raise ValueError(
+            "posterior-sampled M-steps are isolated to q5_buffer_sampling"
         )
     if latent_mstep_objective == "exact_signed_trace_answer" and (
         algorithm_profile != "l2r_exact_signed_factorial"
@@ -9907,6 +10028,84 @@ def _validate_ac_alg1_run_config(
                     "q5_support_reallocation verifier settings changed: "
                     f"{verifier_mismatches}"
                 )
+    elif algorithm_profile == "q5_buffer_sampling":
+        q5_requirements = {
+            "rounds": (config.rounds, 32),
+            "L_batch": (config.L_batch, 0),
+            "U_batch": (U_batch, 4),
+            "G_label": (config.G_label, 32),
+            "G_answer_only": (config.G_answer_only, 32),
+            "inner_steps": (config.inner_steps, 1),
+            "lr": (config.lr, 1.0e-5),
+            "buffer_limit": (config.buffer_limit, 32),
+            "answer_event_mode": (answer_event_mode, "strict_terminal_marker"),
+            "answer_target_termination": (answer_target_termination, "eos"),
+            "labelled_frac": (config.labelled_frac, 0.0),
+            "labelled_em_weight": (labelled_em_weight, 0.0),
+            "answer_only_em_weight": (answer_only_em_weight, 1.0),
+            "supervised_weight": (supervised_weight, 0.0),
+            "buffer_strategy": (buffer_strategy, "fifo"),
+            "buffer_semantics": (buffer_semantics, "unique_set"),
+            "buffer_lifecycle": (buffer_lifecycle, "persistent"),
+            "buffer_max_age": (buffer_max_age, -1),
+            "labelled_proposal_prompt": (
+                labelled_proposal_prompt,
+                "answer_derive",
+            ),
+            "answer_only_proposal_prompt": (
+                answer_only_proposal_prompt,
+                "answer_derive",
+            ),
+            "proposal_mixture": (proposal_mixture, "single"),
+            "proposal_filter": (proposal_filter, "all"),
+            "proposal_policy": (proposal_policy, "current"),
+            "proposal_temperature": (proposal_temperature, 1.0),
+            "proposal_allocation_mode": (proposal_allocation_mode, "uniform"),
+            "responsibility_score": (responsibility_score, "joint"),
+            "responsibility_posterior": (
+                responsibility_posterior,
+                "softmax_entropy",
+            ),
+            "responsibility_temperature": (responsibility_temperature, 1.0),
+            "responsibility_ess_floor": (responsibility_ess_floor, 0.0),
+            "responsibility_abstention": (responsibility_abstention, "none"),
+            "responsibility_policy": (responsibility_policy, "current"),
+            "responsibility_answer_policy": (
+                responsibility_answer_policy,
+                "current",
+            ),
+            "responsibility_refresh": (responsibility_refresh, "inner_step"),
+            "responsibility_verifier_rollouts": (
+                responsibility_verifier_rollouts,
+                0,
+            ),
+            "variational_estimator": (variational_estimator, "delta_joint"),
+            "labelled_numeric_constraint": (labelled_numeric_constraint, "off"),
+            "labelled_supervision": (labelled_supervision, "gold"),
+            "digit_token_weight": (digit_token_weight, 1.0),
+            "trace_representation": (trace_representation, "reasoning"),
+            "latent_mstep_objective": (latent_mstep_objective, "joint"),
+            "update_geometry": (update_geometry, "sum"),
+            "step_acceptance": (step_acceptance, "none"),
+            "optimizer_state_scope": (optimizer_state_scope, "persistent"),
+            "question_sampling": (config.question_sampling, "epoch_shuffle"),
+        }
+        mismatches = {
+            name: {"actual": actual, "required": required}
+            for name, (actual, required) in q5_requirements.items()
+            if actual != required
+        }
+        if mismatches:
+            raise ValueError(
+                "q5_buffer_sampling rejected hidden algorithm changes: "
+                f"{mismatches}"
+            )
+        if mstep_sample_size not in {0, 16}:
+            raise ValueError(
+                "q5_buffer_sampling permits only full support or 16 posterior draws"
+            )
+        if policy_kl_coef is not None or policy_anchor_mode != "fixed":
+            raise ValueError("q5_buffer_sampling forbids policy anchoring")
     elif algorithm_profile == "q5_revisit_concise":
         q5_requirements = {
             "rounds": (config.rounds, 32),
@@ -10336,6 +10535,7 @@ def _execute_ac_alg1_update(
     digit_token_weight = config.digit_token_weight
     trace_representation = config.trace_representation
     latent_mstep_objective = config.latent_mstep_objective
+    mstep_sample_size = config.mstep_sample_size
     answer_event_mode = config.answer_event_mode
     answer_target_termination = config.answer_target_termination
     update_geometry = config.update_geometry
@@ -10767,6 +10967,9 @@ def _execute_ac_alg1_update(
         digit_token_weight=digit_token_weight,
         answer_target_termination=answer_target_termination,
         latent_mstep_objective=latent_mstep_objective,
+        mstep_sample_size=mstep_sample_size,
+        run_seed=config.seed,
+        outer_round=t,
         update_geometry=update_geometry,
         step_acceptance=step_acceptance,
         rollback_tolerance=rollback_tolerance,
@@ -10934,6 +11137,7 @@ def _record_ac_alg1_round(
     digit_token_weight = config.digit_token_weight
     trace_representation = config.trace_representation
     latent_mstep_objective = config.latent_mstep_objective
+    mstep_sample_size = config.mstep_sample_size
     answer_event_mode = config.answer_event_mode
     answer_target_termination = config.answer_target_termination
     update_geometry = config.update_geometry
@@ -11095,6 +11299,7 @@ def _record_ac_alg1_round(
         "digit_token_weight": digit_token_weight,
         "trace_representation": trace_representation,
         "latent_mstep_objective": latent_mstep_objective,
+        "mstep_sample_size": mstep_sample_size,
         "answer_event_mode": answer_event_mode,
         "update_geometry": update_geometry,
         "step_acceptance": step_acceptance,
@@ -11893,6 +12098,7 @@ def run_ac_alg1(
     digit_token_weight: float = 1.0,
     trace_representation: str = "reasoning",
     latent_mstep_objective: str = "joint",
+    mstep_sample_size: int = 0,
     answer_event_mode: str = "legacy",
     answer_target_termination: str = "none",
     update_geometry: str = "sum",
@@ -12050,6 +12256,8 @@ def run_ac_alg1(
         latent_mstep_objective: Train the joint h,a continuation, its per-token
             mean variant, the answer factor only, or the rationale factor only
             in latent terms.
+        mstep_sample_size: Posterior draws per question used by the latent
+            M-step. Zero preserves the full posterior-weighted support.
         answer_event_mode: Replay-compatible or strict terminal-marker answer
             event shared with evaluation.
         answer_target_termination: ``none`` preserves historical answer targets;

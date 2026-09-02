@@ -240,6 +240,53 @@
           "repair": "validator-only job 7331842 loaded the shared Python runtime and validated the original immutable payload without rerunning training"
         }
       ]
+    },
+    {
+      "registry_id": "qwen3_q5_buffer_sampling_20260902",
+      "run_id": "1d5b0eb4",
+      "status": "ready_for_submission",
+      "source_revision": null,
+      "execution_revision": null,
+      "account": "amanojna",
+      "scheduler_jobs": [],
+      "dependency": {
+        "registry_id": "qwen3_posterity_followups_20260901",
+        "run_id": "f20c9e17",
+        "completion_criterion": "structured 42-task posterity-followup validator marker"
+      },
+      "config": "lm_study/experiments_qwen3_17b_q5_buffer_sampling.yaml",
+      "submitter": "lm_study/submit_qwen3_17b_q5_buffer_sampling_ucl.sh",
+      "analyzer": "analysis/analyze_qwen3_q5_buffer_sampling.py",
+      "expected_tasks": 14,
+      "official_test_used": false,
+      "result_root": "~/po_results/2026-09-02/q5-buffer-sampling/qwen3-q5-buffer-sampling__1d5b0eb4",
+      "validator_marker": "~/po_results/auto_state/qwen3_q5_buffer_sampling_1d5b0eb4.ok",
+      "design": {
+        "independent_unit": "paired training seed",
+        "seeds": [1201, 1213, 1217, 1223, 1229, 1231, 1237],
+        "new_cells": [
+          "Q5-S32-B32-U1-FULL",
+          "Q5-S32-B32-U1-MS16"
+        ],
+        "historical_control": "Q5-MORE-S32-B16-U1",
+        "historical_control_run_id": "f20c9e17",
+        "primary_metric_order": [
+          "Final Acc@1",
+          "strict final accuracy",
+          "normalized trajectory AUC"
+        ]
+      },
+      "scientific_question": "Does retaining 32 unique Q5 traces improve over support 16, and can a 16-draw posterior-sampled M-step retain that benefit at lower backward-pass cost?",
+      "limitations": [
+        "The historical support-16 control is reused rather than rerun because it has the same seven seeds and frozen protocol.",
+        "The fixed question schedule visits each optimization question once, so this tests within-question support depth rather than cross-round replay.",
+        "The official GSM8K test split remains sealed."
+      ],
+      "next_actions": [
+        "Submit the uncapped 14-task array only after immutable-commit, generated-YAML, runtime-profile and analyzer gates pass.",
+        "After completion, require all task receipts, artifact hashes, logs and the structured validator marker before analysis.",
+        "Compare Final Acc@1 first, then strict final accuracy and AUC; report unique sampled traces, posterior mass coverage, backward tokens and accelerator-hours."
+      ]
     }
   ]
 }

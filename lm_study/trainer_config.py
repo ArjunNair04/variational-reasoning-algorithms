@@ -156,6 +156,7 @@ class ACAlg1RunConfig(_ConfigFromCall):
     digit_token_weight: float
     trace_representation: str
     latent_mstep_objective: str
+    mstep_sample_size: int
     answer_event_mode: str
     answer_target_termination: str
     update_geometry: str

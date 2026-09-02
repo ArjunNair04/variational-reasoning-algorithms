@@ -303,6 +303,8 @@ KNOBS = (
          "source self-training proposal top-k cutoff; zero disables top-k"),
     Knob("trice_estimator", str, "trice",
          "TRICE score estimator: basic or control_variate"),
+    Knob("mstep_sample_size", int, "mss",
+         "AC-ALG1 posterior draws per question used by the latent M-step; zero uses the full weighted support"),
 )
 
 # Kept as an extension point for non-overridable runtime metadata. Every
