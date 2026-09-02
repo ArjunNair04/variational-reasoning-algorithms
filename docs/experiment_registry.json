@@ -244,11 +244,24 @@
     {
       "registry_id": "qwen3_q5_buffer_sampling_20260902",
       "run_id": "1d5b0eb4",
-      "status": "ready_for_submission",
-      "source_revision": null,
-      "execution_revision": null,
+      "status": "submitted_queued",
+      "source_revision": "44e23c9847f1fd5c7a9deee337e6939417fff175",
+      "execution_revision": "44e23c9847f1fd5c7a9deee337e6939417fff175",
       "account": "amanojna",
-      "scheduler_jobs": [],
+      "scheduler_jobs": [
+        {
+          "role": "payload",
+          "job_id": "7332131",
+          "tasks": 14,
+          "state": "queued_after_verified_release"
+        },
+        {
+          "role": "validator",
+          "job_id": "7332132",
+          "depends_on": "7332131",
+          "state": "dependency_held"
+        }
+      ],
       "dependency": {
         "registry_id": "qwen3_posterity_followups_20260901",
         "run_id": "f20c9e17",
