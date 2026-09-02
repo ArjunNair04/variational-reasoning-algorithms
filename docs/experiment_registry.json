@@ -55,16 +55,28 @@
         "sha256": "4ab6945df5dfe4f6918c082f21403fe56249a2cc6aa186ff317a02aaecb9a39c",
         "basis": "same seven training seeds and fixed train-derived validation partition"
       },
+      "reproducibility_audit": {
+        "status": "complete_no_gpu_repeat_required",
+        "analyzer": "analysis/analyze_selected_method_reproducibility_audit.py",
+        "local_mirror": "../ResultsArchive/beaker-amanojna/20260902T151747Z__qwen3_selected_method_posterity_68078ecc",
+        "summary": "../ResultsArchive/beaker-amanojna/20260902T151747Z__qwen3_selected_method_posterity_68078ecc/reproducibility_audit_v2/audit_summary.json",
+        "summary_sha256": "4ea52605ee5d03cd6a3762f045d3d1b42dfefd266f0041da125314cc91dcc836",
+        "decision": "The existing paired artifacts isolate the first divergence before a new repeatability array is needed. Learned-method results are accepted as statistical rather than bit-exact reproductions."
+      },
       "findings": [
         "All 91 payload cells, including 84 trained adapters, passed receipt-bound artifact and log validation.",
         "The same-seed replay broadly reproduced the prior seven-seed results. Final Acc@1 differences were 0.00 pp for frozen base, -0.25 pp for Q5, +3.11 pp for PIS, +1.07 pp for ReST-EM, +0.50 pp for STaR, -0.11 pp for TRICE-CV and -1.46 pp for RLOO.",
         "Trajectory AUC was especially stable: the absolute replay difference was at most 0.62 pp for every source-mapped method.",
+        "The detailed same-seed audit found identical validation support throughout and exact frozen-base generations. For PIS, every seed had identical round-zero questions, sampled traces, trace order, posterior weights and objective before first diverging in the backward gradient or optimizer update.",
+        "For PIS seed 1231, the round-zero objective was exactly -76.1930935382843 in both runs, while the gradient norm differed by 0.066% (49.91465 versus 49.88194). Both tasks ran on seymour3 with the same H100, driver 550.127.08, CUDA 12.4, cuDNN 90100, PyTorch 2.6.0+cu124, Transformers 4.51.3 and PEFT 0.13.2.",
+        "Q5 round-zero sampled traces matched exactly, but BF16 log-probability scores differed before later sampling paths separated. This is consistent with GPU numerical variation being amplified by posterior weighting and repeated stochastic training.",
         "Frozen-reader answer-guided Q5 reached 81.32% Final Acc@1, compared with 80.32% for its moving-reader control; the paired interval includes no effect.",
         "Answer-guided PIS degraded to 63.64% Final Acc@1, while question-prompt PIS reached 80.00%."
       ],
       "limitations": [
         "This deliberately reuses the historical seeds and train-derived validation questions, so it is reproducibility evidence rather than fresh method-selection evidence.",
         "Learned runs are not bit-exact; PIS has the largest endpoint replay difference despite nearly unchanged trajectory AUC.",
+        "The historical run used Python 3.11.15 and an earlier execution revision, while the replay used Python 3.11.0. Static review found no active scientific-path change for these cells, but the comparison cannot attribute every floating-point difference exclusively to CUDA.",
         "The official GSM8K test split remained sealed."
       ],
       "incidents": [

@@ -15,6 +15,16 @@
 
 ## Change record
 
+- **2026-09-02, same-seed reproducibility audit:** added a fail-closed
+  historical-versus-posterity analyzer that checks complete paired-seed
+  coverage, reports Final Acc@1 before strict final and AUC, verifies identical
+  validation support at every checkpoint, compares final generations, and
+  locates the first observable Q5/PIS divergence across question selection,
+  sampled traces, posterior weights and optimizer drift. This changes no
+  experiment or model behavior. Verification covers focused tests, Python
+  compilation, formatting checks and execution against the mirrored source
+  and replay artifacts.
+
 - **2026-09-02, AMN validator Python-runtime repair:** initialise the shared
   Python runtime and invoke the experiment virtual environment's interpreter
   explicitly in all three posterity validator wrappers. This repairs
