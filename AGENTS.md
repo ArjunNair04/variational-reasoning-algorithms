@@ -15,6 +15,14 @@
 
 ## Change record
 
+- **2026-09-02, AMN validator Python-runtime repair:** initialise the shared
+  Python runtime and invoke the experiment virtual environment's interpreter
+  explicitly in all three posterity validator wrappers. This repairs
+  post-training validation only; payload code, YAMLs, task mappings and result
+  artifacts are unchanged. Verification covers focused wrapper assertions,
+  shell syntax, Python tests and rerunning the validators against the completed
+  payload artifacts.
+
 - **2026-09-01, posterior-update posterity follow-ups:** added a generated
   six-cell, seven-seed study for Q5 support depth, Q5 token-mean
   responsibilities, PIS update reuse, rationale-only adaptive PIS KL, and the

@@ -11,6 +11,10 @@ export PROJ=${PROJ:-$VRL_ROOT/vrl}
 export PAYLOAD_PROJ=${PAYLOAD_PROJ:-$PROJ}
 export VENV=${VENV:-$VRL_ROOT/po_venv}
 
+# Initialise the shared Python runtime before invoking the virtual environment.
+# shellcheck disable=SC1091
+source "$PROJ/lm_study/ucl_python_env.sh"
+
 for required in SOURCE_JOB_ID VALIDATOR_COMMIT EXECUTION_COMMIT EXPECTED_CONFIG_SHA256 YAML MARKER; do
   test -n "${!required:-}" || { echo "ERROR: $required missing" >&2; exit 3; }
 done

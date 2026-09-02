@@ -42,3 +42,12 @@ def test_temperature_runner_is_uncapped_and_resource_safe() -> None:
     assert "seed_count=7" in runner
     assert runner.count('"$VENV/bin/python"') == 2
     assert "\npython " not in runner
+
+
+def test_temperature_validator_uses_shared_runtime_and_venv_python() -> None:
+    validator = (
+        HERE / "validate_qwen3_17b_l2r_focused_followup_ucl.sh"
+    ).read_text(encoding="utf-8")
+    assert 'source "$PROJ/lm_study/ucl_python_env.sh"' in validator
+    assert validator.count('"$VENV/bin/python"') == 1
+    assert "\npython " not in validator

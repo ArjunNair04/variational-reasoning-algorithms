@@ -133,3 +133,5 @@ def test_scheduler_is_uncapped_and_dependency_gated() -> None:
     assert 'qsub -h -hold_jid "$CONTROL_VALIDATOR_JOB_ID"' in submitter
     assert "CONTROL_VALIDATOR_JOB_ID" in submitter
     assert "qwen3_posterity_followups.${SOURCE_JOB_ID}.*.log" in validator
+    assert 'source "$PROJ/lm_study/ucl_python_env.sh"' in validator
+    assert validator.count('"$VENV/bin/python"') == 2

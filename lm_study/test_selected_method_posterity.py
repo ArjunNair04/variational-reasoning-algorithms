@@ -224,3 +224,6 @@ def test_scheduler_is_uncapped_and_uses_exact_task_mapping() -> None:
     assert "user_held_pending_herring_and_quota_gates" not in submitter
     assert "qwen3_selected_method_posterity.${SOURCE_JOB_ID}.*.log" in validator
     assert "qwen3_final_method_confirmation.${SOURCE_JOB_ID}" not in validator
+    assert 'source "$PROJ/lm_study/ucl_python_env.sh"' in validator
+    assert validator.count('"$VENV/bin/python"') == 2
+    assert "\npython " not in validator

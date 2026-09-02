@@ -11,6 +11,10 @@ export PROJ=${PROJ:-$VRL_ROOT/vrl}
 export PAYLOAD_PROJ=${PAYLOAD_PROJ:-$PROJ}
 export VENV=${VENV:-$VRL_ROOT/po_venv}
 
+# Initialise the shared Python runtime before invoking the virtual environment.
+# shellcheck disable=SC1091
+source "$PROJ/lm_study/ucl_python_env.sh"
+
 for required in SOURCE_JOB_ID VALIDATOR_COMMIT EXECUTION_COMMIT EXPECTED_CONFIG_SHA256 YAML MARKER RUN_ID LOG_STEM; do
   test -n "${!required:-}" || { echo "ERROR: $required missing" >&2; exit 3; }
 done
@@ -21,7 +25,7 @@ test -z "$(cd "$PAYLOAD_PROJ" && git status --porcelain --untracked-files=no)" |
 
 cd "$PROJ/lm_study"
 source "$VENV/bin/activate"
-python validate_yaml_run.py "$YAML" \
+"$VENV/bin/python" validate_yaml_run.py "$YAML" \
   --log-glob "$PAYLOAD_PROJ/lm_study/logs/${LOG_STEM}.${SOURCE_JOB_ID}.*.log" \
   --marker "$MARKER" \
   --marker-run-id "$RUN_ID" \
