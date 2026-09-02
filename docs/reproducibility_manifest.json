@@ -62,12 +62,15 @@
       "marker": "~/po_results/auto_state/qwen3_selected_method_posterity_68078ecc.ok",
       "log_glob": "lm_study/logs/qwen3_selected_method_posterity.7330195.*.log",
       "payload_job": "7330195",
-      "validator_job": "7330196",
+      "failed_validator_job": "7330196",
+      "validator_job": "7331840",
+      "validator_revision": "131ce9431b87b2d2d7f8ed7104228e55fe6c873e",
+      "analysis_root": "~/po_results/2026-09-02/analysis/qwen3-selected-method-posterity__68078ecc",
       "expected_tasks": 91,
       "expected_trained_adapters": 84,
       "seed_values": [1201, 1213, 1217, 1223, 1229, 1231, 1237],
       "cell_count": 13,
-      "status": "provisional_until_gate_passes"
+      "status": "validated_and_analyzed"
     },
     "temperature_mixture": {
       "registry_id": "qwen3_pis_temperature_posterity_20260829",
@@ -79,12 +82,15 @@
       "marker": "~/po_results/auto_state/qwen3_pis_temperature_posterity_f3950b2e.ok",
       "log_glob": "lm_study/logs/qwen3_17b_pis_temperature_posterity.7330197.*.log",
       "payload_job": "7330197",
-      "validator_job": "7330198",
+      "failed_validator_job": "7330198",
+      "validator_job": "7331841",
+      "validator_revision": "131ce9431b87b2d2d7f8ed7104228e55fe6c873e",
+      "analysis_root": "~/po_results/2026-09-02/analysis/pis-temperature-posterity__f3950b2e",
       "expected_tasks": 14,
       "expected_trained_adapters": 0,
       "seed_values": [1481, 1483, 1487, 1489, 1499, 1511, 1523],
       "cell_count": 2,
-      "status": "provisional_until_gate_passes"
+      "status": "validated_and_analyzed"
     }
   }
 }

@@ -4,7 +4,7 @@
     {
       "registry_id": "qwen3_selected_method_posterity_20260829",
       "run_id": "68078ecc",
-      "status": "running",
+      "status": "validated_and_analyzed",
       "source_revision": "3472a144ce7059c660f640a56c6e0e4a132eee34",
       "execution_revision": "4a9a9cafc6b17cc18e7c1da8a422e847daeb4746",
       "account": "amanojna",
@@ -25,13 +25,20 @@
           "role": "payload_retry",
           "job_id": "7330195",
           "tasks": 91,
-          "state": "running"
+          "state": "completed_validated"
         },
         {
           "role": "validator_retry",
           "job_id": "7330196",
           "depends_on": "7330195",
-          "state": "dependency_held"
+          "state": "failed_infrastructure_after_payload"
+        },
+        {
+          "role": "validator_runtime_repair",
+          "job_id": "7331840",
+          "depends_on": "7330195",
+          "state": "completed",
+          "validator_revision": "131ce9431b87b2d2d7f8ed7104228e55fe6c873e"
         }
       ],
       "config": "lm_study/experiments_qwen3_17b_selected_method_posterity.yaml",
@@ -39,6 +46,27 @@
       "analyzer": "analysis/analyze_qwen3_selected_method_posterity.py",
       "expected_tasks": 91,
       "official_test_used": false,
+      "result_root": "~/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc",
+      "validator_marker": "~/po_results/auto_state/qwen3_selected_method_posterity_68078ecc.ok",
+      "analysis_root": "~/po_results/2026-09-02/analysis/qwen3-selected-method-posterity__68078ecc",
+      "source_comparison": {
+        "run_id": "978b99c8",
+        "artifact": "../ResultsArchive/beaker-vmohanar/20260820T081540Z__qwen3_final_method_confirmation_978b99c8/analysis/method_summary.csv",
+        "sha256": "4ab6945df5dfe4f6918c082f21403fe56249a2cc6aa186ff317a02aaecb9a39c",
+        "basis": "same seven training seeds and fixed train-derived validation partition"
+      },
+      "findings": [
+        "All 91 payload cells, including 84 trained adapters, passed receipt-bound artifact and log validation.",
+        "The same-seed replay broadly reproduced the prior seven-seed results. Final Acc@1 differences were 0.00 pp for frozen base, -0.25 pp for Q5, +3.11 pp for PIS, +1.07 pp for ReST-EM, +0.50 pp for STaR, -0.11 pp for TRICE-CV and -1.46 pp for RLOO.",
+        "Trajectory AUC was especially stable: the absolute replay difference was at most 0.62 pp for every source-mapped method.",
+        "Frozen-reader answer-guided Q5 reached 81.32% Final Acc@1, compared with 80.32% for its moving-reader control; the paired interval includes no effect.",
+        "Answer-guided PIS degraded to 63.64% Final Acc@1, while question-prompt PIS reached 80.00%."
+      ],
+      "limitations": [
+        "This deliberately reuses the historical seeds and train-derived validation questions, so it is reproducibility evidence rather than fresh method-selection evidence.",
+        "Learned runs are not bit-exact; PIS has the largest endpoint replay difference despite nearly unchanged trajectory AUC.",
+        "The official GSM8K test split remained sealed."
+      ],
       "incidents": [
         {
           "kind": "infrastructure",
@@ -49,13 +77,20 @@
           "training_started": false,
           "cause": "batch shell resolved cached /usr/bin/python 2.7 instead of the experiment virtual environment",
           "repair": "invoke $VENV/bin/python explicitly in the payload runner"
+        },
+        {
+          "kind": "infrastructure",
+          "failed_tasks": [],
+          "training_started": true,
+          "cause": "validator job 7330196 invoked the legacy system Python after all payload cells had completed",
+          "repair": "validator-only job 7331840 loaded the shared Python runtime and validated the original immutable payload without rerunning training"
         }
       ]
     },
     {
       "registry_id": "qwen3_pis_temperature_posterity_20260829",
       "run_id": "f3950b2e",
-      "status": "submitted",
+      "status": "validated_and_analyzed",
       "source_revision": "3472a144ce7059c660f640a56c6e0e4a132eee34",
       "execution_revision": "4a9a9cafc6b17cc18e7c1da8a422e847daeb4746",
       "account": "amanojna",
@@ -76,13 +111,20 @@
           "role": "payload_retry",
           "job_id": "7330197",
           "tasks": 14,
-          "state": "queued"
+          "state": "completed_validated"
         },
         {
           "role": "validator_retry",
           "job_id": "7330198",
           "depends_on": "7330197",
-          "state": "dependency_held"
+          "state": "failed_infrastructure_after_payload"
+        },
+        {
+          "role": "validator_runtime_repair",
+          "job_id": "7331841",
+          "depends_on": "7330197",
+          "state": "completed",
+          "validator_revision": "131ce9431b87b2d2d7f8ed7104228e55fe6c873e"
         }
       ],
       "config": "lm_study/experiments_qwen3_17b_pis_temperature_posterity.yaml",
@@ -90,6 +132,18 @@
       "analyzer": "analysis/analyze_l2r_temperature_mixture.py",
       "expected_tasks": 14,
       "official_test_used": false,
+      "result_root": "~/po_results/2026-08-29/reproducibility/pis-temperature-mixture-posterity__f3950b2e",
+      "validator_marker": "~/po_results/auto_state/qwen3_pis_temperature_posterity_f3950b2e.ok",
+      "analysis_root": "~/po_results/2026-09-02/analysis/pis-temperature-posterity__f3950b2e",
+      "findings": [
+        "All 14 payload cells passed validation.",
+        "The temperature-mixture arm changed Final Acc@1 by -0.43 pp, strict final accuracy by -0.25 pp and trajectory AUC by +0.26 pp relative to temperature 1.0.",
+        "The preregistered advancement gate failed; no further temperature retuning is permitted by this protocol."
+      ],
+      "limitations": [
+        "The comparison uses seven paired historical seeds and the same train-derived validation set.",
+        "The official GSM8K test split remained sealed."
+      ],
       "incidents": [
         {
           "kind": "infrastructure",
@@ -97,13 +151,20 @@
           "training_started": false,
           "cause": "shared payload runner had the same cached Python resolution defect",
           "repair": "invoke $VENV/bin/python explicitly in the payload runner"
+        },
+        {
+          "kind": "infrastructure",
+          "failed_tasks": [],
+          "training_started": true,
+          "cause": "validator job 7330198 invoked the legacy system Python after all payload cells had completed",
+          "repair": "validator-only job 7331841 loaded the shared Python runtime and validated the original immutable payload without rerunning training"
         }
       ]
     },
     {
       "registry_id": "qwen3_posterity_followups_20260901",
       "run_id": "f20c9e17",
-      "status": "dependency_held",
+      "status": "validated_and_analyzed",
       "source_revision": "a8e746bdedc2f82617d24e2fe77454665a70e92c",
       "execution_revision": "682f5d7da33ab8d2f28330329489800daf0fc2cd",
       "account": "amanojna",
@@ -113,13 +174,20 @@
           "job_id": "7330284",
           "tasks": 42,
           "depends_on": "7330196",
-          "state": "dependency_held"
+          "state": "completed_validated"
         },
         {
           "role": "validator",
           "job_id": "7330285",
           "depends_on": "7330284",
-          "state": "dependency_held"
+          "state": "failed_infrastructure_after_payload"
+        },
+        {
+          "role": "validator_runtime_repair",
+          "job_id": "7331842",
+          "depends_on": "7330284",
+          "state": "completed",
+          "validator_revision": "131ce9431b87b2d2d7f8ed7104228e55fe6c873e"
         }
       ],
       "dependency": {
@@ -132,10 +200,33 @@
       "analyzer": "analysis/analyze_qwen3_posterity_followups.py",
       "expected_tasks": 42,
       "official_test_used": false,
+      "result_root": "~/po_results/2026-09-01/reproducibility/qwen3-posterity-followups__f20c9e17",
+      "validator_marker": "~/po_results/auto_state/qwen3_posterity_followups_f20c9e17.ok",
+      "analysis_root": "~/po_results/2026-09-02/analysis/qwen3-posterity-followups__f20c9e17",
+      "findings": [
+        "All 42 payload cells and trained adapters passed validation.",
+        "Q5-MORE improved Final Acc@1 by +0.57 pp, strict final accuracy by +2.93 pp and trajectory AUC by +0.64 pp over canonical answer-guided Q5; only the strict and AUC intervals excluded zero.",
+        "Token-mean Q5 was harmful, reducing Final Acc@1 by 3.79 pp and strict final accuracy by 10.21 pp.",
+        "PIS with one update was worse than four updates, while rationale-only KL produced no improvement over the four-update PIS control.",
+        "Exact signed updates improved extracted accuracy at one update but severely damaged strict formatting; four reused exact-signed updates collapsed strict final accuracy to 8.57%."
+      ],
+      "limitations": [
+        "These are paired seven-seed follow-ups against controls from the selected-method posterity replay.",
+        "The official GSM8K test split remained sealed."
+      ],
       "next_actions": [
-        "Wait for selected-method posterity validator job 7330196 to complete successfully and release payload job 7330284 automatically.",
-        "Reconcile all 42 payload tasks and validator job 7330285 before treating the study as complete.",
-        "After validation, analyse against the selected-method posterity controls on the paired seeds."
+        "Treat Q5-MORE as the only positive follow-up signal, while retaining the uncertainty on Final Acc@1.",
+        "Do not advance token-mean Q5, rationale-only PIS KL or exact-signed update reuse under their tested settings.",
+        "Use a fresh held-out or official-test confirmation only after the final method is frozen."
+      ],
+      "incidents": [
+        {
+          "kind": "infrastructure",
+          "failed_tasks": [],
+          "training_started": true,
+          "cause": "validator job 7330285 could not load libpython3.11 after all payload cells had completed",
+          "repair": "validator-only job 7331842 loaded the shared Python runtime and validated the original immutable payload without rerunning training"
+        }
       ]
     }
   ]
