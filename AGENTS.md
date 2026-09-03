@@ -15,6 +15,14 @@
 
 ## Change record
 
+- **2026-09-03, Q5 buffer-sampling analysis schema repair:** corrected the
+  prepared analyzer to read per-step support and posterior-sampling records
+  from the persisted `inner_m_step.steps` schema, require complete 32-round
+  coverage, and report full-support rows alongside sampled rows. This changes
+  no training artifact or scientific method. Verification covers a nested-
+  schema regression test, the focused analyzer tests, Python compilation,
+  formatting checks and rerunning analysis against all 14 validated receipts.
+
 - **2026-09-02, Q5 large-support M-step sampling:** added a generated,
   seven-seed comparison that retains 32 unique answer-guided Q5 traces and
   either updates over the full posterior or 16 categorical posterior draws.

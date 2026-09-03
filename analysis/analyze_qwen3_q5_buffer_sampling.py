@@ -85,6 +85,15 @@ def _normalized_auc(base: float, values: list[float]) -> float:
     return float(integrate(trajectory, rounds) / float(CHECKPOINTS[-1]))
 
 
+def _inner_steps(round_row: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Return persisted inner-step diagnostics from the current schema."""
+
+    value = (round_row.get("inner_m_step") or {}).get("steps") or []
+    if not isinstance(value, list):
+        raise ValueError("inner_m_step.steps must be a list")
+    return value
+
+
 def _verify_marker(
     path: Path,
     config_path: Path,
@@ -173,18 +182,41 @@ def load_results(
             sample_records = []
             backward_tokens = 0
             for round_row in diagnostics:
-                for inner in round_row.get("inner_step_diagnostics") or []:
+                for inner in _inner_steps(round_row):
                     backward_tokens += int((inner.get("support") or {}).get("backward_tokens") or 0)
                     sampling = inner.get("mstep_sampling") or {}
-                    for question in sampling.get("questions") or []:
-                        sample_records.append(question)
+                    questions = list(sampling.get("questions") or [])
+                    if sampling.get("mode") == "full_posterior":
+                        questions = [
+                            {
+                                "pid": int(question["pid"]),
+                                "posterior_support_size": int(question["rows"]),
+                                "draw_count": 0,
+                                "unique_draw_count": int(question["rows"]),
+                                "posterior_mass_covered": 1.0,
+                                "empirical_ess": None,
+                                "selected_indices": None,
+                                "multiplicities": None,
+                            }
+                            for question in (round_row.get("buffer") or {}).get("per_question") or []
+                        ]
+                    for question in questions:
+                        sample_records.append({
+                            "completed_rounds": int(round_row["completed_rounds"]),
+                            "inner_step": int(inner["inner_step"]),
+                            **question,
+                        })
             expected_mode = "posterior_categorical" if cell_id.endswith("MS16") else "full_posterior"
             if diagnostics and any(
                 (inner.get("mstep_sampling") or {}).get("mode") != expected_mode
                 for round_row in diagnostics
-                for inner in (round_row.get("inner_step_diagnostics") or [])
+                for inner in _inner_steps(round_row)
             ):
                 raise ValueError(f"{cell_id}/{seed}: M-step sampling mode changed")
+            if len(diagnostics) != 32 or any(len(_inner_steps(row)) != 1 for row in diagnostics):
+                raise ValueError(f"{cell_id}/{seed}: inner-step diagnostic coverage changed")
+            if not sample_records or backward_tokens <= 0:
+                raise ValueError(f"{cell_id}/{seed}: M-step mechanism diagnostics are incomplete")
             rows.append({
                 "cell": cell_id,
                 "seed": seed,
