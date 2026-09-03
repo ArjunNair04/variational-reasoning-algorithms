@@ -244,7 +244,7 @@
     {
       "registry_id": "qwen3_q5_buffer_sampling_20260902",
       "run_id": "1d5b0eb4",
-      "status": "submitted_queued",
+      "status": "validated_and_analyzed",
       "source_revision": "44e23c9847f1fd5c7a9deee337e6939417fff175",
       "execution_revision": "44e23c9847f1fd5c7a9deee337e6939417fff175",
       "account": "amanojna",
@@ -253,13 +253,13 @@
           "role": "payload",
           "job_id": "7332131",
           "tasks": 14,
-          "state": "queued_after_verified_release"
+          "state": "completed_validated"
         },
         {
           "role": "validator",
           "job_id": "7332132",
           "depends_on": "7332131",
-          "state": "dependency_held"
+          "state": "completed"
         }
       ],
       "dependency": {
@@ -274,6 +274,8 @@
       "official_test_used": false,
       "result_root": "~/po_results/2026-09-02/q5-buffer-sampling/qwen3-q5-buffer-sampling__1d5b0eb4",
       "validator_marker": "~/po_results/auto_state/qwen3_q5_buffer_sampling_1d5b0eb4.ok",
+      "analysis_root": "~/po_results/2026-09-03/analysis/qwen3-q5-buffer-sampling__1d5b0eb4-v2",
+      "analysis_revision": "68e39270ed36ab29c8d72929923e7d01c4065d01",
       "design": {
         "independent_unit": "paired training seed",
         "seeds": [1201, 1213, 1217, 1223, 1229, 1231, 1237],
@@ -290,15 +292,24 @@
         ]
       },
       "scientific_question": "Does retaining 32 unique Q5 traces improve over support 16, and can a 16-draw posterior-sampled M-step retain that benefit at lower backward-pass cost?",
+      "findings": [
+        "All 14 payload tasks, trained adapters, completion receipts and artifact hashes passed validation; no failure signature was present and the official GSM8K test was not used.",
+        "Full support 32 reached 81.86% Final Acc@1, 74.71% strict final accuracy and 80.20% trajectory AUC.",
+        "Against the paired support-16 Q5-MORE control, full support 32 improved Final Acc@1 by 0.96 pp with a paired 95% interval of [0.07, 1.82], and strict final accuracy by 0.89 pp [0.07, 1.71]. The extracted and strict AUC changes were smaller and their intervals included zero.",
+        "The 16-draw posterior-sampled M-step reached 81.32% Final Acc@1, 73.21% strict final accuracy and 80.21% trajectory AUC. Relative to full support it changed Final Acc@1 by -0.54 pp [-1.07, 0.04] and strict final accuracy by -1.50 pp [-2.21, -0.71].",
+        "Posterior sampling selected only 1.44 unique traces per question-step on average while covering 98.98% of posterior mass. It reduced mean backward tokens by 93.06% but reduced total accelerator-hours by only 6.15%, because generation and evaluation dominate wall-clock cost."
+      ],
       "limitations": [
         "The historical support-16 control is reused rather than rerun because it has the same seven seeds and frozen protocol.",
         "The fixed question schedule visits each optimization question once, so this tests within-question support depth rather than cross-round replay.",
+        "The same repeatedly used train-derived validation partition supports paired development evidence, not a fresh-question or official-test estimate.",
         "The official GSM8K test split remains sealed."
       ],
       "next_actions": [
-        "Submit the uncapped 14-task array only after immutable-commit, generated-YAML, runtime-profile and analyzer gates pass.",
-        "After completion, require all task receipts, artifact hashes, logs and the structured validator marker before analysis.",
-        "Compare Final Acc@1 first, then strict final accuracy and AUC; report unique sampled traces, posterior mass coverage, backward tokens and accelerator-hours."
+        "Treat support 32 with the full M-step as the strongest current Q5 support setting; preserve the uncertainty on trajectory AUC.",
+        "Do not replace the full M-step with plain posterior-categorical sampling: it collapses to roughly one or two unique traces and harms strict accuracy despite reducing backward tokens.",
+        "If M-step sampling is revisited, test a diversity-preserving constant-budget estimator such as posterior-stratified or without-replacement sampling rather than another categorical-draw count.",
+        "Use a fresh held-out or official-test confirmation only after the final method and stopping rule are frozen."
       ]
     }
   ]
