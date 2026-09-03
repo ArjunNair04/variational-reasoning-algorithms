@@ -315,9 +315,9 @@
     {
       "registry_id": "qwen3_q5_support_followup_20260903",
       "run_id": "6f89a2c1",
-      "status": "prepared",
-      "source_revision": null,
-      "execution_revision": null,
+      "status": "ready_for_submission",
+      "source_revision": "bfe939415978fda78e273d266e2c1b2d2c4cd957",
+      "execution_revision": "bfe939415978fda78e273d266e2c1b2d2c4cd957",
       "account": "amanojna",
       "scheduler_jobs": [],
       "dependency": {
