@@ -305,6 +305,8 @@ KNOBS = (
          "TRICE score estimator: basic or control_variate"),
     Knob("mstep_sample_size", int, "mss",
          "AC-ALG1 posterior draws per question used by the latent M-step; zero uses the full weighted support"),
+    Knob("mstep_sampling_strategy", str, "mstrat",
+         "AC-ALG1 finite-support M-step estimator: posterior_categorical or top_plus_residual"),
 )
 
 # Kept as an extension point for non-overridable runtime metadata. Every

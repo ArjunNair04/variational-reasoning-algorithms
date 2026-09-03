@@ -16,6 +16,7 @@ numerical oracle.
 | `f3950b2e` | PIS temperature-one control versus exact 50:50 temperature-one/temperature-1.2 mixture | 14 | 7 |
 | `f20c9e17` | Q5 support-depth and token-mean follow-ups; PIS update-reuse and rationale-only KL; exact signed sampled-support updates | 42 | 7 |
 | `1d5b0eb4` | Q5 support 32 with a full versus 16-draw posterior-sampled M-step; reuses the validated Q5-MORE support-16 control | 14 | 7 |
+| `6f89a2c1` | Q5 64-proposal full-support search versus exact-top plus 15 residual posterior draws; reuses both validated support-32 controls | 14 | 7 |
 
 All studies use the fixed training-derived 400-question validation partition.
 The official GSM8K test split remains unused. Results are reported as Final
@@ -45,6 +46,8 @@ python lm_study/generate_qwen3_17b_posterity_followups.py \
   --check lm_study/experiments_qwen3_17b_posterity_followups.yaml
 python lm_study/generate_qwen3_17b_q5_buffer_sampling.py \
   --check lm_study/experiments_qwen3_17b_q5_buffer_sampling.yaml
+python lm_study/generate_qwen3_17b_q5_support_followup.py \
+  --check lm_study/experiments_qwen3_17b_q5_support_followup.yaml
 PYTHONPATH=src:lm_study python lm_study/reference_kernel_audit.py
 ```
 
@@ -60,6 +63,7 @@ bash submit_qwen3_17b_pis_temperature_posterity_ucl.sh
 CONTROL_VALIDATOR_JOB_ID=<selected-method-validator-job> \
   bash submit_qwen3_17b_posterity_followups_ucl.sh
 bash submit_qwen3_17b_q5_buffer_sampling_ucl.sh
+bash submit_qwen3_17b_q5_support_followup_ucl.sh
 ```
 
 The array scripts omit `-tc`; SGE resource availability controls concurrency.

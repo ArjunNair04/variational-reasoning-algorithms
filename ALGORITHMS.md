@@ -76,6 +76,36 @@ Because the fixed question schedule visits each optimisation question once,
 this study changes within-question support depth rather than testing replay of
 the same question across outer rounds.
 
+#### Support-allocation follow-up
+
+The follow-up tests two ways to spend more computation without changing Q5's
+posterior. The first draws 64 candidates per selected question, keeps 32 unique
+FIFO entries under the existing buffer rule, and applies the exact full-support
+M-step. The question schedule remains four questions per round, so this changes
+within-question search depth without changing question breadth.
+
+The second retains the 32-candidate control and evaluates the largest posterior
+term exactly. If $t=\arg\max_i w_i$ and $R=\sum_{i\ne t}w_i$, it draws 15
+indices from the normalized residual posterior,
+
+$$
+j_m\sim\operatorname{Categorical}\left(\frac{w_i}{R}:i\ne t\right),
+\qquad m=1,\ldots,15,
+$$
+
+and estimates the weighted M-step gradient by
+
+$$
+\widehat g
+=w_tg_t+\frac{R}{15}\sum_{m=1}^{15}g_{j_m}.
+$$
+
+Conditional on the retained finite support, this estimator is unbiased for
+$\sum_iw_ig_i$. It cannot waste repeated draws on the dominant trace, while
+ordinary posterior-categorical sampling can do so when responsibilities are
+highly concentrated. Sampling uses an isolated deterministic random stream;
+proposal generation, question order and the next E-step remain unchanged.
+
 ### Related EM presets
 
 VIN and VOUT use the same joint posterior with persistent question-only support. VIN refreshes responsibilities at each local update; VOUT freezes them for the outer round. POLD uses fresh question-only support with uniform empirical weights. These are settings of the same update, not separate implementations.

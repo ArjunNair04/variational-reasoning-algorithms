@@ -15,6 +15,18 @@
 
 ## Change record
 
+- **2026-09-03, Q5 support-allocation follow-up:** added a generated,
+  seven-seed comparison between 64 proposals with the exact support-32 M-step
+  and 32 proposals with an exact dominant posterior term plus 15 residual
+  draws. The latter is an unbiased finite-support estimator that prevents the
+  dominant trace from consuming repeated Monte Carlo draws. Both cells retain
+  the canonical Q5 prompt, posterior, buffer, question breadth, one-step update,
+  EOS target and attention-plus-MLP rank-16 LoRA. The study reuses both
+  validated support-32 controls and remains validation-only. Verification
+  covers estimator determinism and unbiasedness, fail-closed profile rejection,
+  generated YAML, all task coordinates, frozen paired analysis, artifact
+  validation, Python compilation, shell syntax and the repository test suite.
+
 - **2026-09-03, Q5 buffer-sampling analysis schema repair:** corrected the
   prepared analyzer to read per-step support and posterior-sampling records
   from the persisted `inner_m_step.steps` schema, require complete 32-round

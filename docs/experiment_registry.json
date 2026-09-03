@@ -311,6 +311,60 @@
         "If M-step sampling is revisited, test a diversity-preserving constant-budget estimator such as posterior-stratified or without-replacement sampling rather than another categorical-draw count.",
         "Use a fresh held-out or official-test confirmation only after the final method and stopping rule are frozen."
       ]
+    },
+    {
+      "registry_id": "qwen3_q5_support_followup_20260903",
+      "run_id": "6f89a2c1",
+      "status": "prepared",
+      "source_revision": null,
+      "execution_revision": null,
+      "account": "amanojna",
+      "scheduler_jobs": [],
+      "dependency": {
+        "registry_id": "qwen3_q5_buffer_sampling_20260902",
+        "run_id": "1d5b0eb4",
+        "completion_criterion": "structured 14-task Q5 buffer-sampling validator marker"
+      },
+      "config": "lm_study/experiments_qwen3_17b_q5_support_followup.yaml",
+      "submitter": "lm_study/submit_qwen3_17b_q5_support_followup_ucl.sh",
+      "analyzer": "analysis/analyze_qwen3_q5_support_followup.py",
+      "expected_tasks": 14,
+      "official_test_used": false,
+      "result_root": "~/po_results/2026-09-03/q5-support-followup/qwen3-q5-support-followup__6f89a2c1",
+      "validator_marker": "~/po_results/auto_state/qwen3_q5_support_followup_6f89a2c1.ok",
+      "analysis_root": null,
+      "design": {
+        "independent_unit": "paired training seed",
+        "seeds": [1201, 1213, 1217, 1223, 1229, 1231, 1237],
+        "new_cells": [
+          "Q5-S64-B32-U1-FULL",
+          "Q5-S32-B32-U1-TOPRES15"
+        ],
+        "historical_controls": [
+          "Q5-S32-B32-U1-FULL",
+          "Q5-S32-B32-U1-MS16"
+        ],
+        "historical_control_run_id": "1d5b0eb4",
+        "primary_metric_order": [
+          "Final Acc@1",
+          "strict final accuracy",
+          "normalized trajectory AUC"
+        ]
+      },
+      "scientific_question": "Can deeper within-question candidate search improve Q5, and can an exact-top plus residual estimator preserve posterior-tail information more effectively than ordinary categorical M-step sampling?",
+      "findings": [],
+      "limitations": [
+        "The two support-32 controls are reused rather than rerun because they use the same seven seeds and frozen protocol.",
+        "The S64 cell doubles proposal draws while retaining four questions per round, so it tests within-question search depth rather than question breadth.",
+        "The exact-top plus residual estimator is unbiased conditional on the retained finite support; it does not correct Q5's answer-guided proposal mismatch.",
+        "The same repeatedly used train-derived validation partition supports paired development evidence, not a fresh-question or official-test estimate.",
+        "The official GSM8K test split remains sealed."
+      ],
+      "next_actions": [
+        "Bind the prepared protocol to an immutable execution revision, deploy it to the AMN checkout and submit the held 14-task payload with its dependent validator.",
+        "After validation, compare S64 full support with S32 full support and compare exact-top residual sampling with both full support and ordinary categorical sampling.",
+        "Do not promote either intervention until all seven seeds, artifacts, logs, receipts and preregistered paired contrasts pass validation."
+      ]
     }
   ]
 }

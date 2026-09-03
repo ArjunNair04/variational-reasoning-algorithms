@@ -164,6 +164,7 @@ ALGORITHM_PROFILES = (
     "barber_verifier",
     "q5_support_reallocation",
     "q5_buffer_sampling",
+    "q5_support_followup",
     "q5_revisit_concise",
     "l2r_reader_ess_closure",
     "l2r_credit_pilot",
@@ -176,6 +177,11 @@ ALGORITHM_PROFILES = (
     "l2r_curated_buffer_pilot",
     "l2r_small_group_replay_pilot",
     "l2r_exact_signed_factorial",
+)
+
+MSTEP_SAMPLING_STRATEGIES = (
+    "posterior_categorical",
+    "top_plus_residual",
 )
 ADAPTER_POLICY_MODES = ("current", "frozen_base")
 RESPONSIBILITY_REFRESH_MODES = ("inner_step", "outer_round")
@@ -5185,13 +5191,21 @@ def _posterior_sampled_mstep_support(
     seed: int,
     outer_round: int,
     inner_step: int,
+    sampling_strategy: str = "posterior_categorical",
 ) -> tuple[dict[int, list[TraceRow]], dict[int, torch.Tensor], dict[str, object]]:
     """Draw an unbiased finite M-step support from fixed responsibilities.
 
-    Repeated categorical draws are represented by multiplicity weights over
-    unique rows.  The deterministic per-question seed makes the draw stable
-    across process restarts without consuming the proposal/question RNG.
+    ``posterior_categorical`` uses ordinary iid posterior draws.
+    ``top_plus_residual`` evaluates the highest-weight trace exactly and uses
+    the remaining draw budget for an unbiased estimate of the residual sum.
+    Deterministic per-question seeds keep either estimator stable across
+    process restarts without consuming the proposal/question RNG.
     """
+
+    if sampling_strategy not in MSTEP_SAMPLING_STRATEGIES:
+        raise ValueError(
+            f"unknown M-step sampling strategy {sampling_strategy!r}"
+        )
 
     if sample_size <= 0:
         return buffers, weights_by_pid, {
@@ -5215,19 +5229,51 @@ def _posterior_sampled_mstep_support(
         real_mass = float(values.sum())
         if not math.isfinite(real_mass) or real_mass <= 0:
             raise ValueError("M-step posterior must have positive finite real mass")
+        if not np.all(np.isfinite(values)) or np.any(values < 0):
+            raise ValueError("M-step posterior weights must be finite and nonnegative")
         probabilities = values / real_mass
         generator = np.random.default_rng(
             np.random.SeedSequence(
                 [int(seed), int(outer_round), int(inner_step), pid, 0x4D535445]
             )
         )
-        draws = generator.choice(
-            len(rows), size=int(sample_size), replace=True, p=probabilities
-        )
-        counts = np.bincount(draws, minlength=len(rows))
-        selected = np.flatnonzero(counts)
-        empirical = counts[selected].astype(np.float64) / float(sample_size)
-        empirical *= real_mass
+        exact_indices: list[int] = []
+        residual_draw_count = 0
+        if sampling_strategy == "posterior_categorical":
+            draws = generator.choice(
+                len(rows), size=int(sample_size), replace=True, p=probabilities
+            )
+            counts = np.bincount(draws, minlength=len(rows))
+            empirical_by_index = counts.astype(np.float64) * (
+                real_mass / float(sample_size)
+            )
+        else:
+            if sample_size < 2:
+                raise ValueError(
+                    "top_plus_residual requires an M-step sample size of at least two"
+                )
+            top_index = int(np.argmax(values))
+            exact_indices = [top_index]
+            counts = np.zeros(len(rows), dtype=np.int64)
+            empirical_by_index = np.zeros(len(rows), dtype=np.float64)
+            empirical_by_index[top_index] = values[top_index]
+            residual_values = values.copy()
+            residual_values[top_index] = 0.0
+            residual_mass = float(residual_values.sum())
+            if residual_mass > 0:
+                residual_draw_count = int(sample_size) - 1
+                draws = generator.choice(
+                    len(rows),
+                    size=residual_draw_count,
+                    replace=True,
+                    p=residual_values / residual_mass,
+                )
+                counts = np.bincount(draws, minlength=len(rows))
+                empirical_by_index += counts.astype(np.float64) * (
+                    residual_mass / float(residual_draw_count)
+                )
+        selected = np.flatnonzero(empirical_by_index)
+        empirical = empirical_by_index[selected]
         sampled_buffers[pid] = [rows[int(index)] for index in selected]
         sampled_weights[pid] = weights.new_tensor(empirical)
         covered_mass = float(values[selected].sum())
@@ -5235,14 +5281,17 @@ def _posterior_sampled_mstep_support(
             "pid": pid,
             "posterior_support_size": len(rows),
             "draw_count": int(sample_size),
+            "exact_trace_count": len(exact_indices),
+            "residual_draw_count": residual_draw_count,
             "unique_draw_count": int(len(selected)),
             "posterior_mass_covered": covered_mass,
             "empirical_ess": float(1.0 / np.square(empirical / real_mass).sum()),
             "selected_indices": [int(index) for index in selected],
             "multiplicities": [int(counts[index]) for index in selected],
+            "exact_indices": exact_indices,
         })
     return sampled_buffers, sampled_weights, {
-        "mode": "posterior_categorical",
+        "mode": sampling_strategy,
         "configured_draws_per_question": int(sample_size),
         "questions": questions,
         "mean_unique_draws": _mean_or_none(
@@ -5339,6 +5388,7 @@ def _inner_weighted_em_steps(
     answer_target_termination: str = "none",
     latent_mstep_objective: str = "joint",
     mstep_sample_size: int = 0,
+    mstep_sampling_strategy: str = "posterior_categorical",
     run_seed: int = 0,
     outer_round: int = 0,
     update_geometry: str = "sum",
@@ -5406,6 +5456,8 @@ def _inner_weighted_em_steps(
             span for both latent objective terms.
         mstep_sample_size: Posterior draws per question for the latent M-step;
             zero preserves the exact full-support objective.
+        mstep_sampling_strategy: Categorical posterior draws or an exact
+            highest-weight term plus sampled residual estimator.
         run_seed: Training seed used only to derive isolated M-step draws.
         outer_round: Zero-based outer round used only to derive those draws.
         update_geometry: ``sum`` for the original gradient, ``mgda`` for a
@@ -5474,6 +5526,10 @@ def _inner_weighted_em_steps(
         raise ValueError("diagnostics_gradient_questions must be nonnegative")
     if mstep_sample_size < 0:
         raise ValueError("mstep_sample_size must be nonnegative")
+    if mstep_sampling_strategy not in MSTEP_SAMPLING_STRATEGIES:
+        raise ValueError(
+            f"unknown M-step sampling strategy {mstep_sampling_strategy!r}"
+        )
     diagnostic_state = diagnostic_state if diagnostic_state is not None else {}
     diagnostic_state.setdefault("accepted_steps", 0)
     diagnostic_state.setdefault("consecutive_rejections", 0)
@@ -5537,6 +5593,7 @@ def _inner_weighted_em_steps(
                 seed=run_seed,
                 outer_round=outer_round,
                 inner_step=inner_index,
+                sampling_strategy=mstep_sampling_strategy,
             )
         )
         mstep_labelled_weights = {
@@ -7856,6 +7913,7 @@ def _validate_ac_alg1_run_config(
     trace_representation = config.trace_representation
     latent_mstep_objective = config.latent_mstep_objective
     mstep_sample_size = config.mstep_sample_size
+    mstep_sampling_strategy = config.mstep_sampling_strategy
     answer_event_mode = config.answer_event_mode
     answer_target_termination = config.answer_target_termination
     update_geometry = config.update_geometry
@@ -8489,9 +8547,16 @@ def _validate_ac_alg1_run_config(
         )
     if mstep_sample_size < 0:
         raise ValueError("mstep_sample_size must be nonnegative")
-    if mstep_sample_size > 0 and algorithm_profile != "q5_buffer_sampling":
+    if mstep_sampling_strategy not in MSTEP_SAMPLING_STRATEGIES:
         raise ValueError(
-            "posterior-sampled M-steps are isolated to q5_buffer_sampling"
+            f"unknown M-step sampling strategy {mstep_sampling_strategy!r}"
+        )
+    if mstep_sample_size > 0 and algorithm_profile not in {
+        "q5_buffer_sampling",
+        "q5_support_followup",
+    }:
+        raise ValueError(
+            "posterior-sampled M-steps are isolated to registered Q5 profiles"
         )
     if latent_mstep_objective == "exact_signed_trace_answer" and (
         algorithm_profile != "l2r_exact_signed_factorial"
@@ -10028,13 +10093,11 @@ def _validate_ac_alg1_run_config(
                     "q5_support_reallocation verifier settings changed: "
                     f"{verifier_mismatches}"
                 )
-    elif algorithm_profile == "q5_buffer_sampling":
+    elif algorithm_profile in {"q5_buffer_sampling", "q5_support_followup"}:
         q5_requirements = {
             "rounds": (config.rounds, 32),
             "L_batch": (config.L_batch, 0),
             "U_batch": (U_batch, 4),
-            "G_label": (config.G_label, 32),
-            "G_answer_only": (config.G_answer_only, 32),
             "inner_steps": (config.inner_steps, 1),
             "lr": (config.lr, 1.0e-5),
             "buffer_limit": (config.buffer_limit, 32),
@@ -10097,15 +10160,37 @@ def _validate_ac_alg1_run_config(
         }
         if mismatches:
             raise ValueError(
-                "q5_buffer_sampling rejected hidden algorithm changes: "
+                f"{algorithm_profile} rejected hidden algorithm changes: "
                 f"{mismatches}"
             )
-        if mstep_sample_size not in {0, 16}:
+        coordinates = (
+            config.G_label,
+            config.G_answer_only,
+            mstep_sample_size,
+            mstep_sampling_strategy,
+        )
+        permitted_coordinates = (
+            {
+                (32, 32, 0, "posterior_categorical"),
+                (32, 32, 16, "posterior_categorical"),
+            }
+            if algorithm_profile == "q5_buffer_sampling"
+            else {
+                (64, 64, 0, "posterior_categorical"),
+                (32, 32, 16, "top_plus_residual"),
+            }
+        )
+        if coordinates not in permitted_coordinates:
+            if algorithm_profile == "q5_buffer_sampling":
+                raise ValueError(
+                    "q5_buffer_sampling permits only full support or 16 posterior draws"
+                )
             raise ValueError(
-                "q5_buffer_sampling permits only full support or 16 posterior draws"
+                "q5_support_followup rejected undeclared support estimator "
+                f"coordinates {coordinates}"
             )
         if policy_kl_coef is not None or policy_anchor_mode != "fixed":
-            raise ValueError("q5_buffer_sampling forbids policy anchoring")
+            raise ValueError(f"{algorithm_profile} forbids policy anchoring")
     elif algorithm_profile == "q5_revisit_concise":
         q5_requirements = {
             "rounds": (config.rounds, 32),
@@ -10321,13 +10406,14 @@ def _validate_q5_support_task_contract(
 
     if config.algorithm_profile not in {
         "q5_support_reallocation",
+        "q5_support_followup",
         "q5_revisit_concise",
     }:
         return
-    if config.algorithm_profile == "q5_revisit_concise":
+    if config.algorithm_profile in {"q5_support_followup", "q5_revisit_concise"}:
         if len(task.prompts) != 128:
             raise ValueError(
-                "q5_revisit_concise task pool changed: expected 128, found "
+                f"{config.algorithm_profile} task pool changed: expected 128, found "
                 f"{len(task.prompts)}"
             )
         return
@@ -10536,6 +10622,7 @@ def _execute_ac_alg1_update(
     trace_representation = config.trace_representation
     latent_mstep_objective = config.latent_mstep_objective
     mstep_sample_size = config.mstep_sample_size
+    mstep_sampling_strategy = config.mstep_sampling_strategy
     answer_event_mode = config.answer_event_mode
     answer_target_termination = config.answer_target_termination
     update_geometry = config.update_geometry
@@ -10968,6 +11055,7 @@ def _execute_ac_alg1_update(
         answer_target_termination=answer_target_termination,
         latent_mstep_objective=latent_mstep_objective,
         mstep_sample_size=mstep_sample_size,
+        mstep_sampling_strategy=mstep_sampling_strategy,
         run_seed=config.seed,
         outer_round=t,
         update_geometry=update_geometry,
@@ -11138,6 +11226,7 @@ def _record_ac_alg1_round(
     trace_representation = config.trace_representation
     latent_mstep_objective = config.latent_mstep_objective
     mstep_sample_size = config.mstep_sample_size
+    mstep_sampling_strategy = config.mstep_sampling_strategy
     answer_event_mode = config.answer_event_mode
     answer_target_termination = config.answer_target_termination
     update_geometry = config.update_geometry
@@ -11300,6 +11389,7 @@ def _record_ac_alg1_round(
         "trace_representation": trace_representation,
         "latent_mstep_objective": latent_mstep_objective,
         "mstep_sample_size": mstep_sample_size,
+        "mstep_sampling_strategy": mstep_sampling_strategy,
         "answer_event_mode": answer_event_mode,
         "update_geometry": update_geometry,
         "step_acceptance": step_acceptance,
@@ -12099,6 +12189,7 @@ def run_ac_alg1(
     trace_representation: str = "reasoning",
     latent_mstep_objective: str = "joint",
     mstep_sample_size: int = 0,
+    mstep_sampling_strategy: str = "posterior_categorical",
     answer_event_mode: str = "legacy",
     answer_target_termination: str = "none",
     update_geometry: str = "sum",
@@ -12258,6 +12349,8 @@ def run_ac_alg1(
             in latent terms.
         mstep_sample_size: Posterior draws per question used by the latent
             M-step. Zero preserves the full posterior-weighted support.
+        mstep_sampling_strategy: Categorical posterior sampling or an exact
+            highest-weight term plus sampled residual estimator.
         answer_event_mode: Replay-compatible or strict terminal-marker answer
             event shared with evaluation.
         answer_target_termination: ``none`` preserves historical answer targets;

@@ -157,6 +157,7 @@ class ACAlg1RunConfig(_ConfigFromCall):
     trace_representation: str
     latent_mstep_objective: str
     mstep_sample_size: int
+    mstep_sampling_strategy: str
     answer_event_mode: str
     answer_target_termination: str
     update_geometry: str
