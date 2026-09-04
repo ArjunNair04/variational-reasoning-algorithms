@@ -21,5 +21,6 @@ from weighted_em import run_weighted_em   # noqa: F401
 from grpo import run_grpo        # noqa: F401
 from raft import run_raft        # noqa: F401
 from rloo import run_rloo        # noqa: F401
+from jepo import run_jepo        # noqa: F401
 from dpo import run_dpo          # noqa: F401
 from apl import run_apl          # noqa: F401

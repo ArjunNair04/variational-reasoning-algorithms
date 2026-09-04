@@ -376,6 +376,7 @@ def sample_round(
     question_sampler=None,
     proposal_prompt="question",
     reward_requires_eos=False,
+    proposal_temperature=1.0,
 ):
     """One round: sample G completions for each of B//G random prompts and score them.
     Returns (pids, pid_row, ids, comp_mask, rew, texts)."""
@@ -404,7 +405,13 @@ def sample_round(
             )
             for i in pid_row
         ]
-    ids, mask, texts = sample_multi(model, tok, prompts, max_new=getattr(task, "max_new", MAX_NEW))
+    ids, mask, texts = sample_multi(
+        model,
+        tok,
+        prompts,
+        temperature=proposal_temperature,
+        max_new=getattr(task, "max_new", MAX_NEW),
+    )
     rew = np.asarray(task.reward(texts, pid_row), dtype=np.float64)
     if reward_requires_eos:
         eos = natural_eos_mask(ids, mask, tok.eos_token_id)

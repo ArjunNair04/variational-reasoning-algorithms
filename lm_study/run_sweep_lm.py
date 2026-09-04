@@ -80,6 +80,7 @@ from result_contract import (
 from prompt_contract import build_gsm8k_prompt_contract, write_prompt_contract
 from ac_alg1_q5_multichain import run_q5_multichain
 from ac_alg1_trice import run_ac_alg1_trice
+from jepo import run_jepo
 from self_training import run_gold_cot_sft, run_source_self_training
 
 try:                                                      # per-round logging coexists with the tqdm bar
@@ -723,6 +724,7 @@ METHODS = load_method_registry(
         "run_weighted_em": run_weighted_em,
         "run_raft": run_raft,
         "run_rloo": run_rloo,
+        "run_jepo": run_jepo,
         "run_grpo": run_grpo,
         "run_dpo": run_dpo,
         "run_apl": run_apl,

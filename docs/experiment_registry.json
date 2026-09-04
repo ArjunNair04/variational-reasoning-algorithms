@@ -365,6 +365,59 @@
         "After validation, compare S64 full support with S32 full support and compare exact-top residual sampling with both full support and ordinary categorical sampling.",
         "Do not promote either intervention until all seven seeds, artifacts, logs, receipts and preregistered paired contrasts pass validation."
       ]
+    },
+    {
+      "registry_id": "qwen3_jepo_comparator_20260904",
+      "run_id": "7452ba96",
+      "status": "ready_for_submission",
+      "source_revision": null,
+      "execution_revision": null,
+      "account": "amanojna",
+      "scheduler_jobs": [],
+      "dependency": {
+        "registry_id": "qwen3_selected_method_posterity_20260829",
+        "run_id": "68078ecc",
+        "completion_criterion": "structured 91-task selected-method posterity validator marker"
+      },
+      "config": "lm_study/experiments_qwen3_17b_jepo_comparator.yaml",
+      "submitter": "lm_study/submit_qwen3_17b_jepo_comparator_ucl.sh",
+      "analyzer": "analysis/analyze_qwen3_jepo_comparator.py",
+      "expected_tasks": 7,
+      "official_test_used": false,
+      "result_root": "~/po_results/2026-09-04/jepo-comparator/qwen3-jepo-ms4__7452ba96",
+      "validator_marker": "~/po_results/auto_state/qwen3_jepo_comparator_7452ba96.ok",
+      "analysis_root": null,
+      "design": {
+        "independent_unit": "paired training seed",
+        "seeds": [1201, 1213, 1217, 1223, 1229, 1231, 1237],
+        "new_cells": ["JEPO-MS4-LR1e-5"],
+        "historical_controls": [
+          "CTRL-base",
+          "Q5-AD-M-LR1e-5-U1-K16",
+          "PIS-Q-S8-B8-U4",
+          "TRICE-LR1e-4-CV",
+          "RLOO-S16-B8-U4"
+        ],
+        "historical_control_run_id": "68078ecc",
+        "primary_metric_order": [
+          "Final Acc@1",
+          "strict final accuracy",
+          "normalized trajectory AUC"
+        ]
+      },
+      "scientific_question": "Can a paper-derived four-sample JEPO objective improve Qwen3-1.7B GSM8K reasoning under the same training-generation budget and paired validation protocol as Q5 and PIS?",
+      "findings": [],
+      "limitations": [
+        "This preserves JEPO's multi-sample estimator and published coefficients but adapts it to the shared Qwen LoRA learning rate, model, dataset and generation budget.",
+        "Historical same-seed controls are reused rather than rerun.",
+        "The fixed train-derived validation partition supports paired development evidence, not a fresh-question or official-test estimate.",
+        "The official GSM8K test split remains sealed."
+      ],
+      "next_actions": [
+        "Bind the generated protocol to an immutable execution revision, deploy it to AMN and submit only its seven held JEPO tasks with a dependent validator.",
+        "After validation, report Final Acc@1, strict final accuracy and AUC against the same-seed frozen base, with descriptive Q5, PIS, TRICE-CV and RLOO context.",
+        "Do not tune JEPO on these seven outcomes; any follow-up must be separately declared."
+      ]
     }
   ]
 }

@@ -13,6 +13,13 @@ from .em import (
     weighted_joint_loss,
 )
 from .self_training import Candidate, select_correct, star_examples
+from .jepo import (
+    JEPOMultisampleTerms,
+    fixed_masked_coefficients,
+    jepo_multisample_terms,
+    leave_one_out_advantages,
+    standardize_and_clip,
+)
 from .policy_gradient import (
     grpo_advantages,
     grpo_loss,
@@ -31,6 +38,7 @@ from .trice import (
 __all__ = [
     "Chain",
     "Candidate",
+    "JEPOMultisampleTerms",
     "NullLatentPosterior",
     "Proposal",
     "ScoreTerm",
@@ -41,7 +49,10 @@ __all__ = [
     "grpo_advantages",
     "grpo_loss",
     "importance_weights",
+    "fixed_masked_coefficients",
+    "jepo_multisample_terms",
     "joint_weights",
+    "leave_one_out_advantages",
     "null_latent_weights",
     "pis_weights",
     "q5_weights",
@@ -49,6 +60,7 @@ __all__ = [
     "rloo_loss",
     "select_correct",
     "star_examples",
+    "standardize_and_clip",
     "trice_step",
     "uniform_weights",
     "weighted_joint_loss",

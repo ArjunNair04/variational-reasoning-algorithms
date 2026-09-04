@@ -243,6 +243,10 @@ methods:
   RLOO:
     implementation: run_rloo
     parameters: {}
+  JEPO:
+    implementation: run_jepo
+    description: Multi-sample Jensen's Evidence lower bound Policy Optimization with format and KL controls.
+    parameters: {}
   GRPO:
     implementation: run_grpo
     parameters: {}

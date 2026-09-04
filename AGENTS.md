@@ -15,6 +15,18 @@
 
 ## Change record
 
+- **2026-09-04, seven-seed JEPO comparator:** added the multi-sample Jensen
+  evidence policy objective as one new common-protocol comparator cell on the
+  established seven paired seeds. The implementation uses four
+  question-conditioned samples, leave-one-out trace credit, a log-mean gold
+  answer term, invalid-format masking with leave-one-out format credit and a
+  frozen-policy KL penalty. No historical comparator is rerun. The generated
+  protocol remains validation-only and binds each task to its configuration
+  hash and execution commit. Verification covers numerical estimator tests,
+  fail-closed runtime axes, generated-YAML equality, all seven task mappings,
+  frozen analysis, artifact/receipt validation, Python compilation, shell
+  syntax and the repository test suite.
+
 - **2026-09-03, Q5 support-allocation follow-up:** added a generated,
   seven-seed comparison between 64 proposals with the exact support-32 M-step
   and 32 proposals with an exact dominant posterior term plus 15 residual

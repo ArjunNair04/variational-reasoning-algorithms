@@ -307,6 +307,12 @@ KNOBS = (
          "AC-ALG1 posterior draws per question used by the latent M-step; zero uses the full weighted support"),
     Knob("mstep_sampling_strategy", str, "mstrat",
          "AC-ALG1 finite-support M-step estimator: posterior_categorical or top_plus_residual"),
+    Knob("jepo_supervised_coef", float, "jepsup",
+         "JEPO coefficient on the multi-sample gold-answer log-mean-probability term"),
+    Knob("jepo_format_penalty", float, "jepfmt",
+         "JEPO penalty assigned to generations that violate the strict output format"),
+    Knob("jepo_advantage_clip", float, "jepclip",
+         "JEPO symmetric clip after population-standard-deviation advantage scaling"),
 )
 
 # Kept as an extension point for non-overridable runtime metadata. Every

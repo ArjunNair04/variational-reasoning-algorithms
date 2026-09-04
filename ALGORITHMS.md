@@ -23,6 +23,40 @@ $$
 
 The terminal answer marker is part of the rationale sequence. The numerical answer and one tokenizer EOS token form the answer target.
 
+### JEPO comparator
+
+JEPO samples four responses for each ordinary question-only prompt. For a
+question $x$, sampled reasoning traces $h_1,\ldots,h_K$ and known terminal
+answer $y^\star$, its multi-sample answer objective is
+
+$$
+\log\left(\frac{1}{K}\sum_{i=1}^{K}
+p_\theta(y^\star,\mathrm{EOS}\mid x,h_i)\right).
+$$
+
+Each valid trace receives leave-one-out credit. Writing
+$\ell_i=\log p_\theta(y^\star,\mathrm{EOS}\mid x,h_i)$,
+
+$$
+A_i=
+\log\left(\frac{1}{K}\sum_j e^{\ell_j}\right)
+-
+\log\left(\frac{1}{K-1}\sum_{j\ne i}e^{\ell_j}\right).
+$$
+
+The detached $A_i$ values are divided by their population standard deviation
+and clipped to $[-1,1]$ before weighting $\nabla\log p_\theta(h_i\mid x)$.
+Gold-answer tokens receive the exact gradient of the log-mean term through
+softmax weights over $\ell_i$. Strict-format-invalid responses are omitted
+from the answer lower bound and receive a separate leave-one-out format
+signal; masked positions retain the fixed generated-batch denominator, so
+fewer valid responses cannot enlarge the surviving gradients. A token-level
+KL penalty to the frozen base is applied to sampled
+responses. The comparator uses the paper-derived $K=4$, supervised
+coefficient $0.01$, format penalty $10$, clip $1$ and KL coefficient $0.001$;
+the model, LoRA surface, learning rate and generation budget follow the shared
+Qwen/GSM8K protocol rather than the paper's full-model MATH training scale.
+
 ### PIS
 
 PIS draws a fresh multiset from the current question-only policy. The proposal density therefore cancels from the self-normalised importance ratio:

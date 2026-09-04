@@ -18,6 +18,12 @@ from variational_reasoning.policy_gradient import (
     rloo_advantages,
     rloo_loss,
 )
+from variational_reasoning.jepo import (
+    fixed_masked_coefficients,
+    jepo_multisample_terms,
+    leave_one_out_advantages,
+    standardize_and_clip,
+)
 from variational_reasoning.self_training import Candidate, select_correct, star_examples
 from variational_reasoning.settings import (
     DEVELOPMENT_SETTINGS,
@@ -184,8 +190,7 @@ def test_trice_control_variate_coefficients():
         Proposal(2, "c2", "c2", True),
     ]
     transitions = [
-        trice_step(chain, proposal)[1]
-        for chain, proposal in zip(chains, proposals)
+        trice_step(chain, proposal)[1] for chain, proposal in zip(chains, proposals)
     ]
     terms, beta = control_variate_terms(transitions)
 
@@ -226,8 +231,56 @@ def test_star_uses_rationalization_only_after_direct_failure():
         Candidate(0, "direct-0", True, True, "direct"),
         Candidate(1, "direct-1", False, True, "direct"),
     ]
-    rationalized = [
-        Candidate(1, "hinted-1", True, True, "answer_rationalized")
-    ]
+    rationalized = [Candidate(1, "hinted-1", True, True, "answer_rationalized")]
     selected = star_examples(direct, rationalized)
     assert [candidate.completion for candidate in selected] == ["direct-0", "hinted-1"]
+
+
+def test_jepo_multisample_terms_match_logmean_leave_one_out_credit():
+    terms = jepo_multisample_terms(
+        answer_logp=np.log([0.2, 0.8, 0.5, 0.5]),
+        question_ids=[0, 0, 1, 1],
+    )
+    np.testing.assert_allclose(terms.answer_weights, [0.2, 0.8, 0.5, 0.5])
+    expected = [np.log(0.5) - np.log(0.8), np.log(0.5) - np.log(0.2), 0.0, 0.0]
+    np.testing.assert_allclose(terms.raw_trace_advantages, expected)
+    assert terms.active_groups == 2
+    assert np.max(np.abs(terms.trace_advantages)) <= 1.0
+
+
+def test_jepo_format_mask_excludes_rows_without_changing_other_groups():
+    terms = jepo_multisample_terms(
+        answer_logp=[-2.0, -1.0, -4.0, -3.0],
+        question_ids=[0, 0, 1, 1],
+        active=[True, False, True, True],
+    )
+    np.testing.assert_allclose(terms.answer_weights[:2], [1.0, 0.0])
+    np.testing.assert_allclose(terms.answer_weights[2:].sum(), 1.0)
+    assert terms.raw_trace_advantages[0] == pytest.approx(0.0)
+    assert not terms.active[1]
+
+
+def test_jepo_format_advantage_and_normalization_are_group_local_then_global():
+    raw = leave_one_out_advantages(
+        rewards=[0.0, -10.0, 0.0, 0.0],
+        question_ids=[0, 0, 1, 1],
+    )
+    np.testing.assert_allclose(raw, [10.0, -10.0, 0.0, 0.0])
+    normalized = standardize_and_clip(raw, clip=1.0)
+    np.testing.assert_allclose(normalized, [1.0, -1.0, 0.0, 0.0])
+
+
+def test_jepo_masking_keeps_the_fixed_generated_batch_denominator():
+    terms = jepo_multisample_terms(
+        answer_logp=[-1.0, -2.0],
+        question_ids=[0, 1],
+        active=[True, True],
+    )
+    trace, answer = fixed_masked_coefficients(
+        terms,
+        question_count=2,
+        samples_per_question=4,
+        supervised_coefficient=0.01,
+    )
+    np.testing.assert_allclose(trace, [0.0, 0.0])
+    np.testing.assert_allclose(answer, [0.005, 0.005])
