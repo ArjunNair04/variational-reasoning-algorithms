@@ -15,6 +15,14 @@
 
 ## Change record
 
+- **2026-09-04, JEPO cluster import-path repair:** prepend the repository's
+  `src` and `lm_study` directories to `PYTHONPATH` in the JEPO submitter and
+  GPU runner. This is an infrastructure-only repair for AMN's uninstalled
+  source layout; the JEPO estimator, generated configuration, seeds and task
+  mapping are unchanged. Verification covers a scheduler regression assertion,
+  Python compilation, shell syntax, generated-YAML equality, all seven dry-run
+  coordinates and the full repository test suite.
+
 - **2026-09-04, seven-seed JEPO comparator:** added the multi-sample Jensen
   evidence policy objective as one new common-protocol comparator cell on the
   established seven paired seeds. The implementation uses four

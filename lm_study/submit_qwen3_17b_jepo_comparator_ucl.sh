@@ -12,6 +12,7 @@ CONTROL_MARKER=${CONTROL_MARKER:-$HOME/po_results/auto_state/qwen3_selected_meth
 CLAIM_DIR=${CLAIM_DIR:-$HOME/po_results/auto_state/qwen3_jepo_comparator_20260904.submit.claim}
 
 source "$SCRIPT_DIR/ucl_python_env.sh"
+export PYTHONPATH="$PROJ/src:$SCRIPT_DIR${PYTHONPATH:+:$PYTHONPATH}"
 
 test -z "$(cd "$PROJ" && git status --porcelain --untracked-files=no)" || {
   echo "ERROR: tracked worktree is dirty" >&2
@@ -44,7 +45,7 @@ trap 'rmdir "$CLAIM_DIR" 2>/dev/null || true' EXIT
 bash -n "$SCRIPT_DIR/run_qwen3_17b_jepo_comparator_ucl.sh"
 bash -n "$SCRIPT_DIR/validate_qwen3_17b_jepo_comparator_ucl.sh"
 "$VENV/bin/python" "$SCRIPT_DIR/generate_qwen3_17b_jepo_comparator.py" --check "$YAML"
-PYTHONPATH="$SCRIPT_DIR:$PROJ/analysis:$PROJ/src" "$VENV/bin/python" \
+PYTHONPATH="$PROJ/analysis:$PYTHONPATH" "$VENV/bin/python" \
   "$PROJ/analysis/analyze_qwen3_jepo_comparator.py" \
   --config "$YAML" --validate-design-only >/dev/null
 

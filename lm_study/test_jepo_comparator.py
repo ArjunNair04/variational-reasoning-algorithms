@@ -75,6 +75,8 @@ def test_scheduler_is_uncapped_and_submission_is_held() -> None:
     assert "#$ -l gpu_type=h100" in runner
     assert "#$ -l tmem=24G" in runner
     assert "cell_count=1" in runner and "seed_count=7" in runner
+    assert 'export PYTHONPATH="$PROJ/src:$PROJ/lm_study' in runner
+    assert 'export PYTHONPATH="$PROJ/src:$SCRIPT_DIR' in submitter
     assert "qsub -h" in submitter
     assert 'qsub -hold_jid "$payload_job"' in submitter
     assert "qwen3_jepo_comparator.${SOURCE_JOB_ID}.*.log" in validator

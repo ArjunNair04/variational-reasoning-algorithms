@@ -22,6 +22,7 @@ export LIBFFI_ROOT=${LIBFFI_ROOT:-/share/apps/libffi-3.4.6}
 export CUDA_SOURCE=${CUDA_SOURCE:-/share/apps/source_files/cuda/cuda-11.8.source}
 export PYTORCH_CUDA_ALLOC_CONF=${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:True}
 export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1
+export PYTHONPATH="$PROJ/src:$PROJ/lm_study${PYTHONPATH:+:$PYTHONPATH}"
 
 for required in EXPECTED_COMMIT EXPECTED_CONFIG_SHA256; do
   test -n "${!required:-}" || { echo "ERROR: $required missing" >&2; exit 2; }
