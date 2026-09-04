@@ -15,6 +15,19 @@
 
 ## Change record
 
+- **2026-09-04, GSM8K fresh-panel ranking robustness:** added an evaluation-only
+  protocol that reuses the validated seven-seed Q5, PIS, TRICE, GRPO and RLOO
+  adapters beside the frozen base. Three fixed 400-question panels exclude the
+  original development-validation rows and every shot-bank or optimization row
+  used by any source seed. Each model is loaded once per seed and evaluated on
+  all panels with its original three demonstrations. No training or official-
+  test access occurs. The prepared validator requires 42 receipts, 126
+  checksum-bound panel files and 50,400 records; the analyzer reports Final
+  Acc@1 first, strict final accuracy second, paired uncertainty and ranking
+  stability. Verification covers deterministic partitioning, generated-YAML
+  equality, adapter inventory, Python compilation, shell syntax and focused
+  design tests.
+
 - **2026-09-04, seven-seed JEPO comparator:** added the multi-sample Jensen
   evidence policy objective as one new common-protocol comparator cell on the
   established seven paired seeds. The implementation uses four

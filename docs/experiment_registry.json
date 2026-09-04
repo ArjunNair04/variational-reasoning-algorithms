@@ -418,6 +418,51 @@
         "After validation, report Final Acc@1, strict final accuracy and AUC against the same-seed frozen base, with descriptive Q5, PIS, TRICE-CV and RLOO context.",
         "Do not tune JEPO on these seven outcomes; any follow-up must be separately declared."
       ]
+    },
+    {
+      "registry_id": "qwen3_gsm8k_panel_robustness_20260904",
+      "run_id": "ec4c38db",
+      "status": "ready_for_submission",
+      "source_revision": null,
+      "execution_revision": null,
+      "account": "vmohanar",
+      "scheduler_jobs": [],
+      "source_experiment": {
+        "run_id": "978b99c8",
+        "validator_job": "7191863",
+        "adapter_count": 35,
+        "methods": ["Q5", "PIS", "TRICE", "GRPO", "RLOO"]
+      },
+      "config": "lm_study/experiments_qwen3_17b_gsm8k_panel_robustness.yaml",
+      "submitter": "lm_study/submit_qwen3_17b_gsm8k_panel_robustness_ucl.sh",
+      "analyzer": "analysis/analyze_qwen3_gsm8k_panel_robustness.py",
+      "expected_tasks": 42,
+      "official_test_used": false,
+      "result_root": "~/po_results/2026-09-04/evaluation/gsm8k-panel-robustness__ec4c38db",
+      "validator_marker": "~/po_results/auto_state/qwen3_gsm8k_panel_robustness_ec4c38db.ok",
+      "analysis_root": null,
+      "design": {
+        "independent_units": ["paired training seed", "fixed fresh panel"],
+        "seeds": [1201, 1213, 1217, 1223, 1229, 1231, 1237],
+        "methods": ["Frozen-base", "Q5", "PIS", "TRICE", "GRPO", "RLOO"],
+        "panels": 3,
+        "questions_per_panel": 400,
+        "training_performed": false,
+        "primary_metric_order": ["Final Acc@1", "strict final accuracy"],
+        "trajectory_auc_available": false
+      },
+      "scientific_question": "Does the ordering of the five selected methods and frozen base remain stable on three disjoint 400-question GSM8K training-derived panels that were not used by the source adapters?",
+      "findings": [],
+      "limitations": [
+        "The panels are fresh relative to the source adapters' validation, shot-bank and optimization rows, but they come from GSM8K training and are not a substitute for the sealed official test.",
+        "This is final-adapter evaluation only, so it estimates Final Acc@1 and strict final accuracy but cannot recompute trajectory AUC.",
+        "The same trained adapter is evaluated on three panels; analysis must preserve seed and panel dependence rather than treating 21 blocks as independent training runs."
+      ],
+      "next_actions": [
+        "Bind the generated protocol to an immutable revision, verify all 35 adapters and submit the held 42-task evaluation array with its dependent validator.",
+        "After validation, report Final Acc@1 first, strict final accuracy second, paired intervals against the frozen base and first-place share across paired seed-panel blocks.",
+        "Do not use these outcomes to alter the panels or method set."
+      ]
     }
   ]
 }
