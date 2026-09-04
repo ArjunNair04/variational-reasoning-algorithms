@@ -369,11 +369,24 @@
     {
       "registry_id": "qwen3_jepo_comparator_20260904",
       "run_id": "7452ba96",
-      "status": "ready_for_submission",
-      "source_revision": null,
-      "execution_revision": null,
+      "status": "submitted_queued",
+      "source_revision": "f1372a00c47b23c3bb5505e98e460312698a446e",
+      "execution_revision": "e51c1e97beb16140f9efa9bca62d31e2d7677efa",
       "account": "amanojna",
-      "scheduler_jobs": [],
+      "scheduler_jobs": [
+        {
+          "role": "payload",
+          "job_id": "7334531",
+          "tasks": 7,
+          "state": "queued"
+        },
+        {
+          "role": "validator",
+          "job_id": "7334532",
+          "depends_on": "7334531",
+          "state": "held_by_dependency"
+        }
+      ],
       "dependency": {
         "registry_id": "qwen3_selected_method_posterity_20260829",
         "run_id": "68078ecc",
@@ -414,7 +427,7 @@
         "The official GSM8K test split remains sealed."
       ],
       "next_actions": [
-        "Bind the generated protocol to an immutable execution revision, deploy it to AMN and submit only its seven held JEPO tasks with a dependent validator.",
+        "Monitor payload 7334531 without altering healthy tasks; validator 7334532 must run only after all seven payload tasks leave the scheduler.",
         "After validation, report Final Acc@1, strict final accuracy and AUC against the same-seed frozen base, with descriptive Q5, PIS, TRICE-CV and RLOO context.",
         "Do not tune JEPO on these seven outcomes; any follow-up must be separately declared."
       ]
