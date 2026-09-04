@@ -422,11 +422,27 @@
     {
       "registry_id": "qwen3_gsm8k_panel_robustness_20260904",
       "run_id": "ec4c38db",
-      "status": "ready_for_submission",
-      "source_revision": null,
-      "execution_revision": null,
+      "status": "submitted",
+      "source_revision": "2748099e4c9c9faa55748c7e1dd6cf96dfa4e092",
+      "execution_revision": "2748099e4c9c9faa55748c7e1dd6cf96dfa4e092",
+      "configuration_sha256": "c5d46b228d1d83350822540aab95db951fb5034699945a61f07d2a5105695a02",
       "account": "vmohanar",
-      "scheduler_jobs": [],
+      "scheduler_jobs": [
+        {
+          "role": "payload",
+          "job_id": "7334541",
+          "tasks": "1-42:1",
+          "state": "released_queued",
+          "resources": "gpu=true,gpu_type=h100,tmem=24G,h_rt=08:00:00",
+          "maximum_concurrency": null
+        },
+        {
+          "role": "validator",
+          "job_id": "7334542",
+          "depends_on": "7334541",
+          "state": "dependency_held"
+        }
+      ],
       "source_experiment": {
         "run_id": "978b99c8",
         "validator_job": "7191863",
@@ -459,7 +475,7 @@
         "The same trained adapter is evaluated on three panels; analysis must preserve seed and panel dependence rather than treating 21 blocks as independent training runs."
       ],
       "next_actions": [
-        "Bind the generated protocol to an immutable revision, verify all 35 adapters and submit the held 42-task evaluation array with its dependent validator.",
+        "Monitor payload 7334541 without altering healthy tasks; validator 7334542 must run only after all 42 payload tasks exit.",
         "After validation, report Final Acc@1 first, strict final accuracy second, paired intervals against the frozen base and first-place share across paired seed-panel blocks.",
         "Do not use these outcomes to alter the panels or method set."
       ]
