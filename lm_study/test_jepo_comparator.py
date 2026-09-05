@@ -14,7 +14,7 @@ from generate_qwen3_17b_jepo_comparator import (
     build_payload,
     validate_payload,
 )
-from jepo import run_jepo
+from jepo import _strict_format_mask, run_jepo
 from run_sweep_lm import METHODS
 from run_yaml import _prepare_cells
 
@@ -62,6 +62,15 @@ def test_jepo_trainer_is_fail_closed_on_protocol_changes() -> None:
             raise AssertionError(f"JEPO accepted invalid change {changed}")
 
 
+def test_jepo_uses_shared_gsm8k_parser_when_task_has_no_parser_method() -> None:
+    mask = _strict_format_mask(
+        object(),
+        ["Reasoning.\n#### 42", "Reasoning.\n#### 42 trailing"],
+        [True, True],
+    )
+    assert mask.tolist() == [True, False]
+
+
 def test_scheduler_is_uncapped_and_submission_is_held() -> None:
     runner = (HERE / "run_qwen3_17b_jepo_comparator_ucl.sh").read_text(encoding="utf-8")
     submitter = (HERE / "submit_qwen3_17b_jepo_comparator_ucl.sh").read_text(
@@ -77,8 +86,10 @@ def test_scheduler_is_uncapped_and_submission_is_held() -> None:
     assert "cell_count=1" in runner and "seed_count=7" in runner
     assert 'export PYTHONPATH="$PROJ/src:$PROJ/lm_study' in runner
     assert 'export PYTHONPATH="$PROJ/src:$SCRIPT_DIR' in submitter
+    assert 'from jepo import _strict_format_mask' in submitter
     assert "qsub -h" in submitter
     assert 'qsub -hold_jid "$payload_job"' in submitter
     assert "qwen3_jepo_comparator.${SOURCE_JOB_ID}.*.log" in validator
     assert 'source "$PROJ/lm_study/ucl_python_env.sh"' in validator
+    assert 'export PYTHONPATH="$PROJ/src:$PROJ/lm_study' in validator
     assert validator.count('"$VENV/bin/python"') == 2

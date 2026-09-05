@@ -15,6 +15,15 @@
 
 ## Change record
 
+- **2026-09-05, JEPO GSM8K runtime repair and isolated retry:** use the shared
+  GSM8K answer-event parser when the task does not expose a parser method, and
+  export the source package path in the dependent validator. The failed
+  pre-training artifacts from run `7452ba96` remain untouched; the scientifically
+  identical retry uses a new run ID and output root. Verification adds an
+  executable GSM8K parser preflight and regression test alongside Python
+  compilation, shell syntax, generated-YAML equality, all task coordinates and
+  the full repository test suite.
+
 - **2026-09-04, JEPO cluster import-path repair:** prepend the repository's
   `src` and `lm_study` directories to `PYTHONPATH` in the JEPO submitter and
   GPU runner. This is an infrastructure-only repair for AMN's uninstalled

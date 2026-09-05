@@ -17,7 +17,7 @@ from generate_qwen3_17b_selected_method_posterity import (
 )
 
 
-RUN_ID = "7452ba96"
+RUN_ID = "6c94a797"
 CONTROL_RUN_ID = "68078ecc"
 CELL_ID = "JEPO-MS4-LR1e-5"
 
@@ -26,7 +26,7 @@ def build_payload() -> dict[str, Any]:
     source = build_control_payload()
     defaults = deepcopy(source["defaults"])
     defaults.update(
-        out=("~/po_results/2026-09-04/jepo-comparator/qwen3-jepo-ms4__7452ba96"),
+        out=("~/po_results/2026-09-05/jepo-comparator/qwen3-jepo-ms4__6c94a797"),
         training_diagnostics_trace_tape=False,
         save_adapter=True,
     )

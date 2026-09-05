@@ -6,10 +6,10 @@ SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
 PROJ=${PROJ:-$(cd "$SCRIPT_DIR" && git rev-parse --show-toplevel)}
 VENV=${VENV:-$HOME/vrl_hpc/po_venv}
 YAML=${YAML:-$SCRIPT_DIR/experiments_qwen3_17b_jepo_comparator.yaml}
-RESULT_OUT=${RESULT_OUT:-$HOME/po_results/2026-09-04/jepo-comparator/qwen3-jepo-ms4__7452ba96}
-MARKER=${MARKER:-$HOME/po_results/auto_state/qwen3_jepo_comparator_7452ba96.ok}
+RESULT_OUT=${RESULT_OUT:-$HOME/po_results/2026-09-05/jepo-comparator/qwen3-jepo-ms4__6c94a797}
+MARKER=${MARKER:-$HOME/po_results/auto_state/qwen3_jepo_comparator_6c94a797.ok}
 CONTROL_MARKER=${CONTROL_MARKER:-$HOME/po_results/auto_state/qwen3_selected_method_posterity_68078ecc.ok}
-CLAIM_DIR=${CLAIM_DIR:-$HOME/po_results/auto_state/qwen3_jepo_comparator_20260904.submit.claim}
+CLAIM_DIR=${CLAIM_DIR:-$HOME/po_results/auto_state/qwen3_jepo_comparator_20260905.submit.claim}
 
 source "$SCRIPT_DIR/ucl_python_env.sh"
 export PYTHONPATH="$PROJ/src:$SCRIPT_DIR${PYTHONPATH:+:$PYTHONPATH}"
@@ -42,6 +42,16 @@ trap 'rmdir "$CLAIM_DIR" 2>/dev/null || true' EXIT
   "$SCRIPT_DIR/generate_qwen3_17b_jepo_comparator.py" \
   "$SCRIPT_DIR/validate_qwen3_17b_jepo_comparator.py" \
   "$PROJ/analysis/analyze_qwen3_jepo_comparator.py"
+"$VENV/bin/python" - <<'PY'
+from jepo import _strict_format_mask
+
+mask = _strict_format_mask(
+    object(),
+    ["Reasoning.\n#### 42", "Reasoning.\n#### 42 trailing"],
+    [True, True],
+)
+assert mask.tolist() == [True, False]
+PY
 bash -n "$SCRIPT_DIR/run_qwen3_17b_jepo_comparator_ucl.sh"
 bash -n "$SCRIPT_DIR/validate_qwen3_17b_jepo_comparator_ucl.sh"
 "$VENV/bin/python" "$SCRIPT_DIR/generate_qwen3_17b_jepo_comparator.py" --check "$YAML"
@@ -83,5 +93,5 @@ if [ "$validator_status" -ne 0 ]; then
 fi
 validator_job=$(printf '%s\n' "$validator_output" | sed -nE 's/.*job ([0-9]+).*/\1/p')
 test -n "$validator_job" || { qdel "$payload_job" >/dev/null 2>&1 || true; exit 4; }
-printf 'execution_commit=%s\nrun_id=7452ba96\npayload_job=%s\nvalidator_job=%s\nconfig_sha256=%s\nresult_out=%s\nmarker=%s\nstate=user_held_pending_release\n' \
+printf 'execution_commit=%s\nrun_id=6c94a797\npayload_job=%s\nvalidator_job=%s\nconfig_sha256=%s\nresult_out=%s\nmarker=%s\nstate=user_held_pending_release\n' \
   "$expected_commit" "$payload_job" "$validator_job" "$config_sha" "$RESULT_OUT" "$MARKER"

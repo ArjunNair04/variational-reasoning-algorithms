@@ -22,7 +22,7 @@ CONFIG = ROOT / "lm_study" / "experiments_qwen3_17b_jepo_comparator.yaml"
 
 def test_design_only_validation_accepts_generated_yaml() -> None:
     config, cell = validate_design(CONFIG)
-    assert config["run_id"] == "7452ba96"
+    assert config["run_id"] == "6c94a797"
     assert cell.tag.endswith(f"_{CELL_ID}")
 
 

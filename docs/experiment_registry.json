@@ -368,23 +368,21 @@
     },
     {
       "registry_id": "qwen3_jepo_comparator_20260904",
-      "run_id": "7452ba96",
-      "status": "submitted_queued",
-      "source_revision": "f1372a00c47b23c3bb5505e98e460312698a446e",
-      "execution_revision": "e51c1e97beb16140f9efa9bca62d31e2d7677efa",
+      "run_id": "6c94a797",
+      "status": "retry_ready_for_submission",
+      "source_revision": null,
+      "execution_revision": null,
       "account": "amanojna",
-      "scheduler_jobs": [
+      "scheduler_jobs": [],
+      "failed_attempts": [
         {
-          "role": "payload",
-          "job_id": "7334531",
-          "tasks": 7,
-          "state": "queued"
-        },
-        {
-          "role": "validator",
-          "job_id": "7334532",
-          "depends_on": "7334531",
-          "state": "held_by_dependency"
+          "run_id": "7452ba96",
+          "execution_revision": "e51c1e97beb16140f9efa9bca62d31e2d7677efa",
+          "payload_job": "7334531",
+          "validator_job": "7334532",
+          "state": "failed_before_training",
+          "failure": "The JEPO runtime required parse_answer_event as a task method, but GSM8K uses the shared module-level parser. All seven tasks stopped before the first optimizer step.",
+          "result_root": "~/po_results/2026-09-04/jepo-comparator/qwen3-jepo-ms4__7452ba96"
         }
       ],
       "dependency": {
@@ -397,8 +395,8 @@
       "analyzer": "analysis/analyze_qwen3_jepo_comparator.py",
       "expected_tasks": 7,
       "official_test_used": false,
-      "result_root": "~/po_results/2026-09-04/jepo-comparator/qwen3-jepo-ms4__7452ba96",
-      "validator_marker": "~/po_results/auto_state/qwen3_jepo_comparator_7452ba96.ok",
+      "result_root": "~/po_results/2026-09-05/jepo-comparator/qwen3-jepo-ms4__6c94a797",
+      "validator_marker": "~/po_results/auto_state/qwen3_jepo_comparator_6c94a797.ok",
       "analysis_root": null,
       "design": {
         "independent_unit": "paired training seed",
@@ -427,7 +425,7 @@
         "The official GSM8K test split remains sealed."
       ],
       "next_actions": [
-        "Monitor payload 7334531 without altering healthy tasks; validator 7334532 must run only after all seven payload tasks leave the scheduler.",
+        "Bind the parser-repaired retry to an immutable execution revision, verify the executable GSM8K parser preflight on AMN and submit only its seven JEPO tasks with a dependent validator.",
         "After validation, report Final Acc@1, strict final accuracy and AUC against the same-seed frozen base, with descriptive Q5, PIS, TRICE-CV and RLOO context.",
         "Do not tune JEPO on these seven outcomes; any follow-up must be separately declared."
       ]

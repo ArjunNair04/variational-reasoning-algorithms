@@ -12,6 +12,7 @@ import numpy as np
 import torch
 
 from ac_alg1 import _pad_trace_rows, _sampled_trace_row
+from answer_events import parse_gsm8k_answer_event
 from common import (
     DEV,
     MODEL_NAME,
@@ -39,9 +40,7 @@ from variational_reasoning.jepo import (
 
 
 def _strict_format_mask(task, texts, natural_eos):
-    parser = getattr(task, "parse_answer_event", None)
-    if parser is None:
-        raise ValueError("JEPO requires the task's strict answer-event parser")
+    parser = getattr(task, "parse_answer_event", parse_gsm8k_answer_event)
     strict = np.asarray(
         [
             bool(parser(text, mode="strict_terminal_marker").strict_valid)
