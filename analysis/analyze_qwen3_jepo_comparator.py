@@ -282,9 +282,11 @@ def load_results(
             if contract != expected_contract:
                 raise ValueError(f"{diagnostics_path}: JEPO contract changed")
             signal = dict(row.get("signal") or {})
+            reward = dict(row.get("reward") or {})
             optimizer = dict(row.get("optimizer") or {})
             for field in (
                 "valid_generation_fraction",
+                "segmentable_fraction",
                 "raw_trace_advantage_std",
                 "normalized_trace_advantage_std",
                 "trace_advantage_clip_fraction",
@@ -292,6 +294,10 @@ def load_results(
                 "logmean_gold_answer_probability",
             ):
                 _finite(signal.get(field), context=f"{diagnostics_path}/{field}")
+            if reward.get("requires_natural_eos") is not True:
+                raise ValueError(
+                    f"{diagnostics_path}: JEPO reward is not natural-EOS gated"
+                )
             for field in (
                 "loss",
                 "lower_bound_loss",

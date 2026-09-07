@@ -14,7 +14,7 @@ from generate_qwen3_17b_jepo_comparator import (
     build_payload,
     validate_payload,
 )
-from jepo import _strict_format_mask, run_jepo
+from jepo import _retain_segmentable_rows, _strict_format_mask, run_jepo
 from run_sweep_lm import METHODS
 from run_yaml import _prepare_cells
 
@@ -69,6 +69,23 @@ def test_jepo_uses_shared_gsm8k_parser_when_task_has_no_parser_method() -> None:
         [True, True],
     )
     assert mask.tolist() == [True, False]
+
+
+def test_jepo_drops_unsegmentable_rows_without_renormalizing_support() -> None:
+    first = object()
+    third = object()
+    rows, question_ids = _retain_segmentable_rows(
+        [first, None, third],
+        [7, 7, 9],
+    )
+    assert rows == [first, third]
+    assert question_ids == [7, 9]
+
+
+def test_jepo_records_segmentation_and_eos_reward_diagnostics() -> None:
+    source = (HERE / "jepo.py").read_text(encoding="utf-8")
+    assert '"segmentable_fraction": segmentable_fraction' in source
+    assert '"requires_natural_eos": bool(reward_requires_eos)' in source
 
 
 def test_scheduler_is_uncapped_and_submission_is_held() -> None:

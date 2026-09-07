@@ -71,6 +71,22 @@ def _token_logps_in_chunks(model, ids, micro, *, grad=False):
     )
 
 
+def _retain_segmentable_rows(candidate_rows, question_ids):
+    """Drop rows whose decoded marker has no exact sampled-token boundary."""
+
+    if len(candidate_rows) != len(question_ids):
+        raise ValueError("JEPO candidate rows and question ids must align")
+    retained = [
+        (row, question_id)
+        for row, question_id in zip(candidate_rows, question_ids)
+        if row is not None
+    ]
+    return (
+        [row for row, _question_id in retained],
+        [question_id for _row, question_id in retained],
+    )
+
+
 def run_jepo(
     task,
     rounds=32,
@@ -180,8 +196,8 @@ def run_jepo(
             clip=jepo_advantage_clip,
         )
 
-        rows = []
-        row_question_ids = []
+        candidate_rows = []
+        candidate_question_ids = []
         for index in np.flatnonzero(format_valid):
             row = _sampled_trace_row(
                 tok,
@@ -196,10 +212,13 @@ def run_jepo(
                 answer_event_mode=answer_event_mode,
                 answer_target_termination=answer_target_termination,
             )
-            if row is None:
-                raise ValueError("strict-valid JEPO generation could not be segmented")
-            rows.append(row)
-            row_question_ids.append(int(pid_row[index]))
+            candidate_rows.append(row)
+            candidate_question_ids.append(int(pid_row[index]))
+        rows, row_question_ids = _retain_segmentable_rows(
+            candidate_rows,
+            candidate_question_ids,
+        )
+        segmentable_fraction = len(rows) / B
 
         answer_logp_old = np.empty(0, dtype=np.float64)
         answer_weights = np.empty(0, dtype=np.float64)
@@ -345,6 +364,7 @@ def run_jepo(
             "fmt": format_fraction,
             "natural_eos_fraction": float(natural_eos.mean()),
             "jepo_valid_fraction": float(format_valid.mean()),
+            "jepo_segmentable_fraction": segmentable_fraction,
             "jepo_valid_groups": active_groups,
             "jepo_raw_advantage_std": raw_trace_std,
             "jepo_advantage_clip_fraction": float(
@@ -396,6 +416,7 @@ def run_jepo(
                     },
                     "signal": {
                         "valid_generation_fraction": float(format_valid.mean()),
+                        "segmentable_fraction": segmentable_fraction,
                         "valid_question_groups": active_groups,
                         "raw_trace_advantage_std": raw_trace_std,
                         "normalized_trace_advantage_std": float(trace_advantage.std())
@@ -408,6 +429,9 @@ def run_jepo(
                         "logmean_gold_answer_probability": record[
                             "jepo_logmean_answer_probability"
                         ],
+                    },
+                    "reward": {
+                        "requires_natural_eos": bool(reward_requires_eos),
                     },
                     "optimizer": {
                         "gradient_steps_this_round": 1,

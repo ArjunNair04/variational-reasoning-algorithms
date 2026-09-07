@@ -15,6 +15,17 @@
 
 ## Change record
 
+- **2026-09-07, JEPO token-boundary robustness repair:** retain strict decoded
+  format scoring when a rare completion cannot be segmented at an exact sampled-
+  token answer boundary, but mask that sample from JEPO's lower-bound and answer
+  terms while preserving the fixed four-sample denominator. Diagnostics now
+  distinguish strict-valid from segmentable support and explicitly declare the
+  natural-EOS reward contract. The incomplete six-of-seven run remains untouched;
+  the repair requires a fresh seven-seed run ID. Verification covers row masking,
+  diagnostic schema, estimator normalization, generated-YAML equality, task-
+  specific runtime preflight, Python compilation, shell syntax and the full test
+  suite.
+
 - **2026-09-05, JEPO GSM8K runtime repair and isolated retry:** use the shared
   GSM8K answer-event parser when the task does not expose a parser method, and
   export the source package path in the dependent validator. The failed

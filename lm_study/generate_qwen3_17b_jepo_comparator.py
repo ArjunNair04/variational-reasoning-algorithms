@@ -17,7 +17,7 @@ from generate_qwen3_17b_selected_method_posterity import (
 )
 
 
-RUN_ID = "6c94a797"
+RUN_ID = "4124d5c8"
 CONTROL_RUN_ID = "68078ecc"
 CELL_ID = "JEPO-MS4-LR1e-5"
 
@@ -26,7 +26,7 @@ def build_payload() -> dict[str, Any]:
     source = build_control_payload()
     defaults = deepcopy(source["defaults"])
     defaults.update(
-        out=("~/po_results/2026-09-05/jepo-comparator/qwen3-jepo-ms4__6c94a797"),
+        out=("~/po_results/2026-09-07/jepo-comparator/qwen3-jepo-ms4__4124d5c8"),
         training_diagnostics_trace_tape=False,
         save_adapter=True,
     )
@@ -104,6 +104,7 @@ def build_payload() -> dict[str, Any]:
                 "answer_term": "gold_answer_log_mean_probability",
                 "answer_log_probability_reduction": "sequence_sum",
                 "invalid_format_policy": "mask_lower_bound_and_apply_format_advantage",
+                "unsegmentable_token_boundary_policy": "mask_evidence_terms_keep_format_signal",
                 "masked_objective_denominator": "fixed_sample_count",
                 "advantage_normalization": "population_std_then_clip_minus1_plus1",
                 "kl_estimator": "token_level_k3_on_sampled_generation",
@@ -115,6 +116,7 @@ def build_payload() -> dict[str, Any]:
                 "Compare JEPO with the same-seed frozen base and report descriptive context for Q5, PIS, TRICE-CV and RLOO.",
                 "Report training generations, optimizer steps, generated tokens, backward tokens and accelerator-hours separately.",
                 "Audit valid-format coverage, normalized advantage clipping, gold-answer weight ESS and sampled policy KL.",
+                "Audit token-segmentable coverage separately from strict decoded-format validity.",
                 "Do not access the official GSM8K test split.",
             ],
         },
