@@ -368,23 +368,24 @@
     },
     {
       "registry_id": "qwen3_jepo_comparator_20260904",
-      "run_id": "6c94a797",
-      "status": "failed_incomplete_runtime_edge_case",
-      "source_revision": "95f8a2a77db75bf1bf53f11dd59b1fcdf56a0580",
-      "execution_revision": "95f8a2a77db75bf1bf53f11dd59b1fcdf56a0580",
+      "run_id": "4124d5c8",
+      "status": "submitted_queued",
+      "source_revision": "b3ae5bf53bd22113b7a5ab0563e85c524e826aca",
+      "execution_revision": "b3ae5bf53bd22113b7a5ab0563e85c524e826aca",
+      "configuration_sha256": "433aa325d1358f43e7ddc51e0c8b2f65f70c37513f490947d40aec78f873b95c",
       "account": "amanojna",
       "scheduler_jobs": [
         {
           "role": "payload",
-          "job_id": "7336425",
+          "job_id": "7340568",
           "tasks": 7,
-          "state": "partial_completion_one_runtime_failure"
+          "state": "queued_released"
         },
         {
           "role": "validator",
-          "job_id": "7336426",
-          "depends_on": "7336425",
-          "state": "failed_validation"
+          "job_id": "7340569",
+          "depends_on": "7340568",
+          "state": "held_by_dependency"
         }
       ],
       "failed_attempts": [
@@ -417,8 +418,8 @@
       "analyzer": "analysis/analyze_qwen3_jepo_comparator.py",
       "expected_tasks": 7,
       "official_test_used": false,
-      "result_root": "~/po_results/2026-09-05/jepo-comparator/qwen3-jepo-ms4__6c94a797",
-      "validator_marker": "~/po_results/auto_state/qwen3_jepo_comparator_6c94a797.ok",
+      "result_root": "~/po_results/2026-09-07/jepo-comparator/qwen3-jepo-ms4__4124d5c8",
+      "validator_marker": "~/po_results/auto_state/qwen3_jepo_comparator_4124d5c8.ok",
       "analysis_root": null,
       "design": {
         "independent_unit": "paired training seed",
@@ -448,16 +449,16 @@
       "limitations": [
         "This preserves JEPO's multi-sample estimator and published coefficients but adapts it to the shared Qwen LoRA learning rate, model, dataset and generation budget.",
         "Historical same-seed controls are reused rather than rerun.",
-        "Only six of seven retry seeds completed; seed 1201 failed after 25 outer rounds, so the preregistered paired analysis is unavailable.",
-        "The validator marker is absent and the completed diagnostics omit the explicit reward.requires_natural_eos field required by the generic validator.",
+        "The preceding run completed only six of seven seeds; its preliminary observations remain non-reportable and are not combined with this fresh run.",
+        "This fresh retry masks rare token-boundary-unsegmentable samples from JEPO evidence terms while preserving their format signal and the fixed K denominator.",
         "The fixed train-derived validation partition supports paired development evidence, not a fresh-question or official-test estimate.",
         "The official GSM8K test split remains sealed."
       ],
       "next_actions": [
-        "Repair JEPO so a strict-valid but token-boundary-unsegmentable sample is excluded from the lower-bound and answer terms without changing the fixed K denominator; log segmentable_fraction.",
-        "Add reward.requires_natural_eos=true to every JEPO training-diagnostic row and cover both repairs with regression tests plus a task-specific cluster runtime preflight.",
-        "Create a fresh immutable run ID and rerun all seven seeds after verification; do not combine the six completed artifacts with a repaired seed from another execution revision.",
-        "Preserve both failed-attempt result roots and do not promote the preliminary six-seed summary to scientific findings."
+        "Monitor payload 7340568 without altering healthy tasks; validator 7340569 must run only after all seven payload tasks leave the scheduler.",
+        "Require seven completion receipts, complete task logs, 32 diagnostic rows per seed, segmentable_fraction and natural-EOS reward evidence, all expected artifacts and the structured validator marker before analysis.",
+        "After validation, report Final Acc@1, strict final accuracy and AUC against the same-seed frozen base, with descriptive Q5, PIS, TRICE-CV and RLOO context.",
+        "Preserve both failed-attempt result roots and do not combine their artifacts with run 4124d5c8."
       ]
     }
   ]
