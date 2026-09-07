@@ -1,0 +1,185 @@
+{
+  "status": "PASS",
+  "date": "2026-09-07",
+  "source_comparison": {
+    "status": "PASS",
+    "original_git_blobs_compared": 617,
+    "source_versions": 18,
+    "all_source_and_yaml_bytes_unchanged": true,
+    "source_manifest_sha256": "a5c0e5a1a2410a4f41c543f9c5a826b2e89173fc21910353af4a51f7c74df3c6"
+  },
+  "dry_runs": [
+    {
+      "study": "initial_objectives",
+      "returncode": 0,
+      "status": "PASS",
+      "log_lines": 6
+    },
+    {
+      "study": "initial_latent_terms",
+      "returncode": 0,
+      "status": "PASS",
+      "log_lines": 6
+    },
+    {
+      "study": "early_replication",
+      "returncode": 0,
+      "status": "PASS",
+      "log_lines": 5
+    },
+    {
+      "study": "prompt_base",
+      "returncode": 0,
+      "status": "PASS",
+      "log_lines": 8
+    },
+    {
+      "study": "prompt_training",
+      "returncode": 0,
+      "status": "PASS",
+      "log_lines": 23
+    },
+    {
+      "study": "eos",
+      "returncode": 0,
+      "status": "PASS",
+      "log_lines": 15
+    },
+    {
+      "study": "prompt_information",
+      "returncode": 0,
+      "status": "PASS",
+      "log_lines": 10
+    },
+    {
+      "study": "joint_objective",
+      "returncode": 0,
+      "status": "PASS",
+      "log_lines": 12
+    },
+    {
+      "study": "prior_delta_retry",
+      "returncode": 0,
+      "status": "PASS",
+      "log_lines": 10
+    },
+    {
+      "study": "common_grid",
+      "returncode": 0,
+      "status": "PASS",
+      "log_lines": 169
+    },
+    {
+      "study": "reader_ess",
+      "returncode": 0,
+      "status": "PASS",
+      "log_lines": 11
+    },
+    {
+      "study": "delta_confirmation",
+      "returncode": 0,
+      "status": "PASS",
+      "log_lines": 9
+    },
+    {
+      "study": "importance_confirmation",
+      "returncode": 0,
+      "status": "PASS",
+      "log_lines": 8
+    },
+    {
+      "study": "selected_methods",
+      "returncode": 0,
+      "status": "PASS",
+      "log_lines": 16
+    },
+    {
+      "study": "pseudo_importance",
+      "returncode": 0,
+      "status": "PASS",
+      "log_lines": 7
+    },
+    {
+      "study": "equal_counts",
+      "returncode": 0,
+      "status": "PASS",
+      "log_lines": 8
+    },
+    {
+      "study": "proposal_depth",
+      "returncode": 0,
+      "status": "PASS",
+      "log_lines": 12
+    },
+    {
+      "study": "transfer",
+      "status": "prepare_only",
+      "reason": "requires new receipt-bound adapter locations"
+    }
+  ],
+  "tests": {
+    "passed": 40,
+    "failed": 0,
+    "skipped": 0,
+    "python": "3.12.14",
+    "torch": "2.2.2 CPU",
+    "numpy": "1.26.4",
+    "scope": "original-operation and compact-reference comparisons, no model/data loading"
+  },
+  "privacy_scan": {
+    "files": 95,
+    "credential_or_personal_path_hits": 0
+  },
+  "compute": {
+    "completed_records": 970,
+    "h100_gpu_hours": 808.589722222222
+  },
+  "numeric_evidence": {
+    "csv_files": 41,
+    "allocation_records": 3430,
+    "fixed_Q_transitions": 288,
+    "transfer_cells": 56,
+    "transfer_response_count": 42000
+  },
+  "gpu_replay_performed": false,
+  "official_gsm8k_test_accessed": false,
+  "rendered_plots_visually_reviewed": [
+    "selected_methods.pdf",
+    "sample_budget.pdf",
+    "fixed_objective.pdf"
+  ],
+  "reviewed_files": {
+    "JOURNEY.md": "1d1edf168615db7bea60f078cc00fa5e9c474aade95c513ab8e70615af059395",
+    "pyproject.toml": "b912e8cce8ec6e65b23601778cb4a54de7d2ffa250a7f10557e70cdf2d935ff7",
+    "README.md": "a7a5ce0fddf10f49aa87c1364dc268b60b5001854b351fa5bc6349c391d9cbd6",
+    "ALGORITHMS.md": "cdd5241266880b0e525d7ff45f2fc98476e39a5a1f789b811b706ebcbf26018e",
+    "AGENTS.md": "8dc581b0fc7d7598682ca6b893b5eaddb8d692d68b2ba96191145c24a21a996c",
+    "experiments/source_manifest.json": "a5c0e5a1a2410a4f41c543f9c5a826b2e89173fc21910353af4a51f7c74df3c6",
+    "experiments/reproduce.py": "942af8df3e57ea2d720e711caf741db0a075e5e6ef7b0fa4be0173ba5684fa89",
+    "experiments/results.py": "96a55eb17104544ee1694f67127465a6d4cbac62540c8be5c13bf6cc8f2c4dad",
+    "experiments/EXPERIMENTS.md": "0c79b5616c584966abd87dd080331881d3ceebf861326f40f8a7d11e1b71f420",
+    "experiments/VERIFICATION.md": "3a618fbb6f4ad74b4a88cf0f9cde18865411522862ae85da096b234e0bf56dba",
+    "experiments/studies.json": "fe123a3d7cd4e8e93d368b2f9f7d8e41ddf4cfe1eb726f0c854a4fcb6551e4aa",
+    "experiments/transfer_plan.json": "4caa9acf6fa34e4755aafc26008d9d5e6ee296d7efdf5802ec9e7c849dd38e45",
+    "experiments/resources/compute/h100_compute_audit.json": "1f82038b70126a72ab8b924658f4a2d7a473e43608356c31bd022e09321557fd",
+    "experiments/resources/compute/verify_compute_ledger.py": "5117956baa89ca250270ccb8d2d7b8e624a7f76c1170a0debcf6d0f5d4799b5d",
+    "experiments/resources/compute/README.md": "8e47ae9ab8b0c88e6bbe442d8989be90be000a3f2e5993f424836e0b3f24e8ea",
+    "experiments/results/README.md": "7be646557a532ddcf29b2d823e23c674280522d017cd4829848f334cdba2fd7d",
+    "experiments/results/manifest.json": "f6a77fea85bcbdb92d3519ecb0dcddaabd65bff6a63bf75d814d7a5e2d67c820",
+    "experiments/environment/provenance.json": "f366b3eefddce313b8b8af67938a605485a2c641c5587d60080933070516c211",
+    "tests/test_replay.py": "9be647b4b4f1fbeae4a7b6463337b204c60ad51e23468dd7fef60ec40e50a846",
+    "tests/test_execution_equivalence.py": "c1804a7909979622629ff67c65cc2397fda3daa30fe50c74a9a45796b6607716",
+    "tests/test_algorithms.py": "7b9ac8a689a8d3b092772b3a5de480211fa2f949e88adbabf3081deadb62e131",
+    "src/variational_reasoning/self_training.py": "e4371f857e9cc6c0ac0efd79f7a3a9b3b4ab7458c09c01a168012d8c1152167d",
+    "src/variational_reasoning/diagnostics.py": "7114db106ab69c61883f8b79bb3870840230b73d68c5fa7c8fe2eced7dc56215",
+    "src/variational_reasoning/__init__.py": "283e1d6377b32b4f670762dbf56bb7278d91ae17f9e4de51d68caa43abacb544",
+    "src/variational_reasoning/em.py": "56e48aecde45ee2f5e7dcb9c58d50709987def9d05a63c44992300501c2a5595",
+    "src/variational_reasoning/trice.py": "4203a1115762bafe7242aec5cd913476b204941f1a9c6b72df3b26ad1d57b95f",
+    "src/variational_reasoning/policy_gradient.py": "a2602cd1d30cc115c750d8c61af8a9aaf0ffede32d52c7644b27c19146f9b2c8",
+    "src/variational_reasoning/settings.py": "d524f988ad52d55b7e53ddac2f4741734cbd875a9bb41fd7981c83246f06d78e",
+    "src/variational_reasoning/answer_events.py": "4c4f5facf2d8ed730b23c6b4451fad3b5c26357187375cbc0219bf30f1bab70f",
+    "src/variational_reasoning/answer_targets.py": "3e704e5b8a6e1d6b2a43122f4da4df861dfc6e1e65520bcefa3d36c6f1a8153e",
+    ".gitattributes": "67dbd75428b120c89d4001792be192381d9e63c430f3cb9050836e8da248cf65"
+  },
+  "frozen_csv_line_endings": "Original CRLF bytes preserved; .gitattributes treats CR as a record ending for whitespace checks."
+}

@@ -1,8 +1,13 @@
-"""Settings used in the experiments summarised here."""
+"""Convenience summaries using historical configuration IDs.
+
+Exact source-bound YAMLs in experiments/configs are authoritative. The final
+thesis calls Q5 delta and PIS importance sampling. Older diagnostic APIs are
+retained for compatibility rather than treated as principal methods.
+"""
 
 SELECTED_SETTINGS = {
     "Q5": {
-        "proposal": "answer-derived",
+        "proposal": "pseudo-posterior",
         "support": "persistent token-unique FIFO",
         "proposals_per_question": 16,
         "support_size": 16,
@@ -31,7 +36,7 @@ SELECTED_SETTINGS = {
         "updates_per_round": 1,
         "rounds": 32,
         "learning_rate": 1e-4,
-        "initializer_prompt": "answer-derived",
+        "initializer_prompt": "pseudo-posterior",
         "proposal_prompt": "question-only",
         "reward_requires_eos": True,
     },
@@ -70,15 +75,15 @@ DEVELOPMENT_SETTINGS = {
 DIAGNOSTIC_SETTINGS = {
     "AC-PIS": {
         **SELECTED_SETTINGS["PIS"],
-        "proposal": "answer-derived",
+        "proposal": "pseudo-posterior",
         "responsibility": "trace + answer - proposal log density",
-        "status": "lower than PIS in the study",
+        "status": "historical diagnostic; not a principal algorithm",
     },
     "CENTERED-TRACE": {
         **SELECTED_SETTINGS["PIS"],
         "rationale_credit": "posterior minus uniform",
         "answer_credit": "posterior",
-        "status": "lower than PIS in the study",
+        "status": "historical diagnostic; not a principal algorithm",
     },
     "NULL-LATENT": {
         **SELECTED_SETTINGS["PIS"],

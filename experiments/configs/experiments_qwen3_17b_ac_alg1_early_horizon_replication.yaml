@@ -1,0 +1,89 @@
+# Fresh-seed confirmation of the only replicated positive AC-ALG1 signal.
+#
+# The completed 20260722i factorial found that the exact B_unsup-only arm was
+# above its paired frozen reference at round 10 in all three original seeds,
+# then reversed below base by round 30.  This configuration changes no training
+# factor.  It asks whether the early gain reproduces on five prespecified,
+# non-contiguous fresh seeds.  The frozen arm is rerun for every seed because
+# task examples, four-shot context, and model sampling are seed dependent.
+#
+# Non-contiguous seed_values must be launched one task at a time:
+#   python run_yaml.py \
+#     experiments_qwen3_17b_ac_alg1_early_horizon_replication.yaml \
+#     --seed 0 --dry-run
+
+run_id: 20260724c
+tag_prefix: q3_alg1_early_horizon_fresh
+diagnostic:
+  stage: confirmatory_replication
+  source_run_id: 20260722i
+  partition: validation
+  seed_values: [31, 47, 73, 101, 127]
+  frozen_training_configuration: exact_20260722i_B_unsup_only
+  primary_horizon_completed_rounds: 10
+  primary_metric: paired_validation_accuracy_auc_rounds_0_10
+  secondary_metrics:
+    - validation_accuracy_round_5
+    - validation_accuracy_round_10
+    - normalized_validation_accuracy_auc_rounds_0_30
+    - final_validation_accuracy_round_30
+    - collapse_onset
+    - responsibility_ess
+    - proposal_acceptance
+  support_rule:
+    minimum_positive_seed_differences: 4
+    minimum_mean_auc_gain: 0.01
+    hierarchical_paired_question_ci_lower_bound: 0.0
+    catastrophic_seed_allowed: false
+    catastrophic_seed_auc_difference_below: -0.05
+  practical_futility_rule:
+    one_sided_95ci_upper_bound_below: 0.01
+    maximum_positive_seed_differences: 1
+  official_test_after_analysis: false
+
+defaults:
+  task: gsm8k
+  model: qwen3-1.7b-base
+  rounds: 30
+  seeds: 5
+  seed_values: [31, 47, 73, 101, 127]
+  n_test: 400
+  train_partition: train
+  eval_partition: validation
+  batch: 64
+  eval_batch: 32
+  G: 16
+  prompts: 64
+  shots: 4
+  grad_checkpoint: false
+  out: ~/po_results/2026-07-24/causal-portfolio/qwen3-early-horizon__20260724c
+  eval_rounds: [5, 10, 15, 20, 30]
+  dump_completions: 20
+  save_adapter: true
+  save_training_diagnostics: true
+  checkpoint_every: 5
+
+algos:
+  base: {}
+
+  AC-ALG1:
+    cell_id: Bunsup_exact
+    lr: 5.0e-5
+    iters: 4
+    buffer_limit: 33
+    labelled_frac: 0.50
+    buffer_strategy: hybrid
+    proposal_prompt: question
+    proposal_filter: answer_correct
+    proposal_policy: current
+    responsibility_score: token_mean
+    responsibility_temperature: 1.0
+    responsibility_ess_floor: 0.0
+    responsibility_policy: current
+    responsibility_refresh: inner_step
+    labelled_em_weight: 0.0
+    answer_only_em_weight: 1.0
+    supervised_weight: 0.0
+    update_geometry: sum
+    step_acceptance: none
+    optimizer_state_scope: persistent

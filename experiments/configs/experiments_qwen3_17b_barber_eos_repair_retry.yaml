@@ -1,0 +1,195 @@
+# Repaired same-commit rerun of the answer-boundary screen. The invalid
+# b8652519 artifacts remain immutable; this run has a fresh identity and path.
+# EOS is the only within-pair intervention.
+
+run_id: 5ab7eecd
+tag_prefix: q3_barber_eos_retry
+
+diagnostic:
+  stage: barber_eos_complete_target_matched_screen_repaired
+  evidence_class: preregistered_three_seed_screen
+  require_protocol_outcome_diagnostics: true
+  invalid_predecessor:
+    run_id: b8652519
+    reason: sweep_adapter_dropped_answer_target_termination
+  source_controls:
+    source_factorial_run_id: 7e9f3c1a
+    variational_run_id: 9c24d8b7
+  provenance:
+    model_id: Qwen/Qwen3-1.7B-Base
+    model_revision: ea980cb0a6c2ae4b936e82123acc929f1cec04c1
+    dataset_id: openai/gsm8k
+    dataset_config: main
+    dataset_revision: 740312add88f781978c0658806c59bc2815b9866
+  seed_values: [31, 47, 73]
+  partitions:
+    optimization_questions: 64
+    final_validation_questions: 400
+    official_test_used: false
+  cells:
+    CTRL-base: fresh_frozen_runtime_control
+    NOEOS-F001: contemporaneous_source_factorial_F001
+    EOS-F001: source_factorial_F001_plus_answer_EOS
+    NOEOS-F111: contemporaneous_source_factorial_F111
+    EOS-F111: source_factorial_F111_plus_answer_EOS
+    NOEOS-Q4: contemporaneous_variational_Q4_delta_prior
+    EOS-Q4: variational_Q4_delta_prior_plus_answer_EOS
+    NOEOS-Q5: contemporaneous_variational_Q5_delta_pseudo
+    EOS-Q5: variational_Q5_delta_pseudo_plus_answer_EOS
+  primary_metric: normalized_strict_validation_accuracy_auc_rounds_0_to_30
+  secondary_metrics:
+    - paired_round_10_strict_validation_accuracy
+    - paired_final_strict_validation_accuracy
+    - normalized_legacy_validation_accuracy_auc_rounds_0_to_30
+    - strict_correct_and_natural_EOS_auc
+    - natural_EOS_rate
+    - EOS_given_strict_correct_rate
+    - token_limit_termination_rate
+    - multiple_marker_rate
+    - nonterminal_rate
+    - nonempty_reasoning_rate
+    - strict_correct_with_reasoning_rate
+    - direct_answer_only_rate
+    - first_step_component_gradient_norms
+    - supervised_and_latent_target_token_counts
+    - supervised_and_latent_EOS_target_counts
+    - pass_at_8
+  interpretation_rules:
+    - Pair each EOS cell only with its contemporaneous NOEOS cell on the same seed.
+    - Historical no-EOS runs are reproducibility context, not primary controls.
+    - Treat the four EOS contrasts as one family and apply Holm correction.
+    - EOS changes both termination semantics and token-summed objective scale; report first-step component gradients and exact target/EOS token counts.
+    - Do not attribute a reasoning improvement to answer accuracy alone; report reasoning-presence diagnostics separately.
+    - This three-seed panel can nominate at most one confirmation candidate and cannot support a final method claim.
+    - Do not use external answer-aware stopping in this study.
+    - Do not inspect the official GSM8K test split.
+
+selection:
+  status: preregistered_screen
+  contrast_family:
+    - EOS-F001_minus_NOEOS-F001
+    - EOS-F111_minus_NOEOS-F111
+    - EOS-Q4_minus_NOEOS-Q4
+    - EOS-Q5_minus_NOEOS-Q5
+  multiplicity_reporting: Holm_adjusted_two_sided_paired_seed_tests_descriptive_only
+  screening_decision_rule: nominate_at_most_one_largest_mean_strict_AUC_effect_passing_every_candidate_gate
+  candidate_gate:
+    - positive_mean_strict_validation_AUC_effect
+    - positive_median_strict_validation_AUC_effect
+    - at_least_two_of_three_seed_strict_AUC_deltas_positive
+    - positive_mean_strict_correct_and_natural_EOS_AUC_effect
+    - increased_mean_natural_EOS_rate
+    - reduced_mean_token_limit_termination_rate
+    - no_mean_reduction_in_legacy_validation_AUC
+    - no_mean_increase_in_direct_answer_only_rate
+  confirmation_gate:
+    seeds: seven_fresh_nonoverlapping_seeds
+    partition: provenance_audited_untouched_train_derived_confirmation_set
+    rule: freeze_one_candidate_before_confirmation
+    primary_gate: positive_95pct_paired_seed_interval_lower_bound_for_strict_AUC
+    behaviour_gate: improved_terminal_behaviour_and_no_legacy_AUC_loss
+    official_test_used: false
+
+defaults:
+  task: gsm8k
+  model: qwen3-1.7b-base
+  rounds: 30
+  seeds: 3
+  seed_values: [31, 47, 73]
+  n_test: 400
+  train_partition: train
+  eval_partition: validation
+  answer_event_mode: strict_terminal_marker
+  answer_target_termination: none
+  batch: 128
+  eval_batch: 32
+  G: 16
+  prompts: 64
+  shots: 4
+  shot_bank_size: 4
+  task_seed_from_run_seed: true
+  question_sampling: epoch_shuffle
+  grad_checkpoint: false
+  out: ~/po_results/2026-07-30/barber-eos/eos-repair-retry__5ab7eecd
+  eval_rounds: [1, 2, 3, 5, 10, 15, 20, 30]
+  dump_completions: 100
+  save_adapter: true
+  save_training_diagnostics: true
+  training_diagnostics_level: deep
+  training_diagnostics_trace_tape: true
+  training_diagnostics_gradient_questions: 2
+  training_diagnostics_probe_size: 0
+  checkpoint_every: 0
+  passk: 8
+  passk_n: 100
+
+algos:
+  base:
+    cell_id: CTRL-base
+
+  AC-ALG1:
+    - &source_delta
+      cell_id: NOEOS-F001
+      answer_target_termination: none
+      algorithm_profile: barber_source
+      batch: 128
+      lr: 1.0e-5
+      iters: 4
+      buffer_limit: 33
+      labelled_frac: 0.50
+      buffer_strategy: fifo
+      buffer_semantics: unique_set
+      buffer_lifecycle: persistent
+      proposal_prompt: question
+      proposal_mixture: single
+      proposal_filter: all
+      proposal_policy: current
+      responsibility_score: joint
+      responsibility_posterior: softmax_entropy
+      responsibility_temperature: 1.0
+      responsibility_ess_floor: 0.0
+      responsibility_policy: current
+      responsibility_answer_policy: current
+      responsibility_refresh: inner_step
+      variational_estimator: delta_joint
+      labelled_em_weight: 0.0
+      answer_only_em_weight: 1.0
+      supervised_weight: 0.0
+      policy_anchor_mode: fixed
+      labelled_numeric_constraint: "off"
+      labelled_supervision: gold
+      digit_token_weight: 1.0
+      trace_representation: reasoning
+      latent_mstep_objective: joint
+      update_geometry: sum
+      step_acceptance: none
+      optimizer_state_scope: persistent
+    - <<: *source_delta
+      cell_id: EOS-F001
+      answer_target_termination: eos
+    - &source_full
+      <<: *source_delta
+      cell_id: NOEOS-F111
+      answer_target_termination: none
+      labelled_em_weight: 1.0
+      supervised_weight: 1.0
+    - <<: *source_full
+      cell_id: EOS-F111
+      answer_target_termination: eos
+    - &q4
+      <<: *source_delta
+      cell_id: NOEOS-Q4
+      answer_target_termination: none
+      batch: 64
+      labelled_frac: 0.0
+    - <<: *q4
+      cell_id: EOS-Q4
+      answer_target_termination: eos
+    - &q5
+      <<: *q4
+      cell_id: NOEOS-Q5
+      answer_target_termination: none
+      proposal_prompt: answer_derive
+    - <<: *q5
+      cell_id: EOS-Q5
+      answer_target_termination: eos

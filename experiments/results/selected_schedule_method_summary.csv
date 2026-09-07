@@ -1,0 +1,11 @@
+method,final_parsed,final_terminal_valid,parsed_auc
+TRICE,83.75,83.32,82.38
+RLOO,82.11,81.50,80.58
+GRPO,81.57,81.07,79.51
+answer_guided_finite_support,80.57,70.64,79.99
+STaR,80.36,60.36,79.69
+RFT,79.00,78.14,76.53
+ReST-EM,78.11,77.18,78.63
+answer_weighted_fresh,76.89,76.21,78.33
+paired_zero_update_base,76.18,57.50,76.18
+gold_trace_SFT,75.36,73.71,76.19

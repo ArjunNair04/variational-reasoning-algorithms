@@ -1,0 +1,103 @@
+# Three-seed ablation of the two AC-ALG1 latent-buffer objective terms.
+#
+# The matched full-objective reference (lambda_L=1, lambda_U=1) is the
+# token-mean arm of experiments_qwen3_17b_ac_alg1_collapse_stability.yaml.
+# This file runs only the three missing corners of the 2x2 factorial:
+#   lambda_L  lambda_U  objective
+#       0         0      B_sup
+#       1         0      B_sup + B'_unsup
+#       0         1      B_sup + B_unsup
+# Both buffers are still generated, scored, and diagnosed in every arm; a zero
+# coefficient removes only that term's contribution to the optimizer gradient.
+#
+# Preview only:
+#   python run_yaml.py \
+#     experiments_qwen3_17b_ac_alg1_objective_terms.yaml --dry-run
+
+run_id: 20260721f
+tag_prefix: q3_alg1_terms
+diagnostic:
+  partition: validation
+  frozen_reference_accuracy: 0.7925
+  matched_full_objective_run_id: 20260721e
+  matched_full_objective_scheduler_job: 7088655
+  candidate_rounds: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
+  primary_metric: normalized_validation_accuracy_auc_rounds_0_30
+  paired_unit: gsm8k_question
+  seed_policy: report_separately_then_average
+  selection_rule: prefer_highest_mean_auc_subject_to_no_seed_collapsing_below_supervised_only
+  stop_signal: supervised_only_not_worse_than_every_latent_arm
+  official_test_after_analysis: false
+defaults:
+  task: gsm8k
+  model: qwen3-1.7b-base
+  rounds: 30
+  seeds: 3
+  n_test: 400
+  train_partition: train
+  eval_partition: validation
+  batch: 64
+  eval_batch: 32
+  G: 16
+  prompts: 64
+  shots: 4
+  grad_checkpoint: false
+  out: ~/po_results
+  eval_every: 2
+  dump_completions: 20
+  save_adapter: true
+  save_training_diagnostics: true
+  checkpoint_every: 2
+
+algos:
+  AC-ALG1:
+    # T00: supervised term only.
+    - lr: 5.0e-5
+      iters: 4
+      buffer_limit: 33
+      labelled_frac: 0.50
+      buffer_strategy: hybrid
+      proposal_prompt: question
+      proposal_filter: answer_correct
+      responsibility_score: token_mean
+      responsibility_temperature: 1.0
+      labelled_em_weight: 0.0
+      answer_only_em_weight: 0.0
+      labelled_numeric_constraint: "off"
+      numeric_penalty: 2.0
+      labelled_supervision: gold
+      compact_gold_weight: 0.50
+
+    # T10: supervised plus labelled latent-buffer term.
+    - lr: 5.0e-5
+      iters: 4
+      buffer_limit: 33
+      labelled_frac: 0.50
+      buffer_strategy: hybrid
+      proposal_prompt: question
+      proposal_filter: answer_correct
+      responsibility_score: token_mean
+      responsibility_temperature: 1.0
+      labelled_em_weight: 1.0
+      answer_only_em_weight: 0.0
+      labelled_numeric_constraint: "off"
+      numeric_penalty: 2.0
+      labelled_supervision: gold
+      compact_gold_weight: 0.50
+
+    # T01: supervised plus answer-only latent-buffer term.
+    - lr: 5.0e-5
+      iters: 4
+      buffer_limit: 33
+      labelled_frac: 0.50
+      buffer_strategy: hybrid
+      proposal_prompt: question
+      proposal_filter: answer_correct
+      responsibility_score: token_mean
+      responsibility_temperature: 1.0
+      labelled_em_weight: 0.0
+      answer_only_em_weight: 1.0
+      labelled_numeric_constraint: "off"
+      numeric_penalty: 2.0
+      labelled_supervision: gold
+      compact_gold_weight: 0.50

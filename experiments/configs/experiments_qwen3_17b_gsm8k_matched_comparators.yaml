@@ -1,0 +1,113 @@
+run_id: 11dd70d8
+tag_prefix: q3_gsm8k_matched_comp
+
+diagnostic:
+  stage: matched_comparator_addon
+  evidence_class: preregistered_seven_seed_confirmation
+  scientific_question: >
+    At exactly matched rollout and update budgets, is the clean validated PIS
+    method competitive with GRPO and RLOO on Qwen3-1.7B GSM8K?
+  source_controls:
+    experiment_id: qwen3_l2r_pis_confirmation_20260815
+    run_id: 388abde8
+    marker_sha256: 48e74b17ac26033b9d38a1dc92ef4261401d475cc756d375e405ddc3d121c279
+    cells: [CTRL-base, PIS-S8-B8-U4]
+    reuse_policy: exact_existing_coordinates_only_no_rerun
+  provenance:
+    model_id: Qwen/Qwen3-1.7B-Base
+    model_revision: ea980cb0a6c2ae4b936e82123acc929f1cec04c1
+    dataset_id: openai/gsm8k
+    dataset_revision: 740312add88f781978c0658806c59bc2815b9866
+  design:
+    new_cell_order: [GRPO-S8-B8-U4, RLOO-S8-B8-U4]
+    union_cell_order: [CTRL-base, PIS-S8-B8-U4, GRPO-S8-B8-U4, RLOO-S8-B8-U4]
+    seed_values: [1009, 1013, 1019, 1021, 1031, 1033, 1039]
+    new_array_tasks: 14
+    accepted_union_tasks: 28
+    coordinate: {S_or_G: 8, B: 8, U: 4}
+  fixed_contract:
+    optimization_questions: 128
+    development_validation_questions: 400
+    prompt_shots: 3
+    nested_prompt_bank_size: 5
+    proposal_and_evaluation_prompt: question_only
+    outer_rounds: 32
+    generated_completions_per_round: 64
+    generated_completions_per_trained_cell: 2048
+    update_passes_per_round: 4
+    adapter_rank: 16
+    adapter_alpha: 32
+    adapter_surface: attention_and_mlp_projections
+    answer_event: one_terminal_marker_followed_by_tokenizer_eos
+    official_test_used: false
+  reporting_order:
+    - final_extracted_answer_accuracy
+    - final_strict_terminal_accuracy
+    - normalized_extracted_accuracy_auc
+  decision_rules:
+    - Treat the seven paired training seeds as the independent units.
+    - PIS is competitive only if its one-sided final-Acc@1 lower bound exceeds minus one point against both GRPO and RLOO.
+    - Claim PIS superiority only when the corresponding lower bound exceeds zero and at least five of seven seed effects are positive.
+    - AUC is secondary and cannot rescue a failed final-Acc@1 result.
+    - Report strict accuracy, late decline, format, EOS, pass-at-8, generated and backward tokens, optimizer steps and accelerator-hours.
+    - Do not access the official GSM8K test split and do not retune from these outcomes.
+
+defaults:
+  task: gsm8k
+  model: qwen3-1.7b-base
+  rounds: 32
+  seeds: 7
+  seed_values: [1009, 1013, 1019, 1021, 1031, 1033, 1039]
+  n_test: 400
+  train_partition: train
+  eval_partition: validation
+  answer_event_mode: strict_terminal_marker
+  answer_target_termination: none
+  evaluation_prompt: question
+  batch: 64
+  eval_batch: 32
+  G: 8
+  prompts: 128
+  shots: 3
+  shot_bank_size: 5
+  task_seed_from_run_seed: true
+  question_sampling: epoch_shuffle
+  grad_checkpoint: false
+  lora_r: 16
+  lora_alpha: 32
+  lora_target_set: attention_mlp
+  out: ~/po_results/2026-08-21/final-comparison/gsm8k-matched-comparators__11dd70d8
+  eval_rounds: [1, 2, 4, 8, 16, 24, 32]
+  dump_completions: 100
+  save_adapter: true
+  save_training_diagnostics: true
+  training_diagnostics_level: standard
+  training_diagnostics_trace_tape: false
+  training_diagnostics_gradient_questions: 0
+  training_diagnostics_probe_size: 0
+  checkpoint_every: 0
+  passk: 8
+  passk_n: 100
+
+algos:
+  GRPO:
+    cell_id: GRPO-S8-B8-U4
+    batch: 64
+    G: 8
+    epochs: 4
+    proposal_prompt: question
+    reward_requires_eos: true
+    lr: 1.0e-5
+    clip: 0.2
+    kl_coef: 0.02
+    optimizer_step_scope: batch
+
+  RLOO:
+    cell_id: RLOO-S8-B8-U4
+    batch: 64
+    G: 8
+    epochs: 4
+    proposal_prompt: question
+    reward_requires_eos: true
+    lr: 2.0e-5
+    kl_coef: 0.03

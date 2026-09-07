@@ -1,0 +1,161 @@
+# Diagnostic prompt-information-path study.
+#
+# Only the missing intervention cells are run. Each is compared against an
+# already verified historical control on the same seeds. These cross-run
+# contrasts are diagnostic and cannot select a final method.
+
+run_id: 5ad4dd9d
+tag_prefix: q3_prompt_paths
+
+diagnostic:
+  stage: prompt_information_path_diagnostic
+  evidence_class: preregistered_cross_run_three_seed_diagnostic
+  require_protocol_outcome_diagnostics: true
+  seed_values: [31, 47, 73]
+  partitions:
+    optimization_questions: 64
+    final_validation_questions: 400
+    official_test_used: false
+  cells:
+    Q5-Q: q5_with_question_only_trace_proposals
+    BASE-AD: frozen_base_with_answer_derived_evaluation_prompt
+    GRPO-AD: grpo_with_answer_derived_training_rollouts
+    RLOO-AD: rloo_with_answer_derived_training_rollouts
+  historical_controls:
+    Q5-AD:
+      run_id: 5ab7eecd
+      description: eos_q5_moving_reader_with_answer_derived_proposals
+    BASE-Q:
+      run_id: 5ab7eecd
+      description: frozen_base_with_question_only_evaluation
+    GRPO-Q:
+      run_id: 20260724i
+      description: selected_grpo_with_question_only_training_rollouts
+    RLOO-Q:
+      run_id: 20260724i
+      description: selected_rloo_with_question_only_training_rollouts
+  primary_contrasts:
+    - Q5-Q_minus_Q5-AD
+    - BASE-AD_minus_BASE-Q
+    - GRPO-AD_minus_GRPO-Q
+    - RLOO-AD_minus_RLOO-Q
+  primary_metrics:
+    - normalized_strict_validation_accuracy_auc
+    - final_strict_validation_accuracy
+  secondary_metrics:
+    - extracted_answer_accuracy
+    - strict_correct_and_natural_EOS_rate
+    - natural_EOS_rate
+    - multiple_marker_rate
+    - nonterminal_rate
+    - nonempty_reasoning_rate
+    - direct_answer_only_rate
+    - generated_tokens
+    - backward_tokens
+    - accelerator_hours
+  interpretation_rules:
+    - Each contrast changes one prompt information path only.
+    - Q5-Q removes gold-answer information from proposal generation but retains the labelled answer factor.
+    - BASE-AD is a diagnostic upper-bound prompt condition, not a deployable baseline.
+    - GRPO-AD and RLOO-AD receive the answer only during training rollout generation; validation remains answer-blind.
+    - Cross-run comparisons may motivate a contemporaneous replication but cannot select a final method.
+    - Do not inspect the official GSM8K test split.
+
+selection:
+  status: diagnostic_only
+  method_selection_allowed: false
+  bridge_dependency: qwen3_barber_eos_stability_response_surface_e5f20a31
+  deferred_bridge: Q5-U_vs_PM-J_vs_PM-ACIS
+
+defaults:
+  task: gsm8k
+  model: qwen3-1.7b-base
+  rounds: 60
+  seeds: 3
+  seed_values: [31, 47, 73]
+  n_test: 400
+  train_partition: train
+  eval_partition: validation
+  answer_event_mode: strict_terminal_marker
+  answer_target_termination: none
+  evaluation_prompt: question
+  batch: 64
+  eval_batch: 32
+  G: 16
+  prompts: 64
+  shots: 4
+  shot_bank_size: 4
+  task_seed_from_run_seed: true
+  question_sampling: epoch_shuffle
+  grad_checkpoint: false
+  out: ~/po_results/2026-07-31/prompt-paths/qwen3-prompt-information-paths__5ad4dd9d
+  eval_rounds: [1, 2, 3, 5, 10, 15, 20, 30, 40, 50, 60]
+  dump_completions: 100
+  save_adapter: false
+  save_training_diagnostics: true
+  training_diagnostics_level: deep
+  training_diagnostics_trace_tape: true
+  training_diagnostics_gradient_questions: 2
+  training_diagnostics_probe_size: 0
+  checkpoint_every: 0
+  passk: 0
+  passk_n: 100
+
+algos:
+  base:
+    - cell_id: BASE-AD
+      rounds: 30
+      evaluation_prompt: answer_derive
+
+  AC-ALG1:
+    - cell_id: Q5-Q
+      rounds: 30
+      answer_target_termination: eos
+      algorithm_profile: barber_reader_ablation
+      lr: 1.0e-5
+      iters: 4
+      buffer_limit: 33
+      labelled_frac: 0.0
+      buffer_strategy: fifo
+      buffer_semantics: unique_set
+      buffer_lifecycle: persistent
+      proposal_prompt: question
+      proposal_mixture: single
+      proposal_filter: all
+      proposal_policy: current
+      responsibility_score: joint
+      responsibility_posterior: softmax_entropy
+      responsibility_temperature: 1.0
+      responsibility_ess_floor: 0.0
+      responsibility_policy: current
+      responsibility_answer_policy: current
+      responsibility_refresh: inner_step
+      variational_estimator: delta_joint
+      labelled_em_weight: 0.0
+      answer_only_em_weight: 1.0
+      supervised_weight: 0.0
+      policy_anchor_mode: fixed
+      labelled_numeric_constraint: "off"
+      labelled_supervision: gold
+      digit_token_weight: 1.0
+      trace_representation: reasoning
+      latent_mstep_objective: joint
+      update_geometry: sum
+      step_acceptance: none
+      optimizer_state_scope: persistent
+
+  GRPO:
+    - cell_id: GRPO-AD
+      proposal_prompt: answer_derive
+      lr: 3.0e-6
+      epochs: 2
+      clip: 0.2
+      kl_coef: 0.04
+      optimizer_step_scope: batch
+
+  RLOO:
+    - cell_id: RLOO-AD
+      proposal_prompt: answer_derive
+      lr: 2.0e-5
+      epochs: 2
+      kl_coef: 0.03

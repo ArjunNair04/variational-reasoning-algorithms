@@ -1,0 +1,22 @@
+{
+  "cluster_qwen3.in": {
+    "source_revision": "48bda822f94d486d15ac03c450449e0a66c6b998",
+    "source_path": "requirements/cluster_qwen3.in",
+    "sha256": "5342954ccd7ff8a619c3133aee56182e82d60523d311c1576448206a956046fe"
+  },
+  "cluster_qwen3.lock": {
+    "source_revision": "48bda822f94d486d15ac03c450449e0a66c6b998",
+    "source_path": "requirements/cluster_qwen3.lock",
+    "sha256": "e92cfcdbf2e82bf88785d45d093d92661c7e59cff87fdc0040d4138c998b5383"
+  },
+  "analysis.in": {
+    "source_revision": "48bda822f94d486d15ac03c450449e0a66c6b998",
+    "source_path": "requirements/analysis.in",
+    "sha256": "250e1f70f7ce20548fb2e3f9726d46ec01a2c08c7011f02beb0605d3e5373d60"
+  },
+  "analysis.lock": {
+    "source_revision": "48bda822f94d486d15ac03c450449e0a66c6b998",
+    "source_path": "requirements/analysis.lock",
+    "sha256": "aeb32aaa1b990ec5df443894a862000236bfd404584d4b8652fd6898d4ae8c36"
+  }
+}

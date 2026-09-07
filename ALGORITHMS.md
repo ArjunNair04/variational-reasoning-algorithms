@@ -1,173 +1,104 @@
-# Algorithms
+# Update rules
 
-## Finite-support EM
+Write the question as $q$, the complete known-answer suffix as $a$, and the
+unobserved reasoning trace as $h$. In the final experiments, $h$ contains the
+first `####` marker and $a$ contains the numerical answer followed by EOS. The
+model therefore assigns the complete response probability
 
-For a question $x$, answer $y^\star$, and latent rationale $h$, the model defines
+$$p_\theta(h,a\mid q)=p_\theta(h\mid q)p_\theta(a\mid q,h).$$
 
-$$
-p_\theta(y^\star\mid x)
-= \sum_h p_\theta(h\mid x)
-  p_\theta(y^\star,\mathrm{EOS}\mid x,h).
-$$
+Professor Barber's finite-support formulation assigns nonnegative masses to
+traces in a retained set $\mathcal B(q)$. Its ordinary E-step is
 
-The latent sum is generally too large to compute directly, so we approximate it with a small support of sampled rationales. If $w_i$ is the detached responsibility of trace $h_i$, the joint M-step is
+$$w_s = \frac{p_{\theta_{\mathrm{old}}}(h^s,a\mid q)}
+ {\sum_{h\in\mathcal B(q)}p_{\theta_{\mathrm{old}}}(h,a\mid q)}.$$
 
-$$
-\mathcal L(\theta)
-= -\frac{1}{|M|}\sum_{x\in M}\sum_i w_i
-\left[
-  \log p_\theta(h_i\mid x)
-  + \log p_\theta(y^\star,\mathrm{EOS}\mid x,h_i)
-\right].
-$$
+These are the exact posterior masses **conditional on the retained set**. The
+proposal determines which traces can enter that set. With the pseudo-posterior
+proposal, the prompt supplies the known answer; the retained trace is then
+scored and fitted under the original question-only prompt. No proposal-density
+correction appears in this discrete-set E-step.
 
-The terminal answer marker is part of the rationale sequence. The numerical answer and one tokenizer EOS token form the answer target.
+## Fitting the complete response
 
-### PIS
+For $M$ usable questions, the detached-weight loss is
 
-PIS draws a fresh multiset from the current question-only policy. The proposal density therefore cancels from the self-normalised importance ratio:
+$$L(\theta)=-\frac1M\sum_q\sum_s w_s
+ [\log p_\theta(h^s\mid q)+\log p_\theta(a\mid q,h^s)].$$
 
-$$
-w_i
-= \operatorname{softmax}_i
-  \log p_{\theta_k}(y^\star,\mathrm{EOS}\mid x,h_i).
-$$
+Log probabilities are sums over response tokens. They are not divided by trace
+length. Empty questions are omitted from the mean; an entirely empty minibatch
+has no latent update. Ordinary delta recomputes weights before each of $J$
+optimizer steps. The fixed-weight diagnostic computes them once per minibatch;
+these choices coincide at $J=1$.
 
-The setting used here has eight traces for each of eight questions and holds the weights fixed for four local updates.
+The final delta buffer retains distinct original token prefixes and evicts the
+oldest on overflow. A duplicate does not become a second atom or refresh its
+age. Prefix admission requires an intact token boundary through the marker;
+a token containing part of the generated numerical answer cannot be cut apart.
+The sampled suffix is replaced with the known complete answer event.
 
-### Q5
+## Importance sampling
 
-Q5 proposes traces with an answer-derived prompt, reconstructs them under the ordinary question-only prompt, and keeps a token-unique FIFO support of size 16. Its posterior is
+Importance sampling retains fresh **occurrences**. If an eligible trace occurs
+twice, both draws contribute. For proposal distribution $q(h)$,
 
-$$
-w_i
-= \operatorname{softmax}_i
-\left\{
-  \log p_{\theta_k}(h_i\mid x)
-  + \log p_{\theta_k}(y^\star,\mathrm{EOS}\mid x,h_i)
-\right\}.
-$$
+$$\widetilde w_s=\frac{p_{\theta_{\mathrm{old}}}(h^s,a\mid q)}{q(h^s)},
+\qquad w_s=\frac{\widetilde w_s}{\sum_j\widetilde w_j}.$$
 
-The setting used here has one local update. Q5-MORE changes only the number of raw proposals from 16 to 32 before compression to the same support size. The available Q5-MORE result is preliminary.
+For question-only prior draws the trace factor cancels, leaving the known
+answer likelihood. Prefix eligibility conditions sampling on admission; its
+common normalising probability also cancels among the retained draws. The
+finite self-normalised estimate is not generally unbiased. With a
+pseudo-posterior proposal, the recorded sample-time prefix probability remains
+in the denominator. The final importance method holds its weights fixed for
+all $J$ fitting steps. The historical correction pilot refreshed the numerator
+while holding its proposal denominator fixed; it has its own archived version.
 
-The Q5 implementation uses this uncorrected posterior with answer-derived proposals.
+## Weight concentration
 
-### Related EM presets
+Classical effective sample size is $1/\sum_s w_s^2$, and entropy is
+$H=-\sum_{s:w_s>0}w_s\log w_s$. Their effective counts obey
+$\mathrm{ESS}\leq\exp(H)\leq K$. Here $K$ counts finite admissible scores.
+Neither count measures calculation validity or independent optimiser updates.
+The temperature intervention increases the softmax temperature only when the
+normalised ESS falls below a requested floor. Negative-infinity exclusions stay
+excluded. The code retains the original bounded search; a floor of one can
+require an infinite temperature for exact equality.
 
-VIN and VOUT use the same joint posterior with persistent question-only support. VIN refreshes responsibilities at each local update; VOUT freezes them for the outer round. POLD uses fresh question-only support with uniform empirical weights. These are settings of the same update, not separate implementations.
+## Comparison methods
 
-### Answer-conditioned importance correction
+GRPO centres and scales checker rewards within each question's response group.
+The executed loss clips token probability ratios at $1\pm\epsilon$ and includes
+a reference-policy KL penalty. Its numerical KL estimator clamps the reference
+minus current token log ratio to $[-5,5]$ before exponentiation. The selected
+configuration accumulates microbatches into one optimizer step per full batch.
+An all-pass or all-fail group has zero centred task-reward advantage; the KL
+term can still act.
 
-The AC-PIS diagnostic samples from an answer-conditioned proposal $g(h\mid x,y^\star)$ and applies the exact self-normalised correction
+RLOO first subtracts a sequence-level sampled KL penalty from each reward, then
+subtracts the other responses' mean return. Its fixed advantages weight summed
+sequence log probabilities across repeated epochs; the executed RLOO trainer
+has no PPO clipping step. The reference singleton fallback matches the source,
+although the thesis comparisons use groups larger than one.
 
-$$
-w_i=\operatorname{softmax}_i
-\left[
-\log p_{\theta_k}(h_i\mid x)
-+\log p_{\theta_k}(y^\star,\mathrm{EOS}\mid x,h_i)
--\log g(h_i\mid x,y^\star)
-\right].
-$$
+TRICE retains a passing response for each question and tests a fresh proposal.
+Its score estimator uses the retained state and a leave-one-out control-variate
+coefficient on the proposal, including rejected proposals. The Qwen/LoRA
+comparison initialises with the known answer available, then proposes from the
+question-only prompt. This implementation choice is recorded separately from
+the published algorithm's dataset-specific initialisation.
 
-The M-step is unchanged.
+RFT, ReST-EM and STaR select checker-passing, naturally terminated responses for
+maximum-likelihood fitting. ReST-EM repeats generation and improvement; STaR
+also tries a known-answer rationale when its direct attempt fails. Gold SFT has
+additional worked-solution supervision. Their exact resetting, grouping and
+learning-rate choices are in the selected study YAML, rather than imposed by
+the small selection helpers.
 
-### Centred trace credit
-
-The centred diagnostic keeps ordinary positive answer training but gives the rationale a signed relative coefficient:
-
-$$
-c_i^{h}=w_i-\frac{1}{K},
-\qquad
-c_i^{y}=w_i.
-$$
-
-The rationale coefficients sum to zero. The experiments examined how these negative coefficients affected training when the sampled support was weak.
-
-### Null-state abstention
-
-The smooth abstention diagnostic adds one fixed null state. For $K$ real traces,
-
-$$
-q_i=
-\frac{(1-\pi_0)K^{-1}\exp(\ell_i/\tau)}{Z},
-\qquad
-q_0=
-\frac{\pi_0\exp(b_0/\tau)}{Z}.
-$$
-
-The real M-step coefficients are the unconditional $q_i$, so $\sum_i q_i=1-q_0$. Renormalising them back to one would remove the abstention mechanism.
-
-## GRPO
-
-For the responses to one question, GRPO standardises the verifier reward:
-
-$$
-A_i = \frac{r_i-\bar r}{\operatorname{sd}(r)+10^{-8}}.
-$$
-
-If the group has no reward variation, every advantage is zero. The implementation here uses the clipped token-level ratio objective
-
-$$
-\min(\rho_{it}A_i,
-      \operatorname{clip}(\rho_{it},1-\epsilon,1+\epsilon)A_i)
--\beta\,K_3,
-$$
-
-where $\rho_{it}=\exp(\ell_{it}-\ell^{\mathrm{old}}_{it})$ and
-
-$$
-K_3 = \exp(\ell^{\mathrm{ref}}_{it}-\ell_{it})
-      -(\ell^{\mathrm{ref}}_{it}-\ell_{it})-1.
-$$
-
-The loss is averaged over active response tokens.
-
-## RLOO
-
-RLOO first forms the sampled KL-shaped return
-
-$$
-R_i=r_i-\beta
-(\log p_\theta(o_i\mid x)-\log p_{\mathrm{ref}}(o_i\mid x)),
-$$
-
-then subtracts the mean return of the other responses to the same question:
-
-$$
-A_i=R_i-\frac{1}{G-1}\sum_{j\ne i}R_j.
-$$
-
-The policy loss is the negative mean of $A_i\log p_\theta(o_i\mid x)$.
-
-## TRICE
-
-TRICE keeps one persistent trace for each question. The configuration here initialises each chain once with an answer-derived prompt, then uses question-only proposals. A correct proposal replaces the chain state; an incorrect proposal is rejected. For valid retained states, the control-variate estimator has terms
-
-$$
-\frac{1}{\sum_m c'_m}\sum_m c'_m
-\left[
-\nabla\log p_\theta(z'_m\mid x_m)
--\beta_m\nabla\log p_\theta(\widetilde z_m\mid x_m)
-\right],
-$$
-
-with the leave-one-out scale
-
-$$
-\beta_m=
-\frac{\sum_{j\ne m}c'_j\widetilde c_j}
-     {\sum_{j\ne m}c'_j}.
-$$
-
-The function returns detached coefficients and roles. A training loop can then evaluate the corresponding trace log probabilities.
-
-## Supervised and self-training baselines
-
-All four baselines use ordinary maximum-likelihood training on a selected completion and an explicit EOS target.
-
-- **Gold-CoT SFT** trains directly on the supplied human rationale.
-- **RFT** generates once, retains answer-correct naturally terminated traces, then trains on them.
-- **ReST-EM** repeats Generate and Improve phases, resetting to the original adapter before each Improve phase.
-- **STaR** first tries one greedy rationale. If it fails, it generates a rationale with the known answer as a hint, removes the hint from the training context, and trains the retained completion under the ordinary question prompt.
-
-The self-training module selects traces that can be passed to a token-level maximum-likelihood training loop.
+The comparator implementations credit their source papers in their module
+docstrings: STaR (Zelikman et al.), ReST-EM (Singh et al.), TRICE (Phan et al.),
+GRPO (Shao et al.) and RLOO (Ahmadian et al.). This repository's contribution is
+the recorded language-model implementation and controlled comparisons, not the
+invention of those methods. Historical centred-credit and null-state APIs remain
+for compatibility and are not part of the principal thesis algorithms.

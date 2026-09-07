@@ -1,0 +1,132 @@
+# Frozen classical 2x2 closure at the unstable S=8, B=8, U=4 coordinate.
+run_id: d2d17e2a
+tag_prefix: q3_l2r_reader_ess_closure
+diagnostic:
+  stage: frozen_reader_by_classical_ess_closure
+  evidence_class: preregistered_seven_seed_development_closure
+  provenance:
+    source_experiment: qwen3_l2r_common_protocol_factorial_20260804
+    source_cell: VIN-S8-B8-U4
+  scientific_question: >
+    At the exact reuse-stress coordinate, does freezing only the answer-reader
+    factor, imposing a one-sided 50% ESS floor, or combining both changes
+    prevent the late collapse of the original persistent finite-set update?
+  fixed_contract:
+    model_id: Qwen/Qwen3-1.7B-Base
+    prompt_shots: 3
+    nested_prompt_bank_size: 5
+    proposal_and_evaluation_prompt: question_only
+    optimization_question_pool: 128
+    development_validation_questions: 400
+    candidate_size: 8
+    questions_per_round: 8
+    reuse_passes: 4
+    outer_rounds: 32
+    adapter_rank: 16
+    adapter_alpha: 32
+    adapter_surface: attention_and_mlp_projections
+    answer_event: one_terminal_marker_followed_by_tokenizer_eos
+    official_test_used: false
+  design:
+    factors:
+      answer_reader: [current, frozen_base]
+      ess_floor_fraction: [0.0, 0.5]
+    trained_cells: 4
+    frozen_control_cells: 1
+    paired_seeds: 7
+    array_tasks: 35
+  primary_metric: normalized_extracted_answer_accuracy_auc_rounds_0_to_32
+  mechanism_metrics:
+    - pre_floor_effective_sample_size_fraction_reconstructed_from_logits
+    - post_floor_effective_sample_size_fraction
+    - ess_floor_activation_fraction
+    - maximum_responsibility
+    - best_to_final_extracted_accuracy_drop
+  decision_rules:
+    - Treat paired seed as the independent experimental unit.
+    - First require the moving-reader/no-floor cell to reproduce final accuracy below base and a late drop above three percentage points.
+    - Estimate the three paired primary contrasts against moving-reader/no-floor and the reader-by-ESS interaction.
+    - Apply Holm correction only to the three primary contrasts.
+    - A rescue requires mean AUC above moving-reader/no-floor, improvement in at least five of seven paired seeds, final accuracy no worse than base, and late drop at most three points.
+    - If the stress cell does not reproduce, report the closure as inconclusive rather than selecting a method.
+    - Do not access the official GSM8K test split.
+
+defaults: &defaults
+  task: gsm8k
+  model: qwen3-1.7b-base
+  rounds: 32
+  seeds: 7
+  seed_values: [257, 263, 271, 277, 293, 307, 311]
+  n_test: 400
+  train_partition: train
+  eval_partition: validation
+  answer_event_mode: strict_terminal_marker
+  answer_target_termination: none
+  evaluation_prompt: question
+  batch: 64
+  eval_batch: 32
+  G: 8
+  prompts: 128
+  shots: 3
+  shot_bank_size: 5
+  task_seed_from_run_seed: true
+  question_sampling: epoch_shuffle
+  grad_checkpoint: false
+  lora_r: 16
+  lora_alpha: 32
+  lora_target_set: attention_mlp
+  out: ~/po_results/2026-08-07/l2r/reader-ess-closure__d2d17e2a
+  eval_rounds: [1, 2, 4, 8, 16, 24, 32]
+  dump_completions: 100
+  save_adapter: false
+  save_training_diagnostics: true
+  training_diagnostics_level: standard
+  training_diagnostics_trace_tape: false
+  training_diagnostics_gradient_questions: 0
+  training_diagnostics_probe_size: 0
+  checkpoint_every: 0
+  passk: 8
+  passk_n: 100
+
+algos:
+  base:
+    cell_id: CTRL-base
+  AC-ALG1:
+    - &closure
+      cell_id: MOVING-ESS0
+      algorithm_profile: l2r_reader_ess_closure
+      answer_target_termination: eos
+      lr: 1.0e-5
+      iters: 4
+      buffer_limit: 8
+      labelled_frac: 0.0
+      buffer_strategy: fifo
+      buffer_semantics: unique_set
+      buffer_lifecycle: persistent
+      proposal_prompt: question
+      proposal_mixture: single
+      proposal_filter: all
+      proposal_policy: current
+      responsibility_score: joint
+      responsibility_posterior: softmax_entropy
+      responsibility_temperature: 1.0
+      responsibility_ess_floor: 0.0
+      responsibility_policy: current
+      responsibility_answer_policy: current
+      responsibility_refresh: inner_step
+      variational_estimator: delta_joint
+      labelled_em_weight: 0.0
+      answer_only_em_weight: 1.0
+      supervised_weight: 0.0
+      policy_anchor_mode: fixed
+      labelled_numeric_constraint: "off"
+      labelled_supervision: gold
+      digit_token_weight: 1.0
+      trace_representation: reasoning
+      latent_mstep_objective: joint
+      update_geometry: sum
+      step_acceptance: none
+      optimizer_state_scope: persistent
+    - {<<: *closure, cell_id: FROZEN-ESS0, responsibility_answer_policy: frozen_base}
+    - {<<: *closure, cell_id: MOVING-ESS50, responsibility_ess_floor: 0.5}
+    - {<<: *closure, cell_id: FROZEN-ESS50, responsibility_answer_policy: frozen_base, responsibility_ess_floor: 0.5}

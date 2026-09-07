@@ -1,4 +1,7 @@
-"""Finite-support posterior weights used by Q5 and PIS."""
+"""Finite-support delta and importance-sampling reference weights.
+
+Historical Q5/PIS names remain aliases for the experiment identifiers.
+"""
 
 from __future__ import annotations
 
@@ -54,14 +57,16 @@ def _group_softmax(
     values = _vector(logits, "logits")
     groups = _groups(question_ids, len(values))
     keep = _mask(active, len(values))
-    if not np.isfinite(values[keep]).all():
-        raise ValueError("active logits must be finite")
+    if not (np.isfinite(values[keep]) | np.isneginf(values[keep])).all():
+        raise ValueError("active logits must be finite or negative infinity")
 
     weights = np.zeros_like(values)
     for group in dict.fromkeys(groups.tolist()):
         local = (groups == group) & keep
         if not local.any():
             continue
+        if not np.isfinite(values[local]).any():
+            raise ValueError("active question has no finite logits")
         centred = values[local] - values[local].max()
         mass = np.exp(centred)
         weights[local] = mass / mass.sum()
@@ -162,7 +167,10 @@ def weighted_joint_loss(
             continue
         if not np.isclose(mass, 1.0, atol=1e-8):
             raise ValueError("weights must sum to one in each active question")
-        per_question.append(np.sum(weight[local] * (trace[local] + answer[local])))
+        positive = local & (weight > 0)
+        if not np.isfinite(trace[positive] + answer[positive]).all():
+            raise ValueError("positive-weight log probabilities must be finite")
+        per_question.append(np.sum(weight[positive] * (trace[positive] + answer[positive])))
     if not per_question:
         return 0.0
     return -float(np.mean(per_question))
@@ -248,7 +256,7 @@ class UniqueFIFOSupport:
     items: list[tuple[int, ...]] = field(default_factory=list)
 
     def __post_init__(self) -> None:
-        if isinstance(self.capacity, bool) or self.capacity < 1:
+        if isinstance(self.capacity, bool) or not isinstance(self.capacity, (int, np.integer)) or self.capacity < 1:
             raise ValueError("capacity must be a positive integer")
 
     def add(self, token_ids: Sequence[int]) -> bool:
@@ -259,3 +267,8 @@ class UniqueFIFOSupport:
         if len(self.items) > self.capacity:
             self.items.pop(0)
         return True
+
+
+# Descriptive names used in the thesis; historical API names stay available.
+delta_weights = joint_weights
+prior_importance_weights = pis_weights

@@ -1,0 +1,3 @@
+cell,n_seeds,strict_auc_pct,final_strict_accuracy_pct,extracted_auc_pct,final_extracted_accuracy_pct,final_natural_eos_rate_pct
+Q5-AD,3,70.775,77.75,78.16250000000001,80.25,95.58333333333333
+Q5-Q,3,71.53055555555557,73.41666666666667,74.75,74.41666666666667,99.25

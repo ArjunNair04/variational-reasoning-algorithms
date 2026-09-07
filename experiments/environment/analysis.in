@@ -1,0 +1,8 @@
+matplotlib==3.10.8
+numpy==2.4.6
+pandas==2.3.3
+pyyaml==6.0.3
+jsonschema==4.26.0
+pytest==9.1.1
+ruff==0.12.4
+mypy==1.16.1

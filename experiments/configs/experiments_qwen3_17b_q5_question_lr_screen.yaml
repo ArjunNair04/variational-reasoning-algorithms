@@ -1,0 +1,116 @@
+# Targeted learning-rate screen released by the completed Q5 question-only
+# proposal diagnosis. Only the M-step learning rate changes across trained
+# cells; the source latent objective and every E-step choice remain fixed.
+
+run_id: 7b5c0a3f
+tag_prefix: q3_q5q_lr_screen
+
+diagnostic:
+  stage: q5_question_only_mstep_learning_rate_screen
+  evidence_class: preregistered_three_seed_development_screen
+  released_by:
+    experiment_id: qwen3_prompt_information_paths_20260731
+    run_id: e5754f6d
+    diagnosis: m_step_or_generalisation_failure
+  seed_values: [31, 47, 73]
+  partitions:
+    optimization_questions: 64
+    final_validation_questions: 400
+    official_test_used: false
+  fixed_axes:
+    proposal_prompt: question
+    buffer_semantics: unique_set
+    buffer_lifecycle: persistent
+    responsibility_score: joint
+    responsibility_posterior: softmax_entropy
+    responsibility_temperature: 1.0
+    responsibility_ess_floor: 0.0
+    variational_estimator: delta_joint
+    latent_mstep_objective: joint
+    answer_target_termination: eos
+    policy_anchor: disabled
+  changed_axis:
+    learning_rates: [3.0e-6, 1.0e-5, 3.0e-5]
+  interpretation_rules:
+    - The source 1e-5 setting is rerun beside both challengers and a contemporaneous frozen control.
+    - No posterior, ESS, buffer, reader, prompt, data-size, inner-step, KL, or LoRA axis changes.
+    - Select at most one development candidate from strict trajectory AUC, final strict accuracy, natural EOS, and best-to-final drop.
+    - A KL screen is released only if the selected learning rate still shows late drift.
+    - Do not inspect the official GSM8K test split.
+
+defaults:
+  task: gsm8k
+  model: qwen3-1.7b-base
+  rounds: 30
+  seeds: 3
+  seed_values: [31, 47, 73]
+  n_test: 400
+  train_partition: train
+  eval_partition: validation
+  answer_event_mode: strict_terminal_marker
+  answer_target_termination: none
+  evaluation_prompt: question
+  batch: 64
+  eval_batch: 32
+  G: 16
+  prompts: 64
+  shots: 4
+  shot_bank_size: 4
+  task_seed_from_run_seed: true
+  question_sampling: epoch_shuffle
+  grad_checkpoint: false
+  out: ~/po_results/2026-08-03/l2r/q5-question-lr-screen__7b5c0a3f
+  eval_rounds: [1, 2, 3, 5, 10, 15, 20, 30]
+  dump_completions: 100
+  save_adapter: false
+  save_training_diagnostics: true
+  training_diagnostics_level: deep
+  training_diagnostics_trace_tape: true
+  training_diagnostics_gradient_questions: 2
+  training_diagnostics_probe_size: 0
+  checkpoint_every: 0
+  passk: 0
+  passk_n: 100
+
+algos:
+  base:
+    cell_id: CTRL-base
+  AC-ALG1:
+    - &q5q
+      cell_id: Q5Q-LR3
+      rounds: 30
+      answer_target_termination: eos
+      algorithm_profile: barber_source
+      lr: 3.0e-6
+      iters: 4
+      buffer_limit: 33
+      labelled_frac: 0.0
+      buffer_strategy: fifo
+      buffer_semantics: unique_set
+      buffer_lifecycle: persistent
+      proposal_prompt: question
+      proposal_mixture: single
+      proposal_filter: all
+      proposal_policy: current
+      responsibility_score: joint
+      responsibility_posterior: softmax_entropy
+      responsibility_temperature: 1.0
+      responsibility_ess_floor: 0.0
+      responsibility_policy: current
+      responsibility_answer_policy: current
+      responsibility_refresh: inner_step
+      variational_estimator: delta_joint
+      labelled_em_weight: 0.0
+      answer_only_em_weight: 1.0
+      supervised_weight: 0.0
+      policy_anchor_mode: fixed
+      labelled_numeric_constraint: "off"
+      labelled_supervision: gold
+      digit_token_weight: 1.0
+      trace_representation: reasoning
+      latent_mstep_objective: joint
+      update_geometry: sum
+      step_acceptance: none
+      optimizer_state_scope: persistent
+    - {<<: *q5q, cell_id: Q5Q-LR10, lr: 1.0e-5}
+    - {<<: *q5q, cell_id: Q5Q-LR30, lr: 3.0e-5}

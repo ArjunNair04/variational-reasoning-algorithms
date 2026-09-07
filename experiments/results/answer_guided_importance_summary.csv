@@ -1,0 +1,3 @@
+method,final_parsed,final_terminal_valid,parsed_auc,mean_ess_fraction,mean_max_responsibility
+question_only_fresh_importance,76.89,76.21,78.33,0.608,0.388
+answer_guided_corrected_importance,69.39,67.86,75.22,0.387,0.822

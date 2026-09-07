@@ -1,0 +1,2 @@
+# Archived direct dependencies for Linux / CUDA 12.4 / Python 3.11.
+-r environment/cluster_qwen3.in

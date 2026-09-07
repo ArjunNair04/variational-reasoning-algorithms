@@ -1,0 +1,247 @@
+{
+  "initial_objectives": {
+    "registry_id": "qwen3_objective_terms_20260721f",
+    "execution_revision": "44eed6e7a00fa64206c95d7e2a6964faa5802e31",
+    "source_bundle": "frozen/44eed6e7a00f.tar.gz",
+    "configurations": [
+      "configs/experiments_qwen3_17b_ac_alg1_objective_terms.yaml"
+    ],
+    "thesis": "4.2: labelled and answer-only objective terms; historical trainer",
+    "analysis_scripts": [
+      "analysis/analyze_ac_alg1_objective_terms.py",
+      "analysis/analyze_ac_alg1_three_term_factorial.py",
+      "analysis/analyze_ac_alg1_collapse_stability.py",
+      "analysis/analyze_ac_alg1_numerical_study.py"
+    ],
+    "kind": "training"
+  },
+  "initial_latent_terms": {
+    "registry_id": "qwen3_latent_only_objective_20260722i",
+    "execution_revision": "9ca8dfa34e2651b278c99ce81b79fda48a673ca6",
+    "source_bundle": "frozen/9ca8dfa34e26.tar.gz",
+    "configurations": [
+      "configs/experiments_qwen3_17b_ac_alg1_latent_only.yaml"
+    ],
+    "thesis": "4.2: historical latent-only objective terms",
+    "analysis_scripts": [
+      "analysis/analyze_ac_alg1_latent_only.py",
+      "analysis/analyze_ac_alg1_three_term_factorial.py"
+    ],
+    "kind": "training"
+  },
+  "early_replication": {
+    "registry_id": "qwen3_ac_alg1_causal_portfolio_20260724c_g_plus_a",
+    "execution_revision": "e44dff166979860a381a969b514876b269e5983d",
+    "source_bundle": "frozen/e44dff166979.tar.gz",
+    "configurations": [
+      "configs/experiments_qwen3_17b_ac_alg1_early_horizon_replication.yaml"
+    ],
+    "thesis": "4.2: five-seed short-horizon objective replication",
+    "analysis_scripts": [
+      "analysis/analyze_ac_alg1_causal_portfolio.py",
+      "analysis/analyze_ac_alg1_safeguarded_updates.py"
+    ],
+    "kind": "training"
+  },
+  "prompt_base": {
+    "registry_id": "qwen3_prompt_shot_base_e742c983",
+    "execution_revision": "ef3d8aac09d777446176133a1ea431c7600a3b52",
+    "source_bundle": "frozen/ef3d8aac09d7.tar.gz",
+    "configurations": [
+      "configs/experiments_qwen3_17b_prompt_shot_base.yaml"
+    ],
+    "thesis": "4.3: frozen prompt calibration",
+    "analysis_scripts": [
+      "analysis/analyze_answer_conditioned_and_prompt_shots.py"
+    ],
+    "kind": "training"
+  },
+  "prompt_training": {
+    "registry_id": "qwen3_prompt_shot_training_b4a0f86a",
+    "execution_revision": "ef3d8aac09d777446176133a1ea431c7600a3b52",
+    "source_bundle": "frozen/ef3d8aac09d7.tar.gz",
+    "configurations": [
+      "configs/experiments_qwen3_17b_prompt_shot_training.yaml"
+    ],
+    "thesis": "4.3: trained three-/four-shot comparison",
+    "analysis_scripts": [
+      "analysis/analyze_answer_conditioned_and_prompt_shots.py"
+    ],
+    "kind": "training"
+  },
+  "eos": {
+    "registry_id": "qwen3_barber_eos_repair_retry_20260730",
+    "execution_revision": "ba06c02dd42936a1c8c42dead6cab1a837937323",
+    "source_bundle": "frozen/ba06c02dd429.tar.gz",
+    "configurations": [
+      "configs/experiments_qwen3_17b_barber_eos_repair_retry.yaml"
+    ],
+    "thesis": "4.3: paired complete-answer target repair",
+    "analysis_scripts": [
+      "analysis/analyze_barber_eos_repair.py"
+    ],
+    "kind": "training"
+  },
+  "prompt_information": {
+    "registry_id": "qwen3_prompt_information_paths_20260731",
+    "execution_revision": "46fade649f9b37e912989d61aa0caaf061e3c517",
+    "source_bundle": "frozen/46fade649f9b.tar.gz",
+    "configurations": [
+      "configs/experiments_qwen3_17b_prompt_information_paths.yaml"
+    ],
+    "thesis": "4.4: historical proposal and importance correction",
+    "analysis_scripts": [
+      "analysis/analyze_prompt_information_paths.py"
+    ],
+    "kind": "training"
+  },
+  "joint_objective": {
+    "registry_id": "qwen3_l2r_persistent_importance_bridge_20260802",
+    "execution_revision": "da711297c198c8887ccd360f04891630e4d89d19",
+    "source_bundle": "frozen/da711297c198.tar.gz",
+    "configurations": [
+      "configs/experiments_qwen3_17b_l2r_persistent_importance_bridge.yaml"
+    ],
+    "thesis": "4.3\u20134.4: joint/answer/trace fitting and proposals",
+    "analysis_scripts": [
+      "analysis/analyze_l2r_persistent_importance_bridge.py"
+    ],
+    "kind": "training"
+  },
+  "prior_delta_retry": {
+    "registry_id": "qwen3_q5_question_lr_screen_20260803",
+    "execution_revision": "0cd1347f91e24b7831df5c8a371ded812b998c65",
+    "source_bundle": "frozen/0cd1347f91e2.tar.gz",
+    "configurations": [
+      "configs/experiments_qwen3_17b_q5_question_lr_screen.yaml"
+    ],
+    "thesis": "Historical supplementary prior-proposal retry (not reported in the current thesis)",
+    "analysis_scripts": [
+      "analysis/analyze_q5_question_lr_screen.py"
+    ],
+    "kind": "training"
+  },
+  "common_grid": {
+    "registry_id": "qwen3_l2r_common_protocol_factorial_20260804",
+    "execution_revision": "4d9f528a59ab65813d17df6c79c3d219b3f9cfad",
+    "source_bundle": "frozen/4d9f528a59ab.tar.gz",
+    "configurations": [
+      "configs/experiments_qwen3_17b_l2r_common_protocol_factorial.yaml"
+    ],
+    "thesis": "4.5: common grid of support, batch and repeated fitting",
+    "analysis_scripts": [
+      "analysis/analyze_l2r_common_protocol_factorial.py",
+      "analysis/analyze_l2r_common_protocol_factorial_partial.py",
+      "docs/experiments/l2r_common_protocol_factorial/generate_cell_results_baseline.py",
+      "docs/experiments/l2r_common_protocol_factorial/generate_l2r_common_protocol_interim_report.py"
+    ],
+    "kind": "training",
+    "continuation": {
+      "execution_revision": "4d0c8a5006013cd4f663749ebd3d371e6343f019",
+      "source_bundle": "frozen/4d0c8a500601.tar.gz",
+      "scope": "Original tasks 1\u2013236 used the initial revision; tasks 237\u2013489 used this continuation. Configuration unchanged. A fresh replay uses one revision for its selected tasks; neither is silently called identical to the other."
+    }
+  },
+  "reader_ess": {
+    "registry_id": "qwen3_l2r_reader_ess_closure_20260807",
+    "execution_revision": "f79b0f1d3cf5ef3584a24057b5b3a6d45c6057bc",
+    "source_bundle": "frozen/f79b0f1d3cf5.tar.gz",
+    "configurations": [
+      "configs/experiments_qwen3_17b_l2r_reader_ess_closure.yaml"
+    ],
+    "thesis": "4.5: seven-seed frozen answer scorer / ESS floor",
+    "analysis_scripts": [
+      "analysis/analyze_l2r_focused_followups.py"
+    ],
+    "kind": "training"
+  },
+  "delta_confirmation": {
+    "registry_id": "qwen3_l2r_q5_reader_confirmation_20260815",
+    "execution_revision": "5988113f682a1859fa2952227a25f22e4d2af42a",
+    "source_bundle": "frozen/5988113f682a.tar.gz",
+    "configurations": [
+      "configs/experiments_qwen3_17b_q5_reader_confirmation.yaml"
+    ],
+    "thesis": "4.6: revisited-question delta confirmation",
+    "analysis_scripts": [
+      "analysis/analyze_l2r_q5_pis_confirmations.py"
+    ],
+    "kind": "training"
+  },
+  "importance_confirmation": {
+    "registry_id": "qwen3_l2r_pis_confirmation_20260815",
+    "execution_revision": "5988113f682a1859fa2952227a25f22e4d2af42a",
+    "source_bundle": "frozen/5988113f682a.tar.gz",
+    "configurations": [
+      "configs/experiments_qwen3_17b_pis_confirmation.yaml"
+    ],
+    "thesis": "4.6: first importance-sampling confirmation",
+    "analysis_scripts": [
+      "analysis/analyze_l2r_q5_pis_confirmations.py"
+    ],
+    "kind": "training"
+  },
+  "selected_methods": {
+    "registry_id": "qwen3_final_method_confirmation_20260818",
+    "execution_revision": "48bda822f94d486d15ac03c450449e0a66c6b998",
+    "source_bundle": "frozen/48bda822f94d.tar.gz",
+    "configurations": [
+      "configs/experiments_qwen3_17b_final_method_confirmation.yaml"
+    ],
+    "thesis": "4.6: seven-seed selected-method comparison",
+    "analysis_scripts": [
+      "analysis/analyze_qwen3_final_method_confirmation.py"
+    ],
+    "kind": "training"
+  },
+  "pseudo_importance": {
+    "registry_id": "qwen3_answer_conditioned_pis_addon_20260818",
+    "execution_revision": "38d134b091f3af50c8e1c3de9fade42ca3acca7d",
+    "source_bundle": "frozen/38d134b091f3.tar.gz",
+    "configurations": [
+      "configs/experiments_qwen3_17b_answer_conditioned_pis_addon.yaml"
+    ],
+    "thesis": "4.4: corrected pseudo-posterior importance proposal",
+    "analysis_scripts": [
+      "analysis/analyze_qwen3_answer_conditioned_pis_addon.py"
+    ],
+    "kind": "training"
+  },
+  "equal_counts": {
+    "registry_id": "qwen3_17b_gsm8k_matched_comparators_20260821",
+    "execution_revision": "056b86affe6b5acf6fcd500e062c75781171f7f7",
+    "source_bundle": "frozen/056b86affe6b.tar.gz",
+    "configurations": [
+      "configs/experiments_qwen3_17b_gsm8k_matched_comparators.yaml"
+    ],
+    "thesis": "4.6: GRPO/RLOO at the first importance schedule",
+    "analysis_scripts": [
+      "analysis/analyze_qwen3_gsm8k_matched_comparators.py"
+    ],
+    "kind": "training"
+  },
+  "proposal_depth": {
+    "registry_id": "qwen3_q5_support_reallocation_20260820",
+    "execution_revision": "5c38141222a893ae96d694f1067e99af498037b7",
+    "source_bundle": "frozen/5c38141222a8.tar.gz",
+    "configurations": [
+      "configs/experiments_qwen3_17b_q5_support_reallocation_retry.yaml"
+    ],
+    "thesis": "4.7: three-seed proposal-depth screen",
+    "analysis_scripts": [
+      "analysis/analyze_q5_support_reallocation.py"
+    ],
+    "kind": "training"
+  },
+  "transfer": {
+    "registry_id": "qwen3_final_frozen_transfer_20260820",
+    "execution_revision": "9aa67a557f97bc067b06483e5920746829f456e9",
+    "source_bundle": "frozen/9aa67a557f97.tar.gz",
+    "configurations": [],
+    "thesis": "4.7: frozen SVAMP and MATH-500 evaluation",
+    "analysis_scripts": [
+      "analysis/analyze_qwen3_final_frozen_transfer.py"
+    ],
+    "kind": "evaluation"
+  }
+}

@@ -1,0 +1,189 @@
+# Matched Qwen3 prompt-shot training study.
+#
+# This follows the frozen calibration and compares no-gold posterior SFT
+# against Qwen GRPO, RLOO, and an answer-correct rejection-SFT control.
+# Every method receives the same nested
+# demonstrations, questions, rollouts, rounds, and validation schedule within
+# seed and shot count.
+
+run_id: b4a0f86a
+tag_prefix: q3_prompt_shot_train
+
+diagnostic:
+  stage: matched_prompt_shot_training_comparison
+  evidence_class: matched_three_seed_validation_study
+  provenance:
+    model_id: Qwen/Qwen3-1.7B-Base
+    model_revision: ea980cb0a6c2ae4b936e82123acc929f1cec04c1
+    dataset_id: openai/gsm8k
+    dataset_config: main
+    dataset_revision: 740312add88f781978c0658806c59bc2815b9866
+  required_calibration_run_id: e742c983
+  seed_values: [31, 47, 73]
+  factors:
+    method: [L2R-Frozen-NoGold, RFT, GRPO, RLOO]
+    shots: [0, 1, 2, 3, 4]
+  matching:
+    nested_demonstration_bank_size: 4
+    training_questions_fixed_across_shots_within_seed: true
+    validation_questions_fixed_across_shots_within_seed: true
+    rounds: 32
+    rollouts_per_round: 128
+    traces_per_question: 16
+    nominal_training_rollouts_per_cell: 4096
+    training_question_pool: 256
+    question_sampling: epoch_shuffle
+    intended_question_exposures_per_cell: 256
+    intended_unique_questions_per_cell: 256
+  posterior_sft:
+    gold_rationale_in_archive: false
+    proposal_prompt: question
+    trace_prior_policy: current
+    answer_reader_policy: frozen_base
+    answer_reader_receives_gradients: false
+    responsibility_score: joint_sequence_log_probability
+  primary_metrics:
+    - normalized_validation_accuracy_auc_rounds_0_to_32
+    - trained_minus_same_seed_same_shot_frozen_base_auc
+    - method_by_shot_interaction
+  secondary_metrics:
+    - final_validation_accuracy
+    - validation_accuracy_at_round_10
+    - base_correct_retention
+    - base_wrong_rescue
+    - pass_at_8
+    - collapse_timing
+    - generated_and_backward_tokens
+  interpretation_rule: >
+    A lower-shot condition is useful only if the paired trained-minus-base
+    effect is seed-consistent and its question-cluster interval excludes no
+    effect. Raw accuracy differences between shot counts are prompt effects,
+    not training effects. Method comparisons use matched deltas from each
+    condition's own frozen base.
+  official_test_after_analysis: false
+
+defaults:
+  task: gsm8k
+  model: qwen3-1.7b-base
+  rounds: 32
+  seeds: 3
+  seed_values: [31, 47, 73]
+  n_test: 400
+  train_partition: train
+  eval_partition: validation
+  batch: 128
+  eval_batch: 32
+  G: 16
+  prompts: 256
+  shots: 4
+  shot_bank_size: 4
+  task_seed_from_run_seed: true
+  question_sampling: epoch_shuffle
+  grad_checkpoint: false
+  out: ~/po_results/2026-07-24/prompt-shots/qwen3-training__b4a0f86a
+  eval_rounds: [1, 2, 5, 10, 20, 32]
+  dump_completions: 20
+  save_adapter: true
+  save_training_diagnostics: true
+  checkpoint_every: 20
+  passk: 8
+  passk_n: 100
+
+algos:
+  # Primary no-gold posterior-SFT candidate. The answer reader is the frozen
+  # base model, the trace prior is the current generator, and the M-step
+  # trains only the generated reasoning trace under the answer-blind prompt.
+  L2R-Frozen-NoGold:
+    - &l2r_shot
+      cell_id: shot0
+      shots: 0
+      lr: 1.0e-5
+      iters: 4
+      archive_limit: 64
+      replay_limit: 16
+      proposal_prompt: question
+      responsibility_score: joint
+      responsibility_temperature: 1.0
+      kl_coef: 0.0
+      question_schedule: cyclic
+    - <<: *l2r_shot
+      cell_id: shot1
+      shots: 1
+    - <<: *l2r_shot
+      cell_id: shot2
+      shots: 2
+    - <<: *l2r_shot
+      cell_id: shot3
+      shots: 3
+    - <<: *l2r_shot
+      cell_id: shot4
+      shots: 4
+
+  # Qwen comparator pilot. The corrected batch-scoped update count is explicit;
+  # this configuration must still enter the balanced validation tuning stage.
+  GRPO:
+    - &grpo_shot
+      cell_id: shot0
+      shots: 0
+      lr: 3.0e-6
+      epochs: 2
+      clip: 0.2
+      kl_coef: 0.04
+      optimizer_step_scope: batch
+    - <<: *grpo_shot
+      cell_id: shot1
+      shots: 1
+    - <<: *grpo_shot
+      cell_id: shot2
+      shots: 2
+    - <<: *grpo_shot
+      cell_id: shot3
+      shots: 3
+    - <<: *grpo_shot
+      cell_id: shot4
+      shots: 4
+
+  # Qwen comparator pilot; it must receive the same later tuning budget.
+  RLOO:
+    - &rloo_shot
+      cell_id: shot0
+      shots: 0
+      lr: 2.0e-5
+      epochs: 2
+      kl_coef: 0.03
+    - <<: *rloo_shot
+      cell_id: shot1
+      shots: 1
+    - <<: *rloo_shot
+      cell_id: shot2
+      shots: 2
+    - <<: *rloo_shot
+      cell_id: shot3
+      shots: 3
+    - <<: *rloo_shot
+      cell_id: shot4
+      shots: 4
+
+  # Minimal answer-only SFT baseline: sample from the current policy, retain
+  # only answer-correct traces, cap each question at four accepted traces, and
+  # apply one next-token update. It is a mechanistic control, not a tuned Qwen
+  # finalist; any confirmatory test must select its rate on validation first.
+  RFT:
+    - &rft_shot
+      cell_id: shot0
+      shots: 0
+      lr: 1.0e-5
+      epochs: 1
+      top_frac: 0.25
+    - <<: *rft_shot
+      cell_id: shot1
+      shots: 1
+    - <<: *rft_shot
+      cell_id: shot2
+      shots: 2
+    - <<: *rft_shot
+      cell_id: shot3
+      shots: 3
+    - <<: *rft_shot
+      cell_id: shot4
+      shots: 4

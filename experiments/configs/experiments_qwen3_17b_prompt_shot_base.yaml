@@ -1,0 +1,63 @@
+# Frozen Qwen3 prompt-shot calibration.
+#
+# Demonstrations are nested prefixes of one four-example bank; zero shot is
+# the empty prefix. For each seed, all shot counts use the same 400 validation
+# questions. This establishes
+# prompt-induced headroom before any training method is compared.
+
+run_id: e742c983
+tag_prefix: q3_prompt_shot_base
+
+diagnostic:
+  stage: frozen_prompt_shot_calibration
+  evidence_class: matched_three_seed_validation_calibration
+  provenance:
+    model_id: Qwen/Qwen3-1.7B-Base
+    model_revision: ea980cb0a6c2ae4b936e82123acc929f1cec04c1
+    dataset_id: openai/gsm8k
+    dataset_config: main
+    dataset_revision: 740312add88f781978c0658806c59bc2815b9866
+  seed_values: [31, 47, 73]
+  shots: [0, 1, 2, 3, 4]
+  primary_metrics:
+    - greedy_validation_accuracy
+    - sampled_pass_at_1
+    - sampled_pass_at_8
+    - parseable_prediction_rate
+  model_suitability_rule: >
+    Qwen remains the primary backbone if four-shot greedy accuracy is below
+    0.90, at least one lower-shot condition creates at least 0.03 absolute
+    headroom, parseable prediction rate is at least 0.98, and pass@8 exceeds
+    greedy accuracy enough to show recoverable policy headroom. Failure of this
+    rule triggers a cross-family model calibration before more L2R training.
+  official_test_after_analysis: false
+
+defaults:
+  task: gsm8k
+  model: qwen3-1.7b-base
+  rounds: 1
+  seeds: 3
+  seed_values: [31, 47, 73]
+  n_test: 400
+  train_partition: train
+  eval_partition: validation
+  batch: 128
+  eval_batch: 32
+  G: 16
+  prompts: 1024
+  shots: 4
+  shot_bank_size: 4
+  task_seed_from_run_seed: true
+  grad_checkpoint: false
+  out: ~/po_results/2026-07-24/prompt-shots/qwen3-base__e742c983
+  dump_completions: 50
+  passk: 8
+  passk_n: 100
+
+algos:
+  base:
+    - {cell_id: shot0, shots: 0}
+    - {cell_id: shot1, shots: 1}
+    - {cell_id: shot2, shots: 2}
+    - {cell_id: shot3, shots: 3}
+    - {cell_id: shot4, shots: 4}

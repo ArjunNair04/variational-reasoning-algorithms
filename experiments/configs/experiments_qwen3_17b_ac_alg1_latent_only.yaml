@@ -1,0 +1,111 @@
+# Three-seed completion of the AC-ALG1 three-term objective factorial.
+#
+# The completed runs 20260721e and 20260721f cover all four objectives with
+# supervised_weight=1. This file runs the three non-empty corners with
+# supervised_weight=0:
+#   lambda_L  lambda_U  objective
+#       1         0      B'_unsup
+#       0         1      B_unsup
+#       1         1      B'_unsup + B_unsup
+# The frozen model supplies the empty (0, 0, 0) corner. Candidate generation,
+# answer-correct filtering, token-mean responsibilities, data partitions, and
+# update budgets remain matched to the completed objective study.
+#
+# Preview only:
+#   python run_yaml.py \
+#     experiments_qwen3_17b_ac_alg1_latent_only.yaml --dry-run
+
+run_id: 20260722i
+tag_prefix: q3_alg1_latent_only
+diagnostic:
+  partition: validation
+  frozen_reference_accuracy: 0.7925
+  matched_supervised_objective_run_ids: [20260721e, 20260721f]
+  candidate_rounds: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
+  primary_metric: normalized_validation_accuracy_auc_rounds_0_30
+  paired_unit: gsm8k_question
+  seed_policy: report_separately_then_average
+  primary_contrast: latent_only_full_minus_current_full_objective
+  secondary_contrasts:
+    - labelled_latent_only_minus_supervised_plus_labelled_latent
+    - answer_only_latent_only_minus_supervised_plus_answer_only_latent
+    - latent_only_interaction
+  support_rule: require_positive_primary_auc_effect_in_all_three_seeds_and_question_cluster_ci_excluding_zero
+  advancement_rule: require_selected_latent_only_auc_to_exceed_frozen_reference_before_any_official_test
+  official_test_after_analysis: false
+defaults:
+  task: gsm8k
+  model: qwen3-1.7b-base
+  rounds: 30
+  seeds: 3
+  n_test: 400
+  train_partition: train
+  eval_partition: validation
+  batch: 64
+  eval_batch: 32
+  G: 16
+  prompts: 64
+  shots: 4
+  grad_checkpoint: false
+  out: ~/po_results
+  eval_every: 2
+  dump_completions: 20
+  save_adapter: true
+  save_training_diagnostics: true
+  checkpoint_every: 2
+
+algos:
+  AC-ALG1:
+    # S0L1U0: labelled latent-buffer term only.
+    - lr: 5.0e-5
+      iters: 4
+      buffer_limit: 33
+      labelled_frac: 0.50
+      buffer_strategy: hybrid
+      proposal_prompt: question
+      proposal_filter: answer_correct
+      responsibility_score: token_mean
+      responsibility_temperature: 1.0
+      labelled_em_weight: 1.0
+      answer_only_em_weight: 0.0
+      supervised_weight: 0.0
+      labelled_numeric_constraint: "off"
+      numeric_penalty: 2.0
+      labelled_supervision: gold
+      compact_gold_weight: 0.50
+
+    # S0L0U1: answer-only latent-buffer term only.
+    - lr: 5.0e-5
+      iters: 4
+      buffer_limit: 33
+      labelled_frac: 0.50
+      buffer_strategy: hybrid
+      proposal_prompt: question
+      proposal_filter: answer_correct
+      responsibility_score: token_mean
+      responsibility_temperature: 1.0
+      labelled_em_weight: 0.0
+      answer_only_em_weight: 1.0
+      supervised_weight: 0.0
+      labelled_numeric_constraint: "off"
+      numeric_penalty: 2.0
+      labelled_supervision: gold
+      compact_gold_weight: 0.50
+
+    # S0L1U1: both latent-buffer terms, no direct gold-rationale supervision.
+    - lr: 5.0e-5
+      iters: 4
+      buffer_limit: 33
+      labelled_frac: 0.50
+      buffer_strategy: hybrid
+      proposal_prompt: question
+      proposal_filter: answer_correct
+      responsibility_score: token_mean
+      responsibility_temperature: 1.0
+      labelled_em_weight: 1.0
+      answer_only_em_weight: 1.0
+      supervised_weight: 0.0
+      labelled_numeric_constraint: "off"
+      numeric_penalty: 2.0
+      labelled_supervision: gold
+      compact_gold_weight: 0.50

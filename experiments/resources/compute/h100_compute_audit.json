@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "audit_date": "2026-09-07",
+  "record_count": 970,
+  "h100_gpu_hours": 808.5897222222222,
+  "wall_seconds": 2910923.0,
+  "gpu_count_per_record": 1,
+  "accelerator_name": "NVIDIA H100 80GB HBM3",
+  "source_and_completion_hashes_verified": true,
+  "base_audit_records": 886,
+  "base_audit_hours": 750.1022222222222,
+  "additional_records": 84,
+  "additional_hours": 58.4875,
+  "duplicates_excluded": 107,
+  "older_records_without_accelerator_hours_excluded": 33,
+  "scope": "Conservative lower bound from completed local run records, including development and evaluation; not the total cost of the final comparisons or an exhaustive scheduler account. Scientifically invalid or superseded development runs still consumed compute. One lower-runtime record retained per scientific tag; unrecorded attempts and startup outside the cell timer are omitted.",
+  "source_path_aliases": {
+    "research_repository": "research repository root",
+    "saved_archive": "separately saved local results archive root"
+  },
+  "csv_sha256": "01a7089ed20a06f1ae73f419a93884bda4bc8ead6e462ac94e5718eef594fd90",
+  "study_totals": [
+    {
+      "run_id": "08b9d6a8",
+      "records": 18,
+      "h100_gpu_hours": 11.075111111111111
+    },
+    {
+      "run_id": "1c8f4b2e",
+      "records": 10,
+      "h100_gpu_hours": 6.257944444444444
+    },
+    {
+      "run_id": "2f18c6a4",
+      "records": 3,
+      "h100_gpu_hours": 0.35491666666666666
+    },
+    {
+      "run_id": "34c342d4",
+      "records": 21,
+      "h100_gpu_hours": 9.526583333333333
+    },
+    {
+      "run_id": "36745404",
+      "records": 21,
+      "h100_gpu_hours": 13.791416666666667
+    },
+    {
+      "run_id": "5ad4dd9d",
+      "records": 9,
+      "h100_gpu_hours": 5.4
+    },
+    {
+      "run_id": "5c7a10e2",
+      "records": 14,
+      "h100_gpu_hours": 10.629222222222221
+    },
+    {
+      "run_id": "64d9bc2a",
+      "records": 30,
+      "h100_gpu_hours": 19.364833333333333
+    },
+    {
+      "run_id": "7b4e1a92",
+      "records": 12,
+      "h100_gpu_hours": 6.042777777777777
+    },
+    {
+      "run_id": "7b5c0a3f",
+      "records": 12,
+      "h100_gpu_hours": 7.627972222222223
+    },
+    {
+      "run_id": "a4f7c19d",
+      "records": 21,
+      "h100_gpu_hours": 11.914472222222223
+    },
+    {
+      "run_id": "a74c1e6b",
+      "records": 18,
+      "h100_gpu_hours": 12.645833333333334
+    },
+    {
+      "run_id": "b6e3f840",
+      "records": 4,
+      "h100_gpu_hours": 0.44825
+    },
+    {
+      "run_id": "ba600e5c",
+      "records": 3,
+      "h100_gpu_hours": 1.9655555555555555
+    },
+    {
+      "run_id": "c6e2b5a4",
+      "records": 15,
+      "h100_gpu_hours": 7.727833333333334
+    },
+    {
+      "run_id": "c9d2f047",
+      "records": 54,
+      "h100_gpu_hours": 37.70713888888889
+    },
+    {
+      "run_id": "d2924981",
+      "records": 21,
+      "h100_gpu_hours": 18.42811111111111
+    },
+    {
+      "run_id": "d2d17e2a",
+      "records": 35,
+      "h100_gpu_hours": 17.860666666666667
+    },
+    {
+      "run_id": "d7c4e8a1",
+      "records": 21,
+      "h100_gpu_hours": 19.06036111111111
+    },
+    {
+      "run_id": "da48c781",
+      "records": 15,
+      "h100_gpu_hours": 8.22725
+    },
+    {
+      "run_id": "e5754f6d",
+      "records": 3,
+      "h100_gpu_hours": 2.7345277777777777
+    },
+    {
+      "run_id": "e786cede",
+      "records": 56,
+      "h100_gpu_hours": 36.96941666666667
+    },
+    {
+      "run_id": "f31c2a6e",
+      "records": 489,
+      "h100_gpu_hours": 508.45005555555554
+    },
+    {
+      "run_id": "f4b1c82d",
+      "records": 15,
+      "h100_gpu_hours": 8.856194444444444
+    },
+    {
+      "run_id": "f4d8b2c7",
+      "records": 50,
+      "h100_gpu_hours": 25.52327777777778
+    }
+  ]
+}

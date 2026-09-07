@@ -1,0 +1,130 @@
+run_id: 388abde8
+tag_prefix: q3_pis_confirmation
+
+diagnostic:
+  stage: pis_fresh_seed_confirmation
+  evidence_class: preregistered_seven_seed_confirmation
+  scientific_question: >
+    Does the lower-compute PIS-S8-B8-U4 nominee reproduce its development gain
+    over a contemporaneous frozen base on seven fresh paired seeds under the
+    unchanged common protocol?
+  provenance:
+    source_experiment: qwen3_l2r_common_protocol_factorial_20260804
+    source_run_id: f31c2a6e
+    source_nominee: PIS-S8-B8-U4
+    selection_rule: one_standard_error_lower_compute
+  design:
+    cells: 2
+    paired_seeds: 7
+    array_tasks: 14
+    fresh_seed_values: [1009, 1013, 1019, 1021, 1031, 1033, 1039]
+  fixed_contract:
+    model_id: Qwen/Qwen3-1.7B-Base
+    model_revision: ea980cb0a6c2ae4b936e82123acc929f1cec04c1
+    dataset_id: openai/gsm8k
+    dataset_revision: 740312add88f781978c0658806c59bc2815b9866
+    optimization_questions: 128
+    development_validation_questions: 400
+    prompt_shots: 3
+    proposal_and_evaluation_prompt: question_only
+    candidate_size: 8
+    questions_per_round: 8
+    outer_rounds: 32
+    inner_updates: 4
+    adapter_rank: 16
+    adapter_alpha: 32
+    adapter_surface: attention_and_mlp_projections
+    answer_event: one_terminal_marker_followed_by_tokenizer_eos
+    policy_kl_anchor: false
+    official_test_used: false
+  reporting_order:
+    - final_extracted_answer_accuracy
+    - final_strict_terminal_accuracy
+    - normalized_accuracy_auc
+  primary_metric: final_extracted_answer_accuracy
+  decision_rules:
+    - Treat paired training seed as the independent unit and retain all seven effects.
+    - Confirm capability improvement only if the paired 95 percent interval for final extracted accuracy over base is positive and at least five of seven seed effects are positive.
+    - Require the paired strict-final mean not to be worse than base by more than two points.
+    - Require the paired extracted-AUC interval over base to be positive so a transient final spike cannot establish confirmation.
+    - Require mean late peak-to-final extracted decline at most three points and strict-format failure no worse than base by more than three points.
+    - Report final extracted accuracy first, strict final accuracy second and AUC third.
+    - Do not compare this result causally with Q5 because prompt, proposal, support, round and adapter protocols differ.
+    - Do not access the official GSM8K test split.
+
+defaults:
+  task: gsm8k
+  model: qwen3-1.7b-base
+  rounds: 32
+  seeds: 7
+  seed_values: [1009, 1013, 1019, 1021, 1031, 1033, 1039]
+  n_test: 400
+  train_partition: train
+  eval_partition: validation
+  answer_event_mode: strict_terminal_marker
+  answer_target_termination: none
+  evaluation_prompt: question
+  batch: 64
+  eval_batch: 32
+  G: 8
+  prompts: 128
+  shots: 3
+  shot_bank_size: 5
+  task_seed_from_run_seed: true
+  question_sampling: epoch_shuffle
+  grad_checkpoint: false
+  lora_r: 16
+  lora_alpha: 32
+  lora_target_set: attention_mlp
+  out: ~/po_results/2026-08-15/l2r/pis-confirmation__388abde8
+  eval_rounds: [1, 2, 4, 8, 16, 24, 32]
+  dump_completions: 100
+  save_adapter: false
+  save_training_diagnostics: true
+  training_diagnostics_level: standard
+  training_diagnostics_trace_tape: true
+  training_diagnostics_gradient_questions: 0
+  training_diagnostics_probe_size: 0
+  checkpoint_every: 0
+  passk: 8
+  passk_n: 100
+
+algos:
+  base:
+    cell_id: CTRL-base
+
+  AC-ALG1:
+    cell_id: PIS-S8-B8-U4
+    algorithm_profile: l2r_common_factorial
+    answer_target_termination: eos
+    lr: 1.0e-5
+    iters: 4
+    buffer_limit: 8
+    labelled_frac: 0.0
+    buffer_strategy: fifo
+    buffer_semantics: multiset_legacy
+    buffer_lifecycle: fresh_round
+    proposal_prompt: question
+    proposal_mixture: single
+    proposal_filter: all
+    proposal_policy: current
+    responsibility_score: joint
+    responsibility_posterior: softmax_entropy
+    responsibility_temperature: 1.0
+    responsibility_ess_floor: 0.0
+    responsibility_policy: current
+    responsibility_answer_policy: current
+    responsibility_refresh: outer_round
+    variational_estimator: prior_importance
+    labelled_em_weight: 0.0
+    answer_only_em_weight: 1.0
+    supervised_weight: 0.0
+    policy_anchor_mode: fixed
+    labelled_numeric_constraint: "off"
+    labelled_supervision: gold
+    digit_token_weight: 1.0
+    trace_representation: reasoning
+    latent_mstep_objective: joint
+    update_geometry: sum
+    step_acceptance: none
+    optimizer_state_scope: persistent

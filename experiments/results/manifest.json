@@ -1,0 +1,210 @@
+{
+  "scope": "Frozen numeric exports used in the thesis; no raw question or response text. Historical aggregate means and later seed/question summaries have different evidence coverage. No new experiment or endpoint selection.",
+  "files": {
+    "answer_guided_importance_summary.csv": {
+      "sha256": "c6c6c399b457b50b562e20686066c41a02261d5864fecd461b44b407525f76a9",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 2
+    },
+    "chapter4_development_allocation_rounds.csv": {
+      "sha256": "c6751393aa689ac1b62990f4f67855216a1baab21df2ee1217445484522a3179",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 474
+    },
+    "chapter4_development_allocation_seed_summary.csv": {
+      "sha256": "f578b2cfd2af801cd3692a22130f5d475fabfa291aac9c0e96656fadc361bfa3",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 15
+    },
+    "chapter4_development_allocations.csv": {
+      "sha256": "c3ba9c219d364259ec340818d77da98e20e53398cbf6892aa3c18cae48d71f97",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 3430
+    },
+    "chapter4_development_diagnostic_grid_outcomes.csv": {
+      "sha256": "630b83e5c2f11695f199a94838fa6433492a39b1baf8f84f0203e975edc61733",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 5
+    },
+    "chapter4_development_eos_contrasts.csv": {
+      "sha256": "20c1152e067c7abc3c050f1c9c45a67917ad0f6788f86d87a3a40fd9977ed2e9",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 8
+    },
+    "chapter4_development_eos_seed.csv": {
+      "sha256": "faa53c0a7c0d99b7e16f60b03b6bbbe0fb46925182a14d9ed0934936b365d8ac",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 27
+    },
+    "chapter4_development_eos_summary.csv": {
+      "sha256": "e95ad6b4933909335a44ead2fc1bbb3341a49476e18694177f5c9d61c9321fe1",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 9
+    },
+    "chapter4_development_joint_contrasts.csv": {
+      "sha256": "5d1169aa2a29410a62e466a3f032725a8d160681932ea285ddf9642aa6c8bb3a",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 25
+    },
+    "chapter4_development_joint_seed.csv": {
+      "sha256": "4f08c4cdae778ba9f3ed9658ff856d179ef5035ff4aaabc082769e90c899345f",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 18
+    },
+    "chapter4_development_joint_summary.csv": {
+      "sha256": "1dfad6b36276144266105f31d8367909117aa4fe7cd5c0636f961c94c7a0d3e8",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 6
+    },
+    "chapter4_development_prompt_base_seed.csv": {
+      "sha256": "31f4f751acfbe86ba7c24b752309d7d06ce3c67a490d1d82ac43b0f9074b2889",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 15
+    },
+    "chapter4_development_prompt_training_seed.csv": {
+      "sha256": "3154d15c02d6c3aa0328bdede4e1b84919bf96103a25034b3c2a46de59632751",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 60
+    },
+    "chapter4_development_prompt_training_summary.csv": {
+      "sha256": "9b8178f94e612bd0006fbc069d81a9d5ca20bbac9caa0a9dd5bba493920c16dd",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 20
+    },
+    "chapter4_development_proposal_contrasts.csv": {
+      "sha256": "a604ae686d58f217416179efefaa2f671a67534c4d0ac3488c5f0ee2c02ee425",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 1
+    },
+    "chapter4_development_proposal_seed.csv": {
+      "sha256": "ee79ec45a5baac7985a36d7f3b3b75da3cb2483d7f925464353c5797b2789da5",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 6
+    },
+    "chapter4_development_proposal_summary.csv": {
+      "sha256": "9c70dfb63f100a6bc4f4723879c458072b26cc9642498354709d5419d8c85c70",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 2
+    },
+    "chapter4_efficiency_checkpoint_seed.csv": {
+      "sha256": "1a80632df2a15a1b4a69ae649c612d465c9effdd45bc705f9a4a2685dfd9be84",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 96
+    },
+    "chapter4_efficiency_checkpoint_summary.csv": {
+      "sha256": "5a294519617211e124fb01658dcd351c801d5f26de8754ffbb44f91c47b64f7f",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 32
+    },
+    "chapter4_initial_objectives.csv": {
+      "sha256": "882a733f4cbea4d54866706a1a5f0552b32950947facf96b93d99fd0ede3223c",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 8
+    },
+    "chapter4_initial_objectives_curves.csv": {
+      "sha256": "54279ad0a244dad342e7ffdd85f77323eeee8bccb99551dd58f26c0d23fab0ea",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 64
+    },
+    "chapter4_initial_objectives_replication_question_effects.csv": {
+      "sha256": "78579988c57076f50bcab3a9d0c91935bd4c82efc82d46efa7dd5559ec340afb",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 4000
+    },
+    "chapter4_initial_objectives_replication_seed.csv": {
+      "sha256": "c1a2721e7652ef56ed1793a6e37747352ed405204dddf0cace4ea37ed43ff027",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 30
+    },
+    "chapter4_initial_objectives_replication_summary.csv": {
+      "sha256": "3f1ca4bf644ecc8138edb403bf5a115187864d8e3523b016a3395b99c6197adc",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 2
+    },
+    "common_factorial_cells.csv": {
+      "sha256": "39b6c799832541d9b26b6c5ba63a63d7140c93c63378ca0c6b876cf12b2eeea2",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 163
+    },
+    "eos_paired_contrasts.csv": {
+      "sha256": "4d96fa4a1575df20aeeddb844f747a4e5b711ab130a6e767daca7932d4b43ee2",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 40
+    },
+    "equal_schedule_method_summary.csv": {
+      "sha256": "a8b9e42552d68d237e9e6396409ffd61931d23d4a328ff11c6bf35e0e5c26daf",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 4
+    },
+    "equal_schedule_paired_contrasts.csv": {
+      "sha256": "e49a30c0ac5a3ef092b4da1f786c12ce9fb297d39f31475f25f041feb9dba32b",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 18
+    },
+    "new_dataset_method_summary.csv": {
+      "sha256": "2bcf67ef497eb91da3cfc39d7e6a665637d55d7a82f1f3af91d12b526bec287b",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 8
+    },
+    "new_dataset_paired_contrasts.csv": {
+      "sha256": "ab4ade8dc8ff2a1013d58470a460d6ed3e1e04a7b0a6a473fbca9666191d41f0",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 20
+    },
+    "selected_schedule_method_summary.csv": {
+      "sha256": "e8fc88bf387256854e59e77805248764cd64584e36de358a228eb9708d62610a",
+      "transformation": "byte-for-byte copy of frozen numeric export",
+      "rows": 10
+    },
+    "diagnostics/transfer_category_cross_tabs.csv": {
+      "sha256": "27cf6b47d5710a14ffa240716eca8602524a126c1224d250ffd73ebc145ca32d",
+      "transformation": "byte-for-byte copy of retrospective numeric diagnostic export",
+      "rows": 2240
+    },
+    "diagnostics/transfer_format_summary.csv": {
+      "sha256": "1c0aac42f049c42ac6c0b9362fca66b258808d9b14483360777a3fc33ce6b311",
+      "transformation": "byte-for-byte copy of retrospective numeric diagnostic export",
+      "rows": 8
+    },
+    "diagnostics/transfer_paired_gap_changes.csv": {
+      "sha256": "b471d967e65adde6aa10e7c7470ec446013040d01f345b159f275cc5c214a841",
+      "transformation": "byte-for-byte copy of retrospective numeric diagnostic export",
+      "rows": 42
+    },
+    "diagnostics/transfer_paired_gap_summary.csv": {
+      "sha256": "fe6581691772ac2a0669998965aee467fa3492c30dad643af5d4c6dcd033c6c8",
+      "transformation": "byte-for-byte copy of retrospective numeric diagnostic export",
+      "rows": 6
+    },
+    "diagnostics/transfer_seed_metrics.csv": {
+      "sha256": "dc73b1ca7f4a0b4d525b045ba986bc398b89bdcfe4096bfc867e0260b67bcba2",
+      "transformation": "byte-for-byte copy of retrospective numeric diagnostic export",
+      "rows": 56
+    },
+    "diagnostics/vout_fixed_q_rounds.csv": {
+      "sha256": "b4e01d3c469ff22ad42818f13d47088b76721662061636e3c061bfb11b37e771",
+      "transformation": "byte-for-byte copy of retrospective numeric diagnostic export",
+      "rows": 96
+    },
+    "diagnostics/vout_fixed_q_seed_summary.csv": {
+      "sha256": "68d98805b996576a44c7066765a4a4dc2eef908bd51ae10b49c17da6b1a30e32",
+      "transformation": "byte-for-byte copy of retrospective numeric diagnostic export",
+      "rows": 3
+    },
+    "diagnostics/vout_fixed_q_transitions.csv": {
+      "sha256": "16a1c9a24bb1ad409d01162f5c22f8f2a2cae8a60fead4f0c7128a4b88682c67",
+      "transformation": "byte-for-byte copy of retrospective numeric diagnostic export",
+      "rows": 288
+    },
+    "diagnostics/vout_reader_summary.csv": {
+      "sha256": "f5abb22a90ee5404e5d97472c9f060e6d349c3568674ffba382d2118167ba3d8",
+      "transformation": "byte-for-byte copy of retrospective numeric diagnostic export",
+      "rows": 3
+    },
+    "diagnostics/vout_validation_trajectories.csv": {
+      "sha256": "a256183733ea866485e700268ad6a47b798a7886be770a5df84bc79b90a26043",
+      "transformation": "byte-for-byte copy of retrospective numeric diagnostic export",
+      "rows": 24
+    }
+  }
+}

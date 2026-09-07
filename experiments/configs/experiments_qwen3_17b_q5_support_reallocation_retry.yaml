@@ -1,0 +1,174 @@
+run_id: 08b9d6a8
+tag_prefix: q3_q5_support_reallocation_retry
+
+diagnostic:
+  stage: q5_support_reallocation_screen
+  evidence_class: exact_infrastructure_retry
+  retry_of:
+    run_id: d7c4e2b1
+    payload_job: 7206102
+    validator_job: 7206103
+    defect: sweep proposal budgets were compared with internal question counts
+  require_protocol_outcome_diagnostics: true
+  scientific_question: >
+    Can Q5 trade additional proposal or verifier calls for better accuracy while
+    retaining its single-update, small-support advantage over online RL?
+  provenance:
+    selected_method: qwen3_final_method_confirmation_20260818
+    motivating_screen: qwen3_q5_allocation_update_screen_20260817
+    posterior_concentration_evidence: qwen3_l2r_common_protocol_factorial_20260804
+  design:
+    q5_cells: 5
+    matched_baseline_cells: 1
+    paired_seeds: [1301, 1303, 1307]
+    array_tasks: 18
+    cell_order: [CTRL-base, Q5-REF, Q5-MORE, Q5-BREADTH, Q5-DIVERSE, Q5-VERIFY]
+    control: Q5-REF
+    challengers: [Q5-MORE, Q5-BREADTH, Q5-DIVERSE, Q5-VERIFY]
+  fixed_contract:
+    model_id: Qwen/Qwen3-1.7B-Base
+    model_revision: ea980cb0a6c2ae4b936e82123acc929f1cec04c1
+    dataset_id: openai/gsm8k
+    dataset_config: main
+    dataset_revision: 740312add88f781978c0658806c59bc2815b9866
+    reference_optimization_questions: 128
+    breadth_optimization_questions: 256
+    development_validation_questions: 400
+    prompt_shots: 3
+    nested_prompt_bank_size: 5
+    proposal_prompt: answer_derive
+    outer_rounds: 32
+    questions_per_round: 4
+    persistent_unique_support_limit: 16
+    optimizer_updates_per_round: 1
+    learning_rate: 1.0e-5
+    adapter_surface: attention_and_mlp_projections
+    adapter_rank: 16
+    answer_event: one_terminal_marker_followed_by_tokenizer_eos
+    evaluation_prompt: question_only
+    policy_kl_anchor: false
+    official_test_used: false
+  interventions:
+    Q5-REF: 16 proposals per question, FIFO support compression, joint posterior score
+    Q5-MORE: 32 proposals per question, FIFO compression to the same 16-row support
+    Q5-BREADTH: 16 proposals per question over 256 questions at the same 4096-proposal cost as Q5-MORE
+    Q5-DIVERSE: 32 proposals per question, calculation-path compression to 16 rows
+    Q5-VERIFY: 16 proposals per question, one detached free-decoding continuation per retained trace
+  analysis_contract:
+    - Treat paired training seed as the independent unit.
+    - Report final extracted Acc@1 first, strict final accuracy second, and normalized extracted trajectory AUC third.
+    - Report proposal calls, verifier calls, generated tokens, backward tokens, optimizer steps and accelerator-hours separately.
+    - Compare every challenger with Q5-REF using paired seed effects and question-paired bootstrap intervals.
+    - A challenger must improve mean final extracted Acc@1 by at least one percentage point.
+    - A challenger may lose at most one point of mean strict final accuracy and one point of extracted AUC.
+    - Q5-MORE must increase raw support before FIFO compression without changing retained support size.
+    - Q5-BREADTH must expose 256 unique optimization questions and match Q5-MORE at 4096 proposals.
+    - Q5-DIVERSE must increase retained calculation-path count or cluster ESS relative to Q5-MORE.
+    - Q5-VERIFY must produce exactly one verifier continuation per actually retained trace at the training E-step, with 2048 calls as an upper bound, and report verifier calibration against proposal correctness.
+    - If multiple challengers pass, select by final extracted Acc@1, strict final accuracy, AUC, then fewer generated tokens.
+    - Any selected arm remains a development nominee and requires a fresh seven-seed confirmation.
+    - Do not access the official GSM8K test split.
+
+defaults:
+  task: gsm8k
+  model: qwen3-1.7b-base
+  rounds: 32
+  seeds: 3
+  seed_values: [1301, 1303, 1307]
+  n_test: 400
+  train_partition: train
+  eval_partition: validation
+  answer_event_mode: strict_terminal_marker
+  answer_target_termination: eos
+  evaluation_prompt: question
+  batch: 64
+  eval_batch: 32
+  G: 16
+  prompts: 128
+  shots: 3
+  shot_bank_size: 5
+  task_seed_from_run_seed: true
+  question_sampling: epoch_shuffle
+  grad_checkpoint: false
+  lora_r: 16
+  lora_alpha: 32
+  lora_target_set: attention_mlp
+  out: ~/po_results/2026-08-20/final-comparison/q5-support-reallocation-retry__08b9d6a8
+  eval_rounds: [1, 2, 4, 8, 16, 24, 32]
+  dump_completions: 100
+  save_adapter: false
+  save_training_diagnostics: true
+  training_diagnostics_level: standard
+  training_diagnostics_trace_tape: false
+  training_diagnostics_gradient_questions: 0
+  training_diagnostics_probe_size: 0
+  checkpoint_every: 0
+  passk: 8
+  passk_n: 100
+
+algos:
+  base:
+    cell_id: CTRL-base
+  AC-ALG1:
+    - &q5_reference
+      cell_id: Q5-REF
+      algorithm_profile: q5_support_reallocation
+      lr: 1.0e-5
+      iters: 1
+      batch: 64
+      G: 16
+      buffer_limit: 16
+      labelled_frac: 0.0
+      buffer_strategy: fifo
+      buffer_semantics: unique_set
+      buffer_lifecycle: persistent
+      proposal_prompt: answer_derive
+      proposal_mixture: single
+      proposal_filter: all
+      proposal_policy: current
+      proposal_allocation_mode: uniform
+      responsibility_score: joint
+      responsibility_posterior: softmax_entropy
+      responsibility_temperature: 1.0
+      responsibility_ess_floor: 0.0
+      responsibility_abstention: none
+      responsibility_policy: current
+      responsibility_answer_policy: current
+      responsibility_refresh: inner_step
+      responsibility_verifier_rollouts: 0
+      variational_estimator: delta_joint
+      labelled_em_weight: 0.0
+      answer_only_em_weight: 1.0
+      supervised_weight: 0.0
+      policy_anchor_mode: fixed
+      labelled_numeric_constraint: "off"
+      labelled_supervision: gold
+      digit_token_weight: 1.0
+      trace_representation: reasoning
+      latent_mstep_objective: joint
+      update_geometry: sum
+      step_acceptance: none
+      optimizer_state_scope: persistent
+    - <<: *q5_reference
+      cell_id: Q5-MORE
+      batch: 128
+      G: 32
+    - <<: *q5_reference
+      cell_id: Q5-BREADTH
+      prompts: 256
+      batch: 128
+      G: 16
+    - <<: *q5_reference
+      cell_id: Q5-DIVERSE
+      batch: 128
+      G: 32
+      buffer_strategy: calculation_diverse
+    - <<: *q5_reference
+      cell_id: Q5-VERIFY
+      responsibility_score: rollout_value
+      responsibility_refresh: outer_round
+      responsibility_verifier_rollouts: 1
+      responsibility_verifier_temperature: 1.0
+      responsibility_verifier_max_new_tokens: 64
+      responsibility_verifier_batch_size: 16
+      responsibility_verifier_smoothing_alpha: 0.5
