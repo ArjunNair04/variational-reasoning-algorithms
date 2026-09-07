@@ -369,7 +369,7 @@
     {
       "registry_id": "qwen3_jepo_comparator_20260904",
       "run_id": "6c94a797",
-      "status": "retry_submitted_queued",
+      "status": "failed_incomplete_runtime_edge_case",
       "source_revision": "95f8a2a77db75bf1bf53f11dd59b1fcdf56a0580",
       "execution_revision": "95f8a2a77db75bf1bf53f11dd59b1fcdf56a0580",
       "account": "amanojna",
@@ -378,13 +378,13 @@
           "role": "payload",
           "job_id": "7336425",
           "tasks": 7,
-          "state": "queued"
+          "state": "partial_completion_one_runtime_failure"
         },
         {
           "role": "validator",
           "job_id": "7336426",
           "depends_on": "7336425",
-          "state": "held_by_dependency"
+          "state": "failed_validation"
         }
       ],
       "failed_attempts": [
@@ -396,6 +396,15 @@
           "state": "failed_before_training",
           "failure": "The JEPO runtime required parse_answer_event as a task method, but GSM8K uses the shared module-level parser. All seven tasks stopped before the first optimizer step.",
           "result_root": "~/po_results/2026-09-04/jepo-comparator/qwen3-jepo-ms4__7452ba96"
+        },
+        {
+          "run_id": "6c94a797",
+          "execution_revision": "95f8a2a77db75bf1bf53f11dd59b1fcdf56a0580",
+          "payload_job": "7336425",
+          "validator_job": "7336426",
+          "state": "six_of_seven_completed_one_runtime_failure",
+          "failure": "Seed 1201 failed at outer round 25 because a strict-valid decoded completion could not be segmented at an exact answer-marker token boundary. The validator also found that completed diagnostics did not declare reward.requires_natural_eos.",
+          "result_root": "~/po_results/2026-09-05/jepo-comparator/qwen3-jepo-ms4__6c94a797"
         }
       ],
       "dependency": {
@@ -431,16 +440,24 @@
       },
       "scientific_question": "Can a paper-derived four-sample JEPO objective improve Qwen3-1.7B GSM8K reasoning under the same training-generation budget and paired validation protocol as Q5 and PIS?",
       "findings": [],
+      "preliminary_observations": [
+        "Six completed seeds averaged 78.38% Final Acc@1, 75.54% strict final accuracy and 77.32% normalized trajectory AUC.",
+        "Across those six seeds, the mean paired endpoint changes from their frozen baselines were +1.92 percentage points for Final Acc@1 and +18.67 points for strict final accuracy.",
+        "These incomplete-run summaries are descriptive diagnostics only. They are not a validated seven-seed JEPO result and must not be used as headline or inferential evidence."
+      ],
       "limitations": [
         "This preserves JEPO's multi-sample estimator and published coefficients but adapts it to the shared Qwen LoRA learning rate, model, dataset and generation budget.",
         "Historical same-seed controls are reused rather than rerun.",
+        "Only six of seven retry seeds completed; seed 1201 failed after 25 outer rounds, so the preregistered paired analysis is unavailable.",
+        "The validator marker is absent and the completed diagnostics omit the explicit reward.requires_natural_eos field required by the generic validator.",
         "The fixed train-derived validation partition supports paired development evidence, not a fresh-question or official-test estimate.",
         "The official GSM8K test split remains sealed."
       ],
       "next_actions": [
-        "Monitor retry payload 7336425 without altering healthy tasks; validator 7336426 must run only after all seven payload tasks leave the scheduler.",
-        "After validation, report Final Acc@1, strict final accuracy and AUC against the same-seed frozen base, with descriptive Q5, PIS, TRICE-CV and RLOO context.",
-        "Do not tune JEPO on these seven outcomes; any follow-up must be separately declared."
+        "Repair JEPO so a strict-valid but token-boundary-unsegmentable sample is excluded from the lower-bound and answer terms without changing the fixed K denominator; log segmentable_fraction.",
+        "Add reward.requires_natural_eos=true to every JEPO training-diagnostic row and cover both repairs with regression tests plus a task-specific cluster runtime preflight.",
+        "Create a fresh immutable run ID and rerun all seven seeds after verification; do not combine the six completed artifacts with a repaired seed from another execution revision.",
+        "Preserve both failed-attempt result roots and do not promote the preliminary six-seed summary to scientific findings."
       ]
     }
   ]
