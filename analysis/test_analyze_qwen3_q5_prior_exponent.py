@@ -1,4 +1,5 @@
 from copy import deepcopy
+import builtins
 
 import numpy as np
 import pandas as pd
@@ -36,3 +37,29 @@ def test_pairing_preserves_seed_and_reader():
     assert np.allclose(contrasts.iloc[16:].mean_difference_pp, 0)
     with pytest.raises(KeyError):
         paired_contrasts(frame.iloc[1:])
+
+
+@pytest.mark.parametrize("lengths", [(3, 3, 9, 12), (12, 9, 6, 3), (3, 6, 9, 12)])
+def test_mechanism_spearman_matches_scipy_without_importing_it(monkeypatch, lengths):
+    from scipy.stats import spearmanr
+
+    logit = np.array([-1., -1., -2., -3.])
+    weights = np.exp(logit - logit.max())
+    weights /= weights.sum()
+    expected = float(spearmanr(weights, lengths).statistic)
+    ds = diagnostics(0.)
+    for row in ds:
+        row["responsibilities"]["traces"] = [dict(
+            partition="answer_only", pid=7, trace_logprob=-5., answer_logprob=float(a),
+            responsibility_logit=float(a), objective_tokens=n+1, answer_tokens=1,
+        ) for a, n in zip(logit, lengths)]
+    original_import = builtins.__import__
+
+    def without_scipy(name, *args, **kwargs):
+        if name == "scipy" or name.startswith("scipy."):
+            raise ModuleNotFoundError("SciPy deliberately unavailable")
+        return original_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", without_scipy)
+    rows = mechanism_rows(ds, 0.)
+    assert all(row["weight_length_spearman"] == pytest.approx(expected) for row in rows)

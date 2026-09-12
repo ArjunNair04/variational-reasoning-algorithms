@@ -15,6 +15,12 @@
 
 ## Change record
 
+- **2026-09-13, Q5 exponent validator dependency repair:** compute Spearman
+  correlation as Pearson correlation of average ranks, avoiding optional SciPy
+  in the AMN runtime. Training, frozen YAML, metrics and contrasts are unchanged.
+  Regression coverage compares tied and untied ranks with SciPy while blocking
+  SciPy imports inside the mechanism calculation. See registry run `e97c3a20`.
+
 - **2026-09-12, Q5 released:** all 12 tasks of 7380685 are ordinary queued
   without a concurrency cap; 7380686 is dependency-held. The execution
   checkout stays at 5b4e32d; subsequent commits are tracking-only.

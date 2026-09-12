@@ -73,7 +73,11 @@ def mechanism_rows(diagnostics, tau):
             lengths = np.array([t["objective_tokens"] - t["answer_tokens"] for t in group])
             corr = None
             if len(group) > 1 and np.std(weights) > 0 and np.std(lengths) > 0:
-                corr = float(pd.Series(weights).corr(pd.Series(lengths), method="spearman"))
+                # Spearman is Pearson correlation of average ranks, including ties.
+                # Avoid pandas' optional SciPy import on the cluster runtime.
+                weight_ranks = pd.Series(weights).rank(method="average").to_numpy()
+                length_ranks = pd.Series(lengths).rank(method="average").to_numpy()
+                corr = float(np.corrcoef(weight_ranks, length_ranks)[0, 1])
             output.append(dict(round=row["completed_rounds"], pid=pid, support=len(group),
                 max_weight=float(weights.max()), ess=float(1 / np.square(weights).sum()),
                 weight_length_spearman=corr,
