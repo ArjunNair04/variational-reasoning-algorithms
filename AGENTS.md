@@ -15,6 +15,12 @@
 
 ## Change record
 
+- **2026-09-12, Q5 submission-path preflight repair:** remove a per-command
+  `PYTHONPATH` override that discarded `src` during analyzer preflight. Keep
+  the exported source path for every subprocess. Cluster preflight failed
+  before qsub; no payload was created. Added a wrapper regression assertion;
+  scientific configuration and model code are unchanged.
+
 - **2026-09-12, Q5 prior-exponent reader screen:** added the isolated
   `q5_prior_exponent` profile and `responsibility_prior_exponent` YAML knob.
   Only the E-step rationale-prior factor changes; tau=1 preserves the legacy

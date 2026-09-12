@@ -3,6 +3,7 @@
 from contextlib import contextmanager
 from dataclasses import replace
 from types import SimpleNamespace
+from pathlib import Path
 
 import pytest
 import torch
@@ -79,3 +80,9 @@ def test_invalid_exponent_rejected():
     for tau in (-1.0, float("nan"), float("inf")):
         with pytest.raises(ValueError):
             alg._buffer_weights_for_questions(None, None, {}, [], responsibility_prior_exponent=tau)
+
+
+def test_submitter_preserves_source_import_path():
+    script = (Path(__file__).parent / "submit_qwen3_17b_q5_prior_exponent_ucl.sh").read_text()
+    assert 'export PYTHONPATH="$PROJ/src:$SCRIPT_DIR:$PROJ/analysis:' in script
+    assert 'PYTHONPATH="$SCRIPT_DIR:' not in script

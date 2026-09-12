@@ -45,7 +45,7 @@ trap 'rmdir "$CLAIM_DIR" 2>/dev/null || true' EXIT
 bash -n "$SCRIPT_DIR/run_qwen3_17b_q5_prior_exponent_ucl.sh"
 bash -n "$SCRIPT_DIR/validate_qwen3_17b_q5_prior_exponent_ucl.sh"
 "$VENV/bin/python" "$SCRIPT_DIR/generate_qwen3_17b_q5_prior_exponent.py" --check "$YAML" --runtime-check
-PYTHONPATH="$SCRIPT_DIR:$PROJ/analysis" "$VENV/bin/python" \
+"$VENV/bin/python" \
   "$PROJ/analysis/analyze_qwen3_q5_prior_exponent.py" \
   --config "$YAML" --validate-design-only >/dev/null
 "$VENV/bin/python" "$PROJ/analysis/analyze_qwen3_q5_prior_exponent.py" \

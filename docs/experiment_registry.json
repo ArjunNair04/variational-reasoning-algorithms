@@ -5,6 +5,7 @@
       "registry_id": "qwen3_q5_prior_exponent_reader_20260912",
       "run_id": "e97c3a20",
       "status": "prepared",
+      "preflight_failures": [{"commit": "bd7e820fd277205f3b5672be255ab064cfa55e8d", "reason": "Analyzer subprocess overwrote PYTHONPATH and omitted src; infrastructure only", "jobs_created": false}],
       "account": "amanojna",
       "config": "lm_study/experiments_qwen3_17b_q5_prior_exponent.yaml",
       "submitter": "lm_study/submit_qwen3_17b_q5_prior_exponent_ucl.sh",
