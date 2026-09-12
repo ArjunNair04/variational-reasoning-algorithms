@@ -1,5 +1,7 @@
 # Q5 prior exponent and answer reader
 
+Results: [three-seed screen, 13 September 2026](results_2026-09-13.md).
+
 Run `e97c3a20` tests four settings on paired seeds 1201, 1213 and 1217:
 
 | Tasks | Prior exponent | Answer reader |

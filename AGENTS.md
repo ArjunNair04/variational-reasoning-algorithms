@@ -15,6 +15,12 @@
 
 ## Change record
 
+- **2026-09-13, Q5 exponent ingestion:** all 12 tasks, adapters and frozen paired
+  analysis passed after the isolated dependency repair; compact outputs and
+  hashes are mirrored locally. Moving tau0.5 is the sole three-seed nominee,
+  with unresolved +0.58 pp final gain; tau0 spreads support but reduces accuracy.
+  Full local suite: 204 passed. No training rerun or automatic confirmation.
+
 - **2026-09-13, Q5 exponent validator dependency repair:** compute Spearman
   correlation as Pearson correlation of average ranks, avoiding optional SciPy
   in the AMN runtime. Training, frozen YAML, metrics and contrasts are unchanged.
