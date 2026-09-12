@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import json
 
 import pandas as pd
 import pytest
@@ -10,6 +11,7 @@ import pytest
 from analysis.analyze_qwen3_jepo_comparator import (
     CELL_ID,
     SEEDS,
+    _validate_evaluation,
     load_controls,
     summarize,
     validate_design,
@@ -18,6 +20,47 @@ from analysis.analyze_qwen3_jepo_comparator import (
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "lm_study" / "experiments_qwen3_17b_jepo_comparator.yaml"
+
+
+def _evaluation_payload(question_ids: list[int]) -> dict:
+    return {
+        "eval_official_test_accessed": False,
+        "eval_source_split": "train",
+        "eval_dataset_splits_loaded": ["train"],
+        "test_acc_legacy": 0.0,
+        "test_acc_strict": 0.0,
+        "records": [
+            {
+                "idx": idx,
+                "legacy_correct": False,
+                "strict_correct": False,
+                "official_test_accessed": False,
+            }
+            for idx in question_ids
+        ],
+    }
+
+
+def test_validation_support_ignores_order_but_not_membership(tmp_path: Path) -> None:
+    path = tmp_path / "eval.json"
+    ids = list(range(400))
+    path.write_text(json.dumps(_evaluation_payload(ids)), encoding="utf-8")
+    original = _validate_evaluation(path)
+    path.write_text(json.dumps(_evaluation_payload(ids[::-1])), encoding="utf-8")
+    assert _validate_evaluation(path) == original
+    path.write_text(
+        json.dumps(_evaluation_payload([*ids[:-1], 400])), encoding="utf-8"
+    )
+    assert _validate_evaluation(path)[2] != original[2]
+
+
+def test_validation_support_rejects_duplicate_ids(tmp_path: Path) -> None:
+    path = tmp_path / "eval.json"
+    path.write_text(
+        json.dumps(_evaluation_payload([*range(399), 0])), encoding="utf-8"
+    )
+    with pytest.raises(ValueError, match="invalid validation question identities"):
+        _validate_evaluation(path)
 
 
 def test_design_only_validation_accepts_generated_yaml() -> None:

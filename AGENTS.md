@@ -15,6 +15,23 @@
 
 ## Change record
 
+- **2026-09-12, Q5 prior-exponent reader screen:** added the isolated
+  `q5_prior_exponent` profile and `responsibility_prior_exponent` YAML knob.
+  Only the E-step rationale-prior factor changes; tau=1 preserves the legacy
+  scoring path and the M-step is unchanged. Run `e97c3a20` contains tau=0/0.5
+  crossed with moving/frozen answer readers on three paired seeds, reusing
+  receipt-bound tau=1 controls from `68078ecc`. Verification includes actual
+  mocked E-step factor/reader tests, identity tests, runtime-profile rejection,
+  exact task mapping, frozen analysis and validator tests, and the full suite.
+  See `docs/experiments/qwen3_q5_prior_exponent/README.md` and the registry.
+
+- **2026-09-10, JEPO result ingestion:** canonicalise validation question IDs
+  before comparing support across seeds; the evaluator deliberately permutes
+  the same 400-question pool. This analysis-only repair changes no training,
+  evaluation, metric or contrast. Regression tests cover reordered, changed and
+  duplicate IDs. Run `4124d5c8` is collected without model weights for the thesis
+  handoff; provenance and completion are recorded in `docs/experiment_registry.json`.
+
 - **2026-09-07, JEPO token-boundary robustness repair:** retain strict decoded
   format scoring when a rare completion cannot be segmented at an exact sampled-
   token answer boundary, but mask that sample from JEPO's lower-bound and answer

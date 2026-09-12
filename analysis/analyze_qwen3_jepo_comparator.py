@@ -178,7 +178,8 @@ def _validate_evaluation(path: Path) -> tuple[float, float, tuple[int, ...]]:
         strict, _finite(payload["test_acc_strict"], context=path.name), abs_tol=1e-12
     ):
         raise ValueError(f"{path}: strict aggregate disagrees with records")
-    return extracted, strict, question_ids
+    # Evaluation shuffles the fixed validation pool independently for each seed.
+    return extracted, strict, tuple(sorted(question_ids))
 
 
 def load_results(

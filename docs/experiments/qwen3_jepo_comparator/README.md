@@ -1,5 +1,12 @@
 # Qwen3 JEPO comparator
 
+## Completed results
+
+Run `4124d5c8` passed all seven tasks and its validator. The
+[seven-seed result report](jepo_results_2026-09-10.md) records 77.46% Final
+Acc@1, 75.07% strict final accuracy and 76.83% AUC, the same-seed comparison,
+compute, analysis-only question-order repair and checkpoint-free thesis handoff.
+
 ## Question
 
 Does the multi-sample JEPO objective improve Qwen3-1.7B GSM8K reasoning under
