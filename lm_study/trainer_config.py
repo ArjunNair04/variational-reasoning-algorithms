@@ -119,6 +119,7 @@ class ACAlg1RunConfig(_ConfigFromCall):
     responsibility_score: str
     responsibility_posterior: str
     responsibility_temperature: float
+    responsibility_prior_exponent: float
     responsibility_ess_floor: float
     responsibility_abstention: str
     responsibility_rejection_threshold: float

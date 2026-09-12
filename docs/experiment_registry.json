@@ -2,6 +2,27 @@
   "schema_version": 1,
   "studies": [
     {
+      "registry_id": "qwen3_q5_prior_exponent_reader_20260912",
+      "run_id": "e97c3a20",
+      "status": "prepared",
+      "account": "amanojna",
+      "config": "lm_study/experiments_qwen3_17b_q5_prior_exponent.yaml",
+      "submitter": "lm_study/submit_qwen3_17b_q5_prior_exponent_ucl.sh",
+      "analyzer": "analysis/analyze_qwen3_q5_prior_exponent.py",
+      "report": "docs/experiments/qwen3_q5_prior_exponent/README.md",
+      "expected_tasks": 12,
+      "seeds": [1201, 1213, 1217],
+      "prior_exponents": [0.5, 0.0],
+      "answer_readers": ["current", "frozen_base"],
+      "control_run_id": "68078ecc",
+      "control_execution_revision": "4a9a9cafc6b17cc18e7c1da8a422e847daeb4746",
+      "official_test_used": false,
+      "result_root": "~/po_results/2026-09-12/q5-prior-exponent/qwen3-q5-prior-exponent__e97c3a20",
+      "validator_marker": "~/po_results/auto_state/qwen3_q5_prior_exponent_e97c3a20.ok",
+      "limitations": ["Three-seed development screen", "Historical tau=1 controls, not concurrent reruns"],
+      "next_actions": ["Verify historical control receipts; submit immutable 12-task array and dependent validator", "After validator succeeds, collect and run frozen paired analysis; no automatic confirmation"]
+    },
+    {
       "registry_id": "qwen3_selected_method_posterity_20260829",
       "run_id": "68078ecc",
       "status": "validated_and_analyzed",
@@ -369,7 +390,8 @@
     {
       "registry_id": "qwen3_jepo_comparator_20260904",
       "run_id": "4124d5c8",
-      "status": "submitted_queued",
+      "status": "validated_and_analyzed",
+      "verified_at": "2026-09-10",
       "source_revision": "b3ae5bf53bd22113b7a5ab0563e85c524e826aca",
       "execution_revision": "b3ae5bf53bd22113b7a5ab0563e85c524e826aca",
       "configuration_sha256": "433aa325d1358f43e7ddc51e0c8b2f65f70c37513f490947d40aec78f873b95c",
@@ -379,13 +401,13 @@
           "role": "payload",
           "job_id": "7340568",
           "tasks": 7,
-          "state": "queued_released"
+          "state": "completed_verified"
         },
         {
           "role": "validator",
           "job_id": "7340569",
           "depends_on": "7340568",
-          "state": "held_by_dependency"
+          "state": "completed_validator_ok"
         }
       ],
       "failed_attempts": [
@@ -420,7 +442,10 @@
       "official_test_used": false,
       "result_root": "~/po_results/2026-09-07/jepo-comparator/qwen3-jepo-ms4__4124d5c8",
       "validator_marker": "~/po_results/auto_state/qwen3_jepo_comparator_4124d5c8.ok",
-      "analysis_root": null,
+      "analysis_root": "~/po_results/2026-09-10/analysis/jepo-comparator__4124d5c8_20260910T114025Z",
+      "local_mirror": "../ResultsArchive/beaker-amanojna/20260910T114025Z__qwen3_jepo_comparator_4124d5c8",
+      "report": "docs/experiments/qwen3_jepo_comparator/jepo_results_2026-09-10.md",
+      "analysis_amendment": "Canonicalise validation question IDs before checking support across seeds: the evaluator permutes the same fixed 400-question set. No metric, contrast or training result changed. Regression tests and the complete 189-test suite pass; the repaired analyzer passed against all remote receipt-bound files, including adapters.",
       "design": {
         "independent_unit": "paired training seed",
         "seeds": [1201, 1213, 1217, 1223, 1229, 1231, 1237],
@@ -440,7 +465,13 @@
         ]
       },
       "scientific_question": "Can a paper-derived four-sample JEPO objective improve Qwen3-1.7B GSM8K reasoning under the same training-generation budget and paired validation protocol as Q5 and PIS?",
-      "findings": [],
+      "findings": [
+        "Seven-seed means: Final Acc@1 77.46%, strict final accuracy 75.07%, normalized extracted-accuracy AUC 76.83%.",
+        "Paired Final Acc@1 gain versus same-seed frozen base is +1.29 pp, Student-t 95% interval [-1.47, +4.05]; strict gain is +17.57 pp [5.45, 29.69], positive on all seven seeds.",
+        "The clearest effect is improved output formatting; a held-out answer-accuracy gain is unresolved. Mean endpoint is below Q5, PIS, TRICE-CV and RLOO in the same-seed AMN replay controls. Trained-comparator gaps remain descriptive.",
+        "Per seed: 2048 training generations, 32 optimizer steps, 262778 generated training tokens, 412078 backward tokens and 0.684 H100-hours including recorded evaluation.",
+        "Verified seven receipts, 49 checkpoint-evaluation records, 224 training diagnostic records, all task terminals, full remote adapter hashes and a checksum-complete local non-adapter mirror. Same-seed optimization questions and demonstrations match the control panel. No official-test access."
+      ],
       "preliminary_observations": [
         "Six completed seeds averaged 78.38% Final Acc@1, 75.54% strict final accuracy and 77.32% normalized trajectory AUC.",
         "Across those six seeds, the mean paired endpoint changes from their frozen baselines were +1.92 percentage points for Final Acc@1 and +18.67 points for strict final accuracy.",
@@ -455,9 +486,8 @@
         "The official GSM8K test split remains sealed."
       ],
       "next_actions": [
-        "Monitor payload 7340568 without altering healthy tasks; validator 7340569 must run only after all seven payload tasks leave the scheduler.",
-        "Require seven completion receipts, complete task logs, 32 diagnostic rows per seed, segmentable_fraction and natural-EOS reward evidence, all expected artifacts and the structured validator marker before analysis.",
-        "After validation, report Final Acc@1, strict final accuracy and AUC against the same-seed frozen base, with descriptive Q5, PIS, TRICE-CV and RLOO context.",
+        "Hand the report and complete compact result package to Thesis Writing; approved prose and printed thesis remain unchanged until separately reviewed.",
+        "Treat JEPO as an external common-protocol comparator, not a new project method or reproduction of its original full-model experiment. Do not pool replay seeds as new independent replications.",
         "Preserve both failed-attempt result roots and do not combine their artifacts with run 4124d5c8."
       ]
     }

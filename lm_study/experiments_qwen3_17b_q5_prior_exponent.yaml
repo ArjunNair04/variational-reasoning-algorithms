@@ -1,0 +1,262 @@
+# Generated; edit generate_qwen3_17b_q5_prior_exponent.py.
+run_id: e97c3a20
+tag_prefix: q3_q5_prior_exponent
+diagnostic:
+  stage: three_seed_prior_exponent_reader_screen
+  evidence_class: development_screen_historical_paired_controls
+  control_run_id: 68078ecc
+  control_commit: 4a9a9cafc6b17cc18e7c1da8a422e847daeb4746
+  control_cells:
+    M: Q5-AD-M-LR1e-5-U1-K16
+    F: Q5-AD-F-LR1e-5-U1-K16
+  design:
+    array_tasks: 12
+    cell_order:
+    - Q5-AD-M-TAU0p5
+    - Q5-AD-M-TAU0
+    - Q5-AD-F-TAU0p5
+    - Q5-AD-F-TAU0
+    paired_seeds:
+    - 1201
+    - 1213
+    - 1217
+  weighting: softmax(answer_reader_logprob + tau * current_trace_logprob)
+  fixed_contract:
+    official_test_used: false
+    answer_target: answer_plus_eos
+    proposal: answer_derive
+    mstep: unchanged_joint_weighted_mle
+  analysis_contract:
+  - Final extracted Acc@1, strict final Acc@1, normalized extracted AUC rounds 0-32,
+    then strict AUC.
+  - Pair each new cell with its same-seed same-reader tau=1 historical control.
+  - Compare frozen minus moving at each tau; report per-seed changes and descriptive
+    paired intervals.
+  - Three seeds are screening evidence, not confirmation; no checkpoint selection
+    or automatic extra jobs.
+  - Nominate at most one tau-reader setting with positive mean final change and no
+    mean strict-final loss versus its reader control; AUC is secondary, not a veto.
+  - Report all settings, concentration, weight-length correlation, tau1 top-trace
+    changes on identical support, backward tokens and compute.
+  - 'Historical controls remain historical: unchanged default code path is tested,
+    but CUDA and execution date may differ.'
+defaults:
+  task: gsm8k
+  model: qwen3-1.7b-base
+  rounds: 32
+  seeds: 3
+  seed_values:
+  - 1201
+  - 1213
+  - 1217
+  n_test: 400
+  train_partition: train
+  eval_partition: validation
+  answer_event_mode: strict_terminal_marker
+  answer_target_termination: none
+  evaluation_prompt: question
+  batch: 64
+  eval_batch: 32
+  G: 16
+  prompts: 128
+  shots: 3
+  shot_bank_size: 5
+  task_seed_from_run_seed: true
+  question_sampling: epoch_shuffle
+  grad_checkpoint: false
+  lora_r: 16
+  lora_alpha: 32
+  lora_target_set: attention_mlp
+  out: ~/po_results/2026-09-12/q5-prior-exponent/qwen3-q5-prior-exponent__e97c3a20
+  eval_rounds:
+  - 1
+  - 2
+  - 4
+  - 8
+  - 16
+  - 24
+  - 32
+  dump_completions: 100
+  save_adapter: true
+  save_training_diagnostics: true
+  training_diagnostics_level: standard
+  training_diagnostics_trace_tape: false
+  training_diagnostics_gradient_questions: 0
+  training_diagnostics_probe_size: 0
+  checkpoint_every: 0
+  passk: 8
+  passk_n: 100
+algos:
+  AC-ALG1:
+  - algorithm_profile: q5_prior_exponent
+    answer_target_termination: eos
+    labelled_frac: 0.0
+    buffer_strategy: fifo
+    buffer_semantics: unique_set
+    buffer_lifecycle: persistent
+    proposal_prompt: answer_derive
+    proposal_mixture: single
+    proposal_filter: all
+    proposal_policy: current
+    responsibility_score: joint
+    responsibility_posterior: softmax_entropy
+    responsibility_temperature: 1.0
+    responsibility_ess_floor: 0.0
+    responsibility_policy: current
+    responsibility_answer_policy: current
+    responsibility_refresh: inner_step
+    variational_estimator: delta_joint
+    labelled_em_weight: 0.0
+    answer_only_em_weight: 1.0
+    supervised_weight: 0.0
+    policy_anchor_mode: fixed
+    labelled_numeric_constraint: 'off'
+    labelled_supervision: gold
+    digit_token_weight: 1.0
+    trace_representation: reasoning
+    latent_mstep_objective: joint
+    update_geometry: sum
+    step_acceptance: none
+    optimizer_state_scope: persistent
+    batch: 64
+    G: 16
+    cell_id: Q5-AD-M-TAU0p5
+    lr: 1.0e-05
+    iters: 1
+    buffer_limit: 16
+    proposal_temperature: 1.0
+    policy_anchor_target_ratio: null
+    policy_anchor_beta_min: 0.0
+    policy_anchor_beta_max: 10.0
+    policy_anchor_ema: 0.9
+    policy_anchor_token_scope: objective
+    responsibility_prior_exponent: 0.5
+  - algorithm_profile: q5_prior_exponent
+    answer_target_termination: eos
+    labelled_frac: 0.0
+    buffer_strategy: fifo
+    buffer_semantics: unique_set
+    buffer_lifecycle: persistent
+    proposal_prompt: answer_derive
+    proposal_mixture: single
+    proposal_filter: all
+    proposal_policy: current
+    responsibility_score: joint
+    responsibility_posterior: softmax_entropy
+    responsibility_temperature: 1.0
+    responsibility_ess_floor: 0.0
+    responsibility_policy: current
+    responsibility_answer_policy: current
+    responsibility_refresh: inner_step
+    variational_estimator: delta_joint
+    labelled_em_weight: 0.0
+    answer_only_em_weight: 1.0
+    supervised_weight: 0.0
+    policy_anchor_mode: fixed
+    labelled_numeric_constraint: 'off'
+    labelled_supervision: gold
+    digit_token_weight: 1.0
+    trace_representation: reasoning
+    latent_mstep_objective: joint
+    update_geometry: sum
+    step_acceptance: none
+    optimizer_state_scope: persistent
+    batch: 64
+    G: 16
+    cell_id: Q5-AD-M-TAU0
+    lr: 1.0e-05
+    iters: 1
+    buffer_limit: 16
+    proposal_temperature: 1.0
+    policy_anchor_target_ratio: null
+    policy_anchor_beta_min: 0.0
+    policy_anchor_beta_max: 10.0
+    policy_anchor_ema: 0.9
+    policy_anchor_token_scope: objective
+    responsibility_prior_exponent: 0.0
+  - algorithm_profile: q5_prior_exponent
+    answer_target_termination: eos
+    labelled_frac: 0.0
+    buffer_strategy: fifo
+    buffer_semantics: unique_set
+    buffer_lifecycle: persistent
+    proposal_prompt: answer_derive
+    proposal_mixture: single
+    proposal_filter: all
+    proposal_policy: current
+    responsibility_score: joint
+    responsibility_posterior: softmax_entropy
+    responsibility_temperature: 1.0
+    responsibility_ess_floor: 0.0
+    responsibility_policy: current
+    responsibility_answer_policy: frozen_base
+    responsibility_refresh: inner_step
+    variational_estimator: delta_joint
+    labelled_em_weight: 0.0
+    answer_only_em_weight: 1.0
+    supervised_weight: 0.0
+    policy_anchor_mode: fixed
+    labelled_numeric_constraint: 'off'
+    labelled_supervision: gold
+    digit_token_weight: 1.0
+    trace_representation: reasoning
+    latent_mstep_objective: joint
+    update_geometry: sum
+    step_acceptance: none
+    optimizer_state_scope: persistent
+    batch: 64
+    G: 16
+    cell_id: Q5-AD-F-TAU0p5
+    lr: 1.0e-05
+    iters: 1
+    buffer_limit: 16
+    proposal_temperature: 1.0
+    policy_anchor_target_ratio: null
+    policy_anchor_beta_min: 0.0
+    policy_anchor_beta_max: 10.0
+    policy_anchor_ema: 0.9
+    policy_anchor_token_scope: objective
+    responsibility_prior_exponent: 0.5
+  - algorithm_profile: q5_prior_exponent
+    answer_target_termination: eos
+    labelled_frac: 0.0
+    buffer_strategy: fifo
+    buffer_semantics: unique_set
+    buffer_lifecycle: persistent
+    proposal_prompt: answer_derive
+    proposal_mixture: single
+    proposal_filter: all
+    proposal_policy: current
+    responsibility_score: joint
+    responsibility_posterior: softmax_entropy
+    responsibility_temperature: 1.0
+    responsibility_ess_floor: 0.0
+    responsibility_policy: current
+    responsibility_answer_policy: frozen_base
+    responsibility_refresh: inner_step
+    variational_estimator: delta_joint
+    labelled_em_weight: 0.0
+    answer_only_em_weight: 1.0
+    supervised_weight: 0.0
+    policy_anchor_mode: fixed
+    labelled_numeric_constraint: 'off'
+    labelled_supervision: gold
+    digit_token_weight: 1.0
+    trace_representation: reasoning
+    latent_mstep_objective: joint
+    update_geometry: sum
+    step_acceptance: none
+    optimizer_state_scope: persistent
+    batch: 64
+    G: 16
+    cell_id: Q5-AD-F-TAU0
+    lr: 1.0e-05
+    iters: 1
+    buffer_limit: 16
+    proposal_temperature: 1.0
+    policy_anchor_target_ratio: null
+    policy_anchor_beta_min: 0.0
+    policy_anchor_beta_max: 10.0
+    policy_anchor_ema: 0.9
+    policy_anchor_token_scope: objective
+    responsibility_prior_exponent: 0.0

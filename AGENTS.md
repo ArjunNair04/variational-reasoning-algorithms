@@ -24,6 +24,8 @@
   mocked E-step factor/reader tests, identity tests, runtime-profile rejection,
   exact task mapping, frozen analysis and validator tests, and the full suite.
   See `docs/experiments/qwen3_q5_prior_exponent/README.md` and the registry.
+  Final local gate: 200 tests, all 12 dry-run coordinates, runtime validation
+  for all four cells and a 128-question-round historical diagnostic replay pass.
 
 - **2026-09-10, JEPO result ingestion:** canonicalise validation question IDs
   before comparing support across seeds; the evaluator deliberately permutes

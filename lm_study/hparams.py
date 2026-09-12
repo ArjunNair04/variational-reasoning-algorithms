@@ -76,6 +76,8 @@ KNOBS = (
          "AC-ALG1 E-step logit: joint or token_mean"),
     Knob("responsibility_temperature", float, "rt",
          "AC-ALG1 positive E-step softmax temperature"),
+    Knob("responsibility_prior_exponent", float, "rpe",
+         "Q5 E-step rationale-prior exponent; 1 preserves historical weighting"),
     Knob("labelled_em_weight", float, "lem",
          "AC-ALG1 coefficient on the labelled latent-buffer term B'_unsup"),
     Knob("labelled_proposal_prompt", str, "lprop",

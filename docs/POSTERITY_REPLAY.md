@@ -94,3 +94,8 @@ and a new analysis output directory. A selected-method replay may also receive
 the checksum-bound historical `method_summary.csv` through `--source-summary`.
 Without that source summary, the replay result may be cited after the gate
 passes, but it must not be described as reproducing the historical estimate.
+# Q5 prior-exponent follow-up
+
+The [prior-exponent reader screen](experiments/qwen3_q5_prior_exponent/README.md)
+adds 12 tasks at tau=0 and 0.5, reusing the matched moving/frozen Q5 controls.
+It is a new controlled intervention, not a replay of tau=1.
