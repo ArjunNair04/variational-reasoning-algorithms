@@ -1,0 +1,259 @@
+# Declaration and factor attribution in the persistent delta update.
+#
+# Measurement replay of Q5-LR1e-5-U1-K16 with deeper per-trace logging, plus two
+# proposal-correction cells. Written by hand rather than by a generator.
+#
+# This study is deliberately NOT registered in studies.json and NOT listed in
+# source_manifest.json: reproduce.py hash-checks configurations against the frozen
+# manifest, so a new configuration cannot be launched through it. Prepare the
+# selected_methods source bundle, then invoke the unpacked trainer directly on this
+# file. See the header of the run instructions committed alongside it.
+#
+# Execution source: 48bda822f94d486d15ac03c450449e0a66c6b998, the revision that
+# produced the Q5-LR1e-5-U1-K16 result this study replays.
+
+run_id: 3f11c07a
+tag_prefix: q3_responsibility_attribution
+diagnostic:
+  stage: responsibility_factor_attribution_and_declaration_prevalence
+  evidence_class: preregistered_seven_seed_measurement_on_reused_development_validation
+  require_protocol_outcome_diagnostics: true
+  partitions:
+    optimization_source: gsm8k_train_optimization_subset
+    development_validation_source: gsm8k_train_validation_subset
+    official_test_used: false
+  scientific_question: >
+    In the selected persistent delta cell, what share of responsibility MASS sits on
+    traces whose answer likelihood is supplied by the answer-bearing tail rather than
+    by the derivation, and is the summed joint score ordering the support by rationale
+    typicality or by answer support? Does removing the prior factor from the
+    responsibility, which is the exact importance correction for a prior proposal,
+    change the endpoint?
+  provenance:
+    model_id: Qwen/Qwen3-1.7B-Base
+    model_revision: ea980cb0a6c2ae4b936e82123acc929f1cec04c1
+    dataset_id: openai/gsm8k
+    dataset_config: main
+    dataset_revision: 740312add88f781978c0658806c59bc2815b9866
+    source_experiment: qwen3_final_method_confirmation_978b99c8
+    source_cell: Q5-LR1e-5-U1-K16
+    execution_revision: 48bda822f94d486d15ac03c450449e0a66c6b998
+    reference_result: final_acc_at_1_plus_4.14_points_over_paired_frozen_base
+  rationale:
+    - The responsibility is exp(trace_logp + answer_logp) normalised on the support.
+      Only the sum enters, so the weight alone cannot say which factor produced it.
+      Every cell records both log-factors per retained trace; nothing else changes.
+    - The split point is the longest prefix of the completion that does not contain the
+      answer string, snapped back to the preceding step boundary. Any earlier cut leaves
+      the answer in context and the statistic is near zero by copying; any later cut
+      deletes derivation tokens and the statistic measures truncation damage.
+    - A foil answer drawn from the other retained traces is scored on both contexts, so
+      degradation caused by truncating mid-derivation cancels between the two brackets.
+    - gamma is a proposal correction, not a tuning knob. A fixed enumerated support gives
+      gamma=1 (the current joint score); a question-only prior proposal cancels the prior
+      factor and gives gamma=0. The persistent cell draws from the answer-derived
+      pseudo-posterior and applies gamma=1 uncorrected.
+    - An earlier gamma sweep predates the EOS answer target. Summed trace_logp is
+      length-sensitive, so under the stopping mismatch the prior factor's spread across
+      the support tracked termination failure rather than typicality.
+  fixed_contract:
+    prompt_shots: 3
+    nested_prompt_bank_size: 5
+    proposal_prompt: answer_derived
+    evaluation_prompt: question_only
+    optimization_questions: 128
+    development_validation_questions: 400
+    candidate_size: 16
+    support_limit: 16
+    reuse_passes: 1
+    outer_rounds: 32
+    adapter_rank: 16
+    adapter_alpha: 32
+    adapter_surface: attention_and_mlp_projections
+    answer_event: one_terminal_marker_followed_by_tokenizer_eos
+    official_test_used: false
+  design:
+    cell_order:
+      - CTRL-base
+      - Q5-GAMMA10-TAPE
+      - Q5-GAMMA05
+      - Q5-GAMMA00
+    factors:
+      responsibility_prior_exponent: [1.0, 0.5, 0.0]
+    paired_seeds: [1201, 1213, 1217, 1223, 1229, 1231, 1237]
+    trained_cells: 3
+    frozen_control_cells: 1
+    array_tasks: 28
+    checkpoint_rule: final_round_32
+  primary_metric: mass_weighted_declaration_share
+  secondary_metrics:
+    - final_extracted_answer_accuracy
+    - final_strict_terminal_accuracy
+    - normalized_extracted_trajectory_auc
+  mechanism_metrics:
+    - responsibility_trace_factor_rank_correlation        # rho_1
+    - responsibility_answer_factor_rank_correlation       # rho_2
+    - declaration_effect_distribution                     # D per retained trace
+    - bypass_effect_distribution                          # L(a|q,h) - L(a|q)
+    - answer_free_prefix_fraction                         # flags near-immediate answers
+    - answer_absent_from_trace_fraction                   # split-undefined bucket
+    - proposal_prior_regression_slope_and_r2              # fitted gamma per question
+    - effective_sample_size_fraction                      # existing, for the mass argument
+  decision_rules:
+    - Treat paired training seed as the independent replicate.
+    - Q5-GAMMA10-TAPE is a bit-exact replay of the confirmed cell with deeper logging.
+      If its final Acc@1 does not reproduce the published value within paired-seed noise,
+      report the study as a failed replay and stop.
+    - Report prevalence as the share of total responsibility MASS on traces above the
+      declaration threshold, not as a count of traces. Count-based prevalence is reported
+      only alongside it.
+    - Preregistered threshold - a trace is declaration-carried when its declaration effect
+      exceeds the median plus two median absolute deviations of the within-question
+      distribution. Report the full sensitivity curve over the threshold, not one point.
+    - If mass-weighted prevalence is below 5 percent at every threshold on the curve, and
+      rho_1 does not exceed rho_2 by more than 0.2 on average, record the mechanism as
+      not prevalent in this construction and do not pursue the reweighting.
+    - Report the fitted gamma with its r-squared. A low r-squared means no scalar exponent
+      is an adequate proposal correction and the explicit proposal density is required.
+    - Accuracy contrasts against GAMMA10 are secondary and reported as unresolved unless
+      the lower 95 percent bound of a nested paired bootstrap excludes zero.
+    - Do not access the official GSM8K test split.
+
+defaults: &defaults
+  task: gsm8k
+  model: qwen3-1.7b-base
+  rounds: 32
+  seeds: 7
+  seed_values: [1201, 1213, 1217, 1223, 1229, 1231, 1237]
+  n_test: 400
+  train_partition: train
+  eval_partition: validation
+  answer_event_mode: strict_terminal_marker
+  answer_target_termination: eos
+  evaluation_prompt: question
+  batch: 64
+  eval_batch: 32
+  G: 16
+  prompts: 128
+  shots: 3
+  shot_bank_size: 5
+  task_seed_from_run_seed: true
+  question_sampling: epoch_shuffle
+  grad_checkpoint: false
+  lora_r: 16
+  lora_alpha: 32
+  lora_target_set: attention_mlp
+  out: ~/po_results/2026-09-12/responsibility-attribution__3f11c07a
+  eval_rounds: [1, 2, 4, 8, 16, 24, 32]
+  dump_completions: 100
+  save_adapter: true
+  save_training_diagnostics: true
+  training_diagnostics_level: deep
+  training_diagnostics_trace_tape: true
+  training_diagnostics_gradient_questions: 0
+  training_diagnostics_probe_size: 0
+  checkpoint_every: 0
+  passk: 8
+  passk_n: 100
+
+algos:
+  base:
+    cell_id: CTRL-base
+  AC-ALG1:
+    - &attrib
+      cell_id: Q5-GAMMA10-TAPE
+      algorithm_profile: barber_reader_ablation
+      answer_target_termination: eos
+      lr: 1.0e-5
+      iters: 1
+      buffer_limit: 16
+      batch: 64
+      G: 16
+      labelled_frac: 0.0
+      buffer_strategy: fifo
+      buffer_semantics: unique_set
+      buffer_lifecycle: persistent
+      proposal_prompt: answer_derive
+      proposal_mixture: single
+      proposal_filter: all
+      proposal_policy: current
+      proposal_temperature: 1.0
+      responsibility_score: joint
+      responsibility_posterior: softmax_entropy
+      responsibility_temperature: 1.0
+      responsibility_ess_floor: 0.0
+      responsibility_policy: current
+      responsibility_answer_policy: current
+      responsibility_refresh: inner_step
+      variational_estimator: delta_joint
+      labelled_em_weight: 0.0
+      answer_only_em_weight: 1.0
+      supervised_weight: 0.0
+      policy_anchor_mode: fixed
+      labelled_numeric_constraint: "off"
+      labelled_supervision: gold
+      digit_token_weight: 1.0
+      trace_representation: reasoning
+      latent_mstep_objective: joint
+      update_geometry: sum
+      step_acceptance: none
+      optimizer_state_scope: persistent
+      # --- fields below are new; see new_fields ---
+      responsibility_prior_exponent: 1.0
+      diagnostics_factor_attribution: true
+      diagnostics_declaration_effect: true
+      declaration_split_rule: answer_free_prefix
+      declaration_split_snap: step_boundary
+      declaration_foil_source: sibling_declared_answers
+      diagnostics_proposal_prior_regression: true
+    - {<<: *attrib, cell_id: Q5-GAMMA05, responsibility_prior_exponent: 0.5}
+    - {<<: *attrib, cell_id: Q5-GAMMA00, responsibility_prior_exponent: 0.0}
+
+new_fields:
+  responsibility_prior_exponent:
+    type: float
+    default: 1.0
+    effect: >
+      Responsibility logits become prior_exponent * trace_logp + answer_logp before the
+      existing group softmax. 1.0 is bit-identical to the current joint score and 0.0 is
+      answer-only. Applies to the responsibility only; the M-step still fits
+      log p(h|q) + log p(a|q,h) unchanged.
+    reference: variational_reasoning.attribution.tempered_joint_weights
+  diagnostics_factor_attribution:
+    type: bool
+    default: false
+    effect: >
+      Per question per refresh, log the Spearman correlation of the normalised weights
+      with trace_logp and with answer_logp across the retained support.
+    reference: variational_reasoning.attribution.factor_attribution
+  diagnostics_declaration_effect:
+    type: bool
+    default: false
+    effect: >
+      Per retained trace, four continuation scores - true and foil answer on the full
+      trace and on the answer-free prefix - reported as D. Three of the four reuse the
+      prefix KV cache, so marginal cost is about 4 * len(answer) token-steps per trace.
+      Also logs L(a|q) once per question for the bypass effect.
+    reference: variational_reasoning.attribution.declaration_effect, bypass_effect
+  declaration_split_rule:
+    values: [answer_free_prefix, marker_start]
+    default: answer_free_prefix
+    effect: >
+      answer_free_prefix cuts before the first occurrence of the answer string, with the
+      canonical marker as fallback and a separate bucket when the answer never appears.
+    reference: variational_reasoning.attribution.answer_free_prefix
+  declaration_split_snap:
+    values: [none, step_boundary]
+    default: step_boundary
+    reference: variational_reasoning.attribution.snap_to_step_boundary
+  declaration_foil_source:
+    values: [sibling_declared_answers, fixed_offset]
+    default: sibling_declared_answers
+  diagnostics_proposal_prior_regression:
+    type: bool
+    default: false
+    effect: >
+      Regress the answer-derived proposal score on the question-only prior score across
+      the support; slope is 1 - gamma. Requires both scores, which the answer-derived
+      proposal path already computes.
+    reference: variational_reasoning.attribution.fit_gamma
