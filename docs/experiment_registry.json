@@ -4,7 +4,10 @@
     {
       "registry_id": "qwen3_q5_prior_exponent_reader_20260912",
       "run_id": "e97c3a20",
-      "status": "prepared",
+      "status": "submitted_held",
+      "execution_revision": "5b4e32deaedf2c99db7cbab2d622015a54b36a44",
+      "configuration_sha256": "bc949c4cfbf6a115750456a23b2e4a3ad73743d1eb43b4270d1662a69f4e732f",
+      "scheduler_jobs": [{"role": "payload", "job_id": "7380685", "tasks": 12, "state": "user_held_pending_release"}, {"role": "validator", "job_id": "7380686", "depends_on": "7380685", "state": "dependency_held"}],
       "preflight_failures": [{"commit": "bd7e820fd277205f3b5672be255ab064cfa55e8d", "reason": "Analyzer subprocess overwrote PYTHONPATH and omitted src; infrastructure only", "jobs_created": false}],
       "account": "amanojna",
       "config": "lm_study/experiments_qwen3_17b_q5_prior_exponent.yaml",
@@ -21,7 +24,7 @@
       "result_root": "~/po_results/2026-09-12/q5-prior-exponent/qwen3-q5-prior-exponent__e97c3a20",
       "validator_marker": "~/po_results/auto_state/qwen3_q5_prior_exponent_e97c3a20.ok",
       "limitations": ["Three-seed development screen", "Historical tau=1 controls, not concurrent reruns"],
-      "next_actions": ["Verify historical control receipts; submit immutable 12-task array and dependent validator", "After validator succeeds, collect and run frozen paired analysis; no automatic confirmation"]
+      "next_actions": ["Release payload 7380685 after this tracking push", "After validator succeeds, collect and run frozen paired analysis; no automatic confirmation"]
     },
     {
       "registry_id": "qwen3_selected_method_posterity_20260829",

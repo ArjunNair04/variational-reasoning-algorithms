@@ -15,6 +15,11 @@
 
 ## Change record
 
+- **2026-09-12, Q5 held submission:** exact uncapped payload 7380685 and
+  dependent validator 7380686 bind execution 5b4e32d and run e97c3a20.
+  Nine historical control receipts/hashes and all cluster coordinates pass;
+  the local full suite passes 201 tests. Release follows the tracking push.
+
 - **2026-09-12, Q5 submission-path preflight repair:** remove a per-command
   `PYTHONPATH` override that discarded `src` during analyzer preflight. Keep
   the exported source path for every subprocess. Cluster preflight failed
