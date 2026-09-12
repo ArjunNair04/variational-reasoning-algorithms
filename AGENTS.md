@@ -15,6 +15,10 @@
 
 ## Change record
 
+- **2026-09-12, Q5 released:** all 12 tasks of 7380685 are ordinary queued
+  without a concurrency cap; 7380686 is dependency-held. The execution
+  checkout stays at 5b4e32d; subsequent commits are tracking-only.
+
 - **2026-09-12, Q5 held submission:** exact uncapped payload 7380685 and
   dependent validator 7380686 bind execution 5b4e32d and run e97c3a20.
   Nine historical control receipts/hashes and all cluster coordinates pass;
