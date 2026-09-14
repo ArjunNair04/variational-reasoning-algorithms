@@ -2,6 +2,10 @@
 
 Status: [token-resolved scoring audit completed and validated](scoring_results_2026-09-14.md);
 the user approved the nine-task marker-fixed training screen on 14 September.
+Payload **7413571** (tasks 1-9) and dependent validator **7413572** are submitted;
+the payload is held until its tracking record is published. Execution remains
+at `037b1d3`; there is no artificial concurrency limit. The prepared analyzer
+will report all six paired contrasts after complete task-level validation.
 The preceding
 [pre-training audit](pretraining_findings_2026-09-14.md) records the semantic
 review and historical saved-score comparison. Job 7412300 adds fixed-final-

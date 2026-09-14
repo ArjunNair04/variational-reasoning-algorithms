@@ -15,6 +15,14 @@
 
 ## Change record
 
+- **2026-09-14, positional screen submission:** payload 7413571 contains
+  exactly nine held tasks; validator 7413572 depends only on that payload.
+  Execution is pinned to 037b1d3, with no concurrency cap. Cluster control
+  hashes, nine coordinates and full scoring revalidation pass. Cluster pytest
+  is unavailable; all 248 local tests pass. Canonical/coordination views and
+  nine/ten tracking tests pass; the canonical MLflow projection is refreshed.
+  Publish this record before releasing the payload; no result claim.
+
 - **2026-09-14, marker-fixed positional training screen:** run `c7e32a91`
   supersedes the unsubmitted historical-mask draft. Early/late exponents apply
   only to native reasoning positions; marker, answer and EOS retain full weight.

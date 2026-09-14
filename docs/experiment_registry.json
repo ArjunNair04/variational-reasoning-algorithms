@@ -4,12 +4,25 @@
     {
       "registry_id": "qwen3_q5_prior_segments_20260914",
       "run_id": "c7e32a91",
-      "status": "ready_for_submission",
+      "status": "user_held_pending_release",
       "superseded_unsubmitted_draft": "a2f46c91",
       "segment_scope": "reasoning_marker_fixed",
       "training_gate": "analysis/check_q5_segment_training_gate.py",
       "account": "amanojna",
-      "scheduler_jobs": [],
+      "scheduler_jobs": [
+        {
+          "role": "payload",
+          "job_id": "7413571",
+          "tasks": 9,
+          "state": "held"
+        },
+        {
+          "role": "validator",
+          "job_id": "7413572",
+          "depends_on": "7413571",
+          "state": "dependency_held"
+        }
+      ],
       "config": "lm_study/experiments_qwen3_17b_q5_prior_segments.yaml",
       "submitter": "lm_study/submit_qwen3_17b_q5_prior_segments_ucl.sh",
       "analyzer": "analysis/analyze_qwen3_q5_prior_segments.py",
@@ -86,11 +99,13 @@
         "Completed audit uses final adapters and retokenized archived text, not historical intermediate checkpoint replay. No accuracy outcome is measured."
       ],
       "next_actions": [
-        "Acquire a pushed AMN lease, deploy the marker-fixed protocol immutably, revalidate controls and scoring evidence on Beaker, then submit nine held tasks and a dependent validator.",
-        "Publish execution identity, job IDs and prepared analysis before releasing only the new payload; no artificial concurrency cap.",
-        "After verified training completion, run the frozen paired accuracy/efficiency analysis; no automatic confirmation."
+        "Verify all nine payload receipts, logs, adapters and 32-round diagnostics plus the dependent validator.",
+        "After verified completion and approved compact collection, run the frozen six paired contrasts; report Final Acc@1, strict final, AUC and compute. No automatic confirmation."
       ],
-      "historical_pretraining_verification": "Full curated suite: 234 tests pass, including 12 focused pre-training audit tests. Outcome-blind semantic review covers 24 saved final evaluations; exact saved-factor uniform reweighting covers 384 question-rounds and 2987 trace rows. All six source hashes match completion receipts and original softmax weights reconstruct. Early/late scores remain unavailable and the submitter rejects the partial audit. AMN briefly reachable; subsequent checkpoint inventory returned exit 255. No model inference, training or submission. Canonical views, nine registry/importer tests and MLflow refresh pass."
+      "historical_pretraining_verification": "Full curated suite: 234 tests pass, including 12 focused pre-training audit tests. Outcome-blind semantic review covers 24 saved final evaluations; exact saved-factor uniform reweighting covers 384 question-rounds and 2987 trace rows. All six source hashes match completion receipts and original softmax weights reconstruct. Early/late scores remain unavailable and the submitter rejects the partial audit. AMN briefly reachable; subsequent checkpoint inventory returned exit 255. No model inference, training or submission. Canonical views, nine registry/importer tests and MLflow refresh pass.",
+      "execution_revision": "037b1d38b484f207e5bff9cf437a3ea421860f53",
+      "configuration_sha256": "c73b7c65c97aff185b3c73ab04019ac2ed1be9f31d1bd30fa17ebdd2c2a13084",
+      "execution_checkout": "/home/amanojna/vrl_hpc/audits/q5-prior-segments-037b1d3"
     },
     {
       "registry_id": "qwen3_q5_prior_exponent_reader_20260912",
