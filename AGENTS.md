@@ -15,6 +15,10 @@
 
 ## Change record
 
+- **2026-09-14, scoring startup:** all three tasks of 7412300 are scheduler-
+  running on seymour4; allocation-only logs do not yet establish scoring
+  progress or a throughput ETA. This is a read-only scheduler snapshot.
+
 - **2026-09-14, scoring release:** after explicit provenance-upload approval,
   published both tracking records and released only 7412300.1-3; all three
   were verified ordinary queued, uncapped. Execution stays at 802c174 and
