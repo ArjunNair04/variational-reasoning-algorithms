@@ -1,5 +1,10 @@
 # Q5 positional rationale-prior weighting
 
+The [three-seed frozen-reader replication](frozen_reader_2026-09-15.md)
+adds nine new tasks under a separate run ID, reusing these moving results and
+the verified unattenuated frozen-reader controls. The original study below
+and its generated YAML remain unchanged.
+
 Status: [token-resolved scoring audit completed and validated](scoring_results_2026-09-14.md);
 the user approved the nine-task marker-fixed training screen on 14 September.
 Payload **7413571** (tasks 1-9) has completed. Validator **7413572** passed at

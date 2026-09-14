@@ -1,6 +1,7 @@
 """Positional scoring, historical identity, RNG isolation and frozen protocol."""
 
 from dataclasses import replace
+from contextlib import contextmanager
 from types import SimpleNamespace
 
 import pytest
@@ -57,36 +58,60 @@ def test_reasoning_split_leaves_multitoken_marker_fixed(length):
 
 
 @pytest.mark.parametrize("head,tail", [(1, 1), (0.5, 1), (1, 0.5), (0.75, 0.75)])
-def test_actual_estep_and_rng(monkeypatch, head, tail):
+@pytest.mark.parametrize("reader", ["current", "frozen_base"])
+def test_actual_estep_and_rng(monkeypatch, head, tail, reader):
     ids = torch.tensor([[9, 8, 7, 6, 5, 4, 3], [9, 8, 7, 6, 5, 4, 3]])
     span = torch.tensor([[False, False, True, True, True, True, True]] * 2)
     ans = torch.tensor([[False, False, False, False, False, True, True]] * 2)
     token_lp = torch.tensor([[0., 0., -1., -4., -2., -.2, -.1], [0., 0., -3., -1., -1., -.5, -.2]])
     calls = []
+    policies = []
+
+    @contextmanager
+    def policy_context(model, policy):
+        previous = model.policy
+        model.policy = policy
+        try:
+            yield
+        finally:
+            model.policy = previous
+
+    monkeypatch.setattr(alg, "_adapter_policy_context", policy_context)
+    frozen_lp = token_lp.clone()
+    frozen_lp[:, 2:5] *= 5  # Freezing must never change the prior or marker source.
+    frozen_lp[:, 5:] = torch.tensor([[-2., -.4], [-.1, -.2]])
 
     def logprobs(model, actual_ids, mask, **kwargs):
         assert torch.equal(actual_ids, ids)  # All original conditioning tokens retained.
         calls.append(mask.clone())
+        policies.append(model.policy)
         torch.rand(1)  # Extra scoring must not advance the main RNG stream.
-        return (token_lp * mask).sum(1)
+        values = frozen_lp if model.policy == "frozen_base" else token_lp
+        return (values * mask).sum(1)
 
     monkeypatch.setattr(alg, "seq_logprobs", logprobs)
     monkeypatch.setattr(alg, "_pad_trace_rows", lambda *_: (ids, span, ans))
     rows = [alg.TraceRow(ids=ids[i], span=span[i], ans=ans[i], pid=7,
                          round_added=0, source="test", reasoning_token_count=2) for i in range(2)]
-    model = SimpleNamespace()
+    model = SimpleNamespace(policy="current")
     torch.manual_seed(7)
-    legacy = alg._buffer_weights_for_questions(model, None, {7: rows}, [7], record_joint_logprobs=True)
+    legacy = alg._buffer_weights_for_questions(model, None, {7: rows}, [7], record_joint_logprobs=True,
+        responsibility_answer_policy=reader)
     old_rng = torch.random.get_rng_state().clone()
     calls.clear()
+    policies.clear()
     torch.manual_seed(7)
     actual = alg._buffer_weights_for_questions(model, None, {7: rows}, [7], record_joint_logprobs=True,
+        responsibility_answer_policy=reader,
         responsibility_prior_head_exponent=head, responsibility_prior_tail_exponent=tail)
     assert torch.equal(torch.random.get_rng_state(), old_rng)
     early, late, marker = split_reasoning_marker_mask(span & ~ans, [2, 2])
-    expected = (token_lp * (ans | marker)).sum(1) + head * (token_lp * early).sum(1) + tail * (token_lp * late).sum(1)
+    answer_lp = frozen_lp if reader == "frozen_base" else token_lp
+    expected = (answer_lp * ans).sum(1) + (token_lp * marker).sum(1) + head * (token_lp * early).sum(1) + tail * (token_lp * late).sum(1)
     torch.testing.assert_close(actual[7], torch.softmax(expected, dim=0))
     assert not actual[7].requires_grad
+    assert model.policy == "current"
+    assert policies[:2] == ["current", reader]
     assert len(calls) == (2 if head == tail == 1 else 4)
     if head == tail == 1:
         assert torch.equal(legacy[7], actual[7])
@@ -94,6 +119,7 @@ def test_actual_estep_and_rng(monkeypatch, head, tail):
     else:
         assert all(row.prior_head_tokens == row.prior_tail_tokens == row.prior_marker_tokens == 1 for row in rows)
         assert torch.equal(calls[-2], early) and torch.equal(calls[-1], marker)
+        assert policies[-2:] == ["current", "current"]
         for i, row in enumerate(rows):
             assert row.prior_marker_logprob == pytest.approx(float((token_lp * marker).sum(1)[i]))
             assert row.prior_head_logprob + row.prior_tail_logprob + row.prior_marker_logprob == pytest.approx(row.trace_logprob)

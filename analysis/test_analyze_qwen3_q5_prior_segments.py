@@ -90,3 +90,46 @@ def test_scheduler_contract():
     assert "for cell in 0 1 2;" in submit and "--nshard 3" in submit
     assert 'export PYTHONPATH="$PROJ/src:$SCRIPT_DIR:$PROJ/analysis:' in submit
     assert "--validate-controls-only" in submit and "qsub -h" in submit
+
+
+def test_frozen_reader_pairings_and_nomination():
+    import generate_qwen3_17b_q5_prior_segments_frozen as frozen
+    cells = (*CELL_ORDER, CONTROL_CELL, *frozen.CELL_ORDER, frozen.CONTROL_CELL)
+    frame = pd.DataFrame([dict(cell=cell, seed=seed, **{m:.8 + .01*(cell in frozen.CELL_ORDER)
+        for m in METRICS}) for cell in cells for seed in SEEDS])
+    result = paired_contrasts(frame, frozen, include_readers=True)
+    assert len(result) == 40  # Six within-reader contrasts plus four reader contrasts.
+    assert result.iloc[:12].control.eq(frozen.CONTROL_CELL).all()
+    assert np.allclose(result.iloc[24:36].mean_difference_pp, 1)
+    assert np.allclose(result.iloc[36:].mean_difference_pp, 0)
+    assert nominate(frame, frozen) == frozen.CELL_ORDER[0]
+    frame.loc[frame.cell.isin(frozen.CELL_ORDER), "final_strict"] = .7
+    assert nominate(frame, frozen) is None
+
+
+def test_frozen_diagnostics_and_moving_marker_fail_closed(tmp_path):
+    import json
+    import generate_qwen3_17b_q5_prior_segments_frozen as frozen
+    import generate_qwen3_17b_q5_prior_segments as moving
+    from analyze_qwen3_q5_prior_segments import verify_moving_marker
+    rows = diagnostics()
+    for row in rows:
+        row["responsibilities"].update(answer_policy="frozen_base", policy="current")
+    assert len(mechanism_rows(rows, .5, 1., expected_reader="frozen_base")) == 32
+    for field, value in (("answer_policy", "current"), ("policy", "frozen_base")):
+        bad = deepcopy(rows)
+        bad[0]["responsibilities"][field] = value
+        with pytest.raises(ValueError, match="policy mismatch"):
+            mechanism_rows(bad, .5, 1., expected_reader="frozen_base")
+    marker = dict(status="ok", run_id=moving.RUN_ID, execution_commit=frozen.MOVING_COMMIT,
+        source_job_id=frozen.MOVING_JOB, configuration_sha256=frozen.MOVING_CONFIG_SHA256,
+        task_count=9, trained_adapter_count=9, official_test_used=False)
+    path = tmp_path/"moving.ok"
+    path.write_text(json.dumps(marker))
+    assert verify_moving_marker(path, frozen) == marker
+    for key in marker:
+        changed = dict(marker)
+        changed[key] = "bad"
+        path.write_text(json.dumps(changed))
+        with pytest.raises(ValueError, match="moving comparison marker mismatch"):
+            verify_moving_marker(path, frozen)

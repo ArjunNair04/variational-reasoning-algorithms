@@ -16,7 +16,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "analysis"))
 
 import yaml
 
-from generate_qwen3_17b_q5_prior_segments import CELL_ORDER, RUN_ID, SEEDS, build_payload
+from generate_qwen3_17b_q5_prior_segments import CELL_ORDER, SEEDS, study_for_payload
 from result_contract import (
     ResultContractError,
     atomic_write_json,
@@ -31,6 +31,7 @@ TASK_COUNT = len(CELL_ORDER) * len(SEEDS)
 
 
 def _expected_coordinates(config: dict) -> list[dict]:
+    study = study_for_payload(config)
     cells = _prepare_cells(
         config, only=None, run_id=str(config["run_id"]), defaults=config["defaults"]
     )
@@ -39,7 +40,7 @@ def _expected_coordinates(config: dict) -> list[dict]:
         for seed_index, seed in enumerate(SEEDS):
             rows.append({
                 "task_id": cell_index * len(SEEDS) + seed_index + 1,
-                "cell_id": CELL_ORDER[cell_index],
+                "cell_id": study.CELL_ORDER[cell_index],
                 "model": str(cell.model),
                 "method": str(cell.method),
                 "seed": seed,
@@ -90,7 +91,7 @@ def _validate_receipts(config: dict, result_root: Path, expected_commit: str) ->
         try:
             receipt = validate_completion_receipt(receipt_path, result_root=result_root)
             validate_receipt_identity(receipt, {
-                "run_id": RUN_ID,
+                "run_id": config["run_id"],
                 "task": "gsm8k",
                 "model": coordinate["model"],
                 "method": method,
@@ -116,7 +117,8 @@ def _validate_receipts(config: dict, result_root: Path, expected_commit: str) ->
             cell_index = (coordinate["task_id"] - 1) // len(SEEDS)
             cell = config["algos"]["AC-ALG1"][cell_index]
             mechanism_rows(_read_jsonl_gz(_artifact(result_root, receipt, "training_diagnostics_")),
-                cell["responsibility_prior_head_exponent"], cell["responsibility_prior_tail_exponent"])
+                cell["responsibility_prior_head_exponent"], cell["responsibility_prior_tail_exponent"],
+                expected_reader=cell["responsibility_answer_policy"])
             if int(result["optimizer_steps"]) != 32 or int(result["train_llm_gen"]) != 2048:
                 raise ValueError("training budget mismatch")
         except (KeyError, TypeError, OSError, ValueError) as exc:
@@ -143,8 +145,10 @@ def validate_study(
     if observed_sha != expected_config_sha256:
         problems.append("configuration SHA mismatch")
     config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
-    if config != build_payload():
-        problems.append("configuration differs from the generated frozen payload")
+    try:
+        study_for_payload(config)
+    except ValueError:
+        return problems + ["configuration differs from the generated frozen payload"], {}
     if not re.fullmatch(r"[0-9a-f]{7,40}", expected_commit):
         problems.append(f"invalid execution commit {expected_commit!r}")
     if not source_job_id.isdigit():
@@ -156,7 +160,7 @@ def validate_study(
     marker = {
         "schema_version": 1,
         "status": "ok",
-        "run_id": RUN_ID,
+        "run_id": config["run_id"],
         "execution_commit": expected_commit,
         "configuration_sha256": observed_sha,
         "source_job_id": source_job_id,

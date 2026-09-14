@@ -13,8 +13,9 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "lm_study"))
 from generate_qwen3_17b_q5_prior_segments import (
     CELL_ORDER, SEEDS, CHECKPOINTS, CONTROL_CELL, CONTROL_COMMIT,
-    CONTROL_RUN_ID, RUN_ID, SETTINGS, build_payload,
+    CONTROL_RUN_ID, RUN_ID, SETTINGS, build_payload, study_for_payload,
 )
+import generate_qwen3_17b_q5_prior_segments as moving_study
 from run_yaml import _prepare_cells
 from ac_alg1_prior_segments import SEGMENT_SCOPE
 from analyze_qwen3_q5_prior_exponent import load_cell, verify_controls, METRICS
@@ -25,17 +26,20 @@ from analyze_qwen3_jepo_comparator import (
 
 def validate_design(path):
     payload = yaml.safe_load(path.read_text())
-    if payload != build_payload():
-        raise ValueError("frozen design changed")
-    return payload, _prepare_cells(payload, only=None, run_id=RUN_ID, defaults=payload["defaults"])
+    study = study_for_payload(payload)
+    return payload, _prepare_cells(payload, only=None, run_id=study.RUN_ID, defaults=payload["defaults"])
 
 
-def mechanism_rows(diagnostics, head_exponent, tail_exponent):
+def mechanism_rows(diagnostics, head_exponent, tail_exponent, expected_reader=None):
     if tuple(r["completed_rounds"] for r in diagnostics) != tuple(range(1, 33)):
         raise ValueError("32 complete diagnostic rounds required")
     output = []
     for row in diagnostics:
         resp = row["responsibilities"]
+        if expected_reader is not None and (
+            resp.get("answer_policy") != expected_reader or resp.get("policy") != "current"
+        ):
+            raise ValueError("logged answer reader or rationale policy mismatch")
         if (resp.get("prior_head_exponent"), resp.get("prior_tail_exponent")) != (head_exponent, tail_exponent):
             raise ValueError("logged segment exponent mismatch")
         if resp.get("prior_exponent") != 1.0:
@@ -97,10 +101,14 @@ def mechanism_rows(diagnostics, head_exponent, tail_exponent):
     return output
 
 
-def paired_contrasts(frame):
+def paired_contrasts(frame, study=moving_study, include_readers=False):
     indexed = frame.set_index(["cell", "seed"])
-    pairs = [(c, CONTROL_CELL) for c in CELL_ORDER]
-    pairs += [(CELL_ORDER[0], CELL_ORDER[1]), (CELL_ORDER[0], CELL_ORDER[2]), (CELL_ORDER[1], CELL_ORDER[2])]
+    order = study.CELL_ORDER
+    pairs = [(c, study.CONTROL_CELL) for c in order]
+    pairs += [(order[0], order[1]), (order[0], order[2]), (order[1], order[2])]
+    if include_readers:
+        pairs += list(zip(order, moving_study.CELL_ORDER, strict=True))
+        pairs += [(study.CONTROL_CELL, moving_study.CONTROL_CELL)]
     samples = np.random.default_rng(20260914).integers(0, len(SEEDS), size=(20000, len(SEEDS)))
     out = []
     for treatment, control in pairs:
@@ -113,10 +121,10 @@ def paired_contrasts(frame):
     return pd.DataFrame(out)
 
 
-def nominate(frame):
+def nominate(frame, study=moving_study):
     means = frame.groupby("cell")[list(METRICS)].mean()
-    control = means.loc[CONTROL_CELL]
-    eligible = [c for c in CELL_ORDER if means.loc[c, "final_extracted"] > control["final_extracted"]
+    control = means.loc[study.CONTROL_CELL]
+    eligible = [c for c in study.CELL_ORDER if means.loc[c, "final_extracted"] > control["final_extracted"]
                 and means.loc[c, "final_strict"] >= control["final_strict"]]
     if not eligible:
         return None
@@ -124,19 +132,33 @@ def nominate(frame):
         -means.loc[c, "final_strict"], -means.loc[c, "extracted_auc"], c))[0]
 
 
+def verify_moving_marker(path, study):
+    marker = _read_json(path)
+    expected = dict(status="ok", run_id=moving_study.RUN_ID,
+        execution_commit=study.MOVING_COMMIT, source_job_id=study.MOVING_JOB,
+        configuration_sha256=study.MOVING_CONFIG_SHA256, task_count=9,
+        trained_adapter_count=9, official_test_used=False)
+    for key, value in expected.items():
+        if marker.get(key) != value:
+            raise ValueError(f"moving comparison marker mismatch: {key}")
+    return marker
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--validate-design-only", action="store_true")
     parser.add_argument("--validate-controls-only", action="store_true")
-    for name in ("artifact-dir", "control-dir", "marker", "control-marker", "output-dir"):
+    for name in ("artifact-dir", "control-dir", "marker", "control-marker", "output-dir", "moving-dir", "moving-marker"):
         parser.add_argument("--"+name, type=Path)
     parser.add_argument("--expected-commit")
     parser.add_argument("--expected-source-job")
     args = parser.parse_args()
-    _, new_cells = validate_design(args.config)
+    payload, new_cells = validate_design(args.config)
+    study = study_for_payload(payload)
+    frozen = payload["diagnostic"]["fixed_contract"]["reader"] == "frozen_base"
     if args.validate_design_only:
-        print(f"{RUN_ID}: three cells x three seeds; historical Q5 control")
+        print(f"{study.RUN_ID}: three cells x three seeds; historical {study.CONTROL_CELL} control")
         return
     if args.validate_controls_only:
         verify_controls(args.control_dir, args.control_marker)
@@ -144,9 +166,13 @@ def main():
         return
     if any(getattr(args, k) is None for k in ("artifact_dir", "control_dir", "marker", "control_marker", "output_dir", "expected_commit", "expected_source_job")):
         parser.error("result paths, both markers and execution identity required")
+    if frozen and (args.moving_dir is None or args.moving_marker is None):
+        parser.error("frozen-reader analysis requires --moving-dir and --moving-marker")
+    moving_marker = verify_moving_marker(args.moving_marker, study) if frozen else None
     marker = _read_json(args.marker)
-    for key, value in dict(status="ok", run_id=RUN_ID, execution_commit=args.expected_commit,
+    for key, value in dict(status="ok", run_id=study.RUN_ID, execution_commit=args.expected_commit,
             source_job_id=args.expected_source_job, task_count=9,
+            trained_adapter_count=9, official_test_used=False,
             configuration_sha256=hashlib.sha256(args.config.read_bytes()).hexdigest()).items():
         if marker.get(key) != value:
             raise ValueError(f"marker mismatch: {key}")
@@ -162,8 +188,15 @@ def main():
             support = base_ids
         if support != base_ids:
             raise ValueError("baseline validation support changed")
-        selected = [(c, controls[c], args.control_dir, CONTROL_RUN_ID, CONTROL_COMMIT) for c in (CONTROL_CELL,)]
-        selected += [(c, p, args.artifact_dir, RUN_ID, args.expected_commit) for c, p in zip(CELL_ORDER, new_cells, strict=True)]
+        control_ids = [study.CONTROL_CELL] + ([moving_study.CONTROL_CELL] if frozen else [])
+        selected = [(c, controls[c], args.control_dir, CONTROL_RUN_ID, CONTROL_COMMIT) for c in control_ids]
+        selected += [(c, p, args.artifact_dir, study.RUN_ID, args.expected_commit)
+                     for c, p in zip(study.CELL_ORDER, new_cells, strict=True)]
+        if frozen:
+            mp = moving_study.build_payload()
+            moving_cells = _prepare_cells(mp, only=None, run_id=moving_study.RUN_ID, defaults=mp["defaults"])
+            selected += [(c, p, args.moving_dir, moving_study.RUN_ID, study.MOVING_COMMIT)
+                         for c, p in zip(moving_study.CELL_ORDER, moving_cells, strict=True)]
         for cell_id, cell, root, run_id, commit in selected:
             receipt, result, values, ids = load_cell(root, cell, seed, run_id, commit)
             if ids != support:
@@ -180,22 +213,26 @@ def main():
                 raise ValueError("training budget mismatch")
             metrics.append(dict(cell=cell_id, seed=seed, **values, train_llm_gen=result["train_llm_gen"],
                 optimizer_steps=result["optimizer_steps"], accelerator_hours=result["accelerator_hours"]))
-            if run_id == RUN_ID:
+            if run_id in {study.RUN_ID, moving_study.RUN_ID}:
                 ds = _read_jsonl_gz(_artifact(root, receipt, "training_diagnostics_"))
                 backward = sum(int((step.get("support") or {}).get("backward_tokens") or 0)
                     for r in ds for step in (r.get("inner_m_step") or {}).get("steps", []))
                 if backward <= 0:
                     raise ValueError("missing backward-token diagnostics")
                 metrics[-1]["backward_tokens"] = backward
-                mechanisms += [dict(cell=cell_id, seed=seed, **r) for r in mechanism_rows(ds, *SETTINGS[cell_id])]
+                settings = study.SETTINGS if run_id == study.RUN_ID else moving_study.SETTINGS
+                reader = "frozen_base" if frozen and run_id == study.RUN_ID else "current"
+                mechanisms += [dict(cell=cell_id, seed=seed, **r)
+                               for r in mechanism_rows(ds, *settings[cell_id], expected_reader=reader)]
     frame = pd.DataFrame(metrics)
     args.output_dir.mkdir(parents=True, exist_ok=False)
     frame.to_csv(args.output_dir / "seed_metrics.csv", index=False)
     frame.groupby("cell", sort=False)[list(METRICS)].mean().to_csv(args.output_dir / "method_summary.csv")
-    paired_contrasts(frame).to_csv(args.output_dir / "paired_contrasts.csv", index=False)
+    paired_contrasts(frame, study, include_readers=frozen).to_csv(args.output_dir / "paired_contrasts.csv", index=False)
     pd.DataFrame(mechanisms).to_csv(args.output_dir / "posterior_diagnostics.csv.gz", index=False)
-    (args.output_dir / "analysis.json").write_text(json.dumps(dict(run_id=RUN_ID, marker=marker,
-        nominee=nominate(frame), automatic_followup=False,
+    (args.output_dir / "analysis.json").write_text(json.dumps(dict(run_id=study.RUN_ID, marker=marker,
+        moving_comparison_marker=moving_marker,
+        nominee=nominate(frame, study), automatic_followup=False,
         evidence="three-seed development screen; historical controls; descriptive intervals", metric_order=METRICS), indent=2))
 
 

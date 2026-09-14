@@ -1,0 +1,252 @@
+# Generated; edit generate_qwen3_17b_q5_prior_segments_frozen.py.
+run_id: 7a31c9e2
+tag_prefix: q3_q5_prior_segments_frozen
+diagnostic:
+  stage: three_seed_frozen_reader_positional_prior_screen
+  evidence_class: development_screen_historical_paired_control
+  control_run_id: 68078ecc
+  control_commit: 4a9a9cafc6b17cc18e7c1da8a422e847daeb4746
+  control_cell: Q5-AD-F-LR1e-5-U1-K16
+  design:
+    array_tasks: 9
+    cell_order:
+    - Q5-EARLY-HALF-F
+    - Q5-LATE-HALF-F
+    - Q5-UNIFORM075-F
+    paired_seeds:
+    - 1201
+    - 1213
+    - 1217
+  split: 'First floor(n/2) reasoning tokens; remaining ceil(n/2) are late. Keep the
+    retained #### marker, answer digits and EOS contributions unchanged; exclude prompt
+    and padding. Use the stored native token boundary, with no segment retokenization.'
+  segment_scope: reasoning_marker_fixed
+  pretraining_evidence:
+    job: '7412300'
+    execution_commit: 802c174e0e1a20842b757ce8b25aea70d8730b6d
+    manifest_sha256: 292f80620f6e90e34b5051778e2a1b28f70c7efa30d06572512356f88568caa9
+    summary_sha256: 0de6cdca7137bc346ac8849f1c678a2f1b8a1dd05332ad750fa7ecdbf7971abc
+    selected_scope: reasoning_marker_fixed
+    decision: User approved the marker-fixed nine-task training screen after reviewing
+      the completed scoring audit on 2026-09-14. The old partial audit remains unchanged.
+  weighting: softmax(answer_logprob + marker_logprob + head_exponent*head_logprob
+    + tail_exponent*tail_logprob)
+  fixed_contract:
+    official_test_used: false
+    answer_target: answer_plus_eos
+    proposal: answer_derive
+    reader: frozen_base
+    mstep: unchanged_joint_weighted_mle
+  analysis_contract:
+  - Final extracted Acc@1 first, strict final second, normalized extracted AUC rounds
+    0-32 third; strict AUC secondary.
+  - Report all per-seed differences and descriptive paired intervals, not a confirmatory
+    significance claim.
+  - Pair each new cell with historical frozen-reader Q5; compare early versus late
+    and each positional cell versus concurrent uniform075. Separately report frozen-minus-moving
+    reader contrasts for each positional setting and the unattenuated Q5 control,
+    using receipt-bound same-seed runs c7e32a91 and 68078ecc.
+  - Three reused development seeds; no checkpoint selection or automatic follow-up.
+    A positive mean final change with no strict-final loss nominates at most one setting
+    for discussion, not deployment.
+  - Uniform075 matches nominal exponent mass at even lengths; odd lengths and realized
+    logprob mass are not exactly matched. Report token counts and factor sums.
+  - Log head/tail/fixed-marker factors, count identities, top-trace changes versus
+    joint and marker-fixed uniform scores, ESS, weight-length rank correlation, backward
+    tokens and compute.
+  - This tests token position, not a demonstrated understanding-versus-solving decomposition.
+    Semantic prompting, M-step masking and KL are excluded.
+  - Only the E-step answer factor uses the frozen base. The rationale prior and marker
+    use the current policy; generation and the complete joint M-step remain trainable.
+    Historical reader contrasts are not bit-exact replays.
+  reader_extension_approval: User requested all three positional variants with frozen
+    reader and three seeds on 2026-09-15.
+  moving_comparison:
+    run_id: c7e32a91
+    execution_commit: 037b1d38b484f207e5bff9cf437a3ea421860f53
+    source_job_id: '7413571'
+    configuration_sha256: c73b7c65c97aff185b3c73ab04019ac2ed1be9f31d1bd30fa17ebdd2c2a13084
+    cell_mapping:
+      Q5-EARLY-HALF-F: Q5-EARLY-HALF
+      Q5-LATE-HALF-F: Q5-LATE-HALF
+      Q5-UNIFORM075-F: Q5-UNIFORM075
+defaults:
+  task: gsm8k
+  model: qwen3-1.7b-base
+  rounds: 32
+  seeds: 3
+  seed_values:
+  - 1201
+  - 1213
+  - 1217
+  n_test: 400
+  train_partition: train
+  eval_partition: validation
+  answer_event_mode: strict_terminal_marker
+  answer_target_termination: none
+  evaluation_prompt: question
+  batch: 64
+  eval_batch: 32
+  G: 16
+  prompts: 128
+  shots: 3
+  shot_bank_size: 5
+  task_seed_from_run_seed: true
+  question_sampling: epoch_shuffle
+  grad_checkpoint: false
+  lora_r: 16
+  lora_alpha: 32
+  lora_target_set: attention_mlp
+  out: ~/po_results/2026-09-15/q5-prior-segments-frozen/qwen3-q5-prior-segments-frozen__7a31c9e2
+  eval_rounds:
+  - 1
+  - 2
+  - 4
+  - 8
+  - 16
+  - 24
+  - 32
+  dump_completions: 100
+  save_adapter: true
+  save_training_diagnostics: true
+  training_diagnostics_level: standard
+  training_diagnostics_trace_tape: false
+  training_diagnostics_gradient_questions: 0
+  training_diagnostics_probe_size: 0
+  checkpoint_every: 0
+  passk: 8
+  passk_n: 100
+algos:
+  AC-ALG1:
+  - algorithm_profile: q5_prior_segments_frozen
+    answer_target_termination: eos
+    labelled_frac: 0.0
+    buffer_strategy: fifo
+    buffer_semantics: unique_set
+    buffer_lifecycle: persistent
+    proposal_prompt: answer_derive
+    proposal_mixture: single
+    proposal_filter: all
+    proposal_policy: current
+    responsibility_score: joint
+    responsibility_posterior: softmax_entropy
+    responsibility_temperature: 1.0
+    responsibility_ess_floor: 0.0
+    responsibility_policy: current
+    responsibility_answer_policy: frozen_base
+    responsibility_refresh: inner_step
+    variational_estimator: delta_joint
+    labelled_em_weight: 0.0
+    answer_only_em_weight: 1.0
+    supervised_weight: 0.0
+    policy_anchor_mode: fixed
+    labelled_numeric_constraint: 'off'
+    labelled_supervision: gold
+    digit_token_weight: 1.0
+    trace_representation: reasoning
+    latent_mstep_objective: joint
+    update_geometry: sum
+    step_acceptance: none
+    optimizer_state_scope: persistent
+    batch: 64
+    G: 16
+    cell_id: Q5-EARLY-HALF-F
+    lr: 1.0e-05
+    iters: 1
+    buffer_limit: 16
+    proposal_temperature: 1.0
+    policy_anchor_target_ratio: null
+    policy_anchor_beta_min: 0.0
+    policy_anchor_beta_max: 10.0
+    policy_anchor_ema: 0.9
+    policy_anchor_token_scope: objective
+    responsibility_prior_head_exponent: 0.5
+    responsibility_prior_tail_exponent: 1.0
+  - algorithm_profile: q5_prior_segments_frozen
+    answer_target_termination: eos
+    labelled_frac: 0.0
+    buffer_strategy: fifo
+    buffer_semantics: unique_set
+    buffer_lifecycle: persistent
+    proposal_prompt: answer_derive
+    proposal_mixture: single
+    proposal_filter: all
+    proposal_policy: current
+    responsibility_score: joint
+    responsibility_posterior: softmax_entropy
+    responsibility_temperature: 1.0
+    responsibility_ess_floor: 0.0
+    responsibility_policy: current
+    responsibility_answer_policy: frozen_base
+    responsibility_refresh: inner_step
+    variational_estimator: delta_joint
+    labelled_em_weight: 0.0
+    answer_only_em_weight: 1.0
+    supervised_weight: 0.0
+    policy_anchor_mode: fixed
+    labelled_numeric_constraint: 'off'
+    labelled_supervision: gold
+    digit_token_weight: 1.0
+    trace_representation: reasoning
+    latent_mstep_objective: joint
+    update_geometry: sum
+    step_acceptance: none
+    optimizer_state_scope: persistent
+    batch: 64
+    G: 16
+    cell_id: Q5-LATE-HALF-F
+    lr: 1.0e-05
+    iters: 1
+    buffer_limit: 16
+    proposal_temperature: 1.0
+    policy_anchor_target_ratio: null
+    policy_anchor_beta_min: 0.0
+    policy_anchor_beta_max: 10.0
+    policy_anchor_ema: 0.9
+    policy_anchor_token_scope: objective
+    responsibility_prior_head_exponent: 1.0
+    responsibility_prior_tail_exponent: 0.5
+  - algorithm_profile: q5_prior_segments_frozen
+    answer_target_termination: eos
+    labelled_frac: 0.0
+    buffer_strategy: fifo
+    buffer_semantics: unique_set
+    buffer_lifecycle: persistent
+    proposal_prompt: answer_derive
+    proposal_mixture: single
+    proposal_filter: all
+    proposal_policy: current
+    responsibility_score: joint
+    responsibility_posterior: softmax_entropy
+    responsibility_temperature: 1.0
+    responsibility_ess_floor: 0.0
+    responsibility_policy: current
+    responsibility_answer_policy: frozen_base
+    responsibility_refresh: inner_step
+    variational_estimator: delta_joint
+    labelled_em_weight: 0.0
+    answer_only_em_weight: 1.0
+    supervised_weight: 0.0
+    policy_anchor_mode: fixed
+    labelled_numeric_constraint: 'off'
+    labelled_supervision: gold
+    digit_token_weight: 1.0
+    trace_representation: reasoning
+    latent_mstep_objective: joint
+    update_geometry: sum
+    step_acceptance: none
+    optimizer_state_scope: persistent
+    batch: 64
+    G: 16
+    cell_id: Q5-UNIFORM075-F
+    lr: 1.0e-05
+    iters: 1
+    buffer_limit: 16
+    proposal_temperature: 1.0
+    policy_anchor_target_ratio: null
+    policy_anchor_beta_min: 0.0
+    policy_anchor_beta_max: 10.0
+    policy_anchor_ema: 0.9
+    policy_anchor_token_scope: objective
+    responsibility_prior_head_exponent: 0.75
+    responsibility_prior_tail_exponent: 0.75

@@ -158,6 +158,7 @@ ALGORITHM_PROFILES = (
     "barber_q5_control",
     "q5_prior_exponent",
     "q5_prior_segments",
+    "q5_prior_segments_frozen",
     "barber_q5_token_mean_followup",
     "l2r_common_factorial",
     "l2r_pis_rationale_kl_followup",
@@ -7958,7 +7959,7 @@ def _validate_ac_alg1_run_config(
     segmented_prior = validate_segment_exponents(
         responsibility_prior_head_exponent, responsibility_prior_tail_exponent,
     )
-    if segmented_prior and config.algorithm_profile != "q5_prior_segments":
+    if segmented_prior and config.algorithm_profile not in {"q5_prior_segments", "q5_prior_segments_frozen"}:
         raise ValueError("nondefault segment exponents require q5_prior_segments profile")
     responsibility_ess_floor = config.responsibility_ess_floor
     responsibility_abstention = config.responsibility_abstention
@@ -9627,6 +9628,7 @@ def _validate_ac_alg1_run_config(
         "barber_q5_control",
         "q5_prior_exponent",
         "q5_prior_segments",
+        "q5_prior_segments_frozen",
         "barber_q5_token_mean_followup",
     }:
         expected_responsibility_score = (
@@ -9703,13 +9705,14 @@ def _validate_ac_alg1_run_config(
                 f"{algorithm_profile} rejected a non-Q5 change: "
                 f"{mismatches}"
             )
-        if algorithm_profile == "q5_prior_segments":
+        if algorithm_profile in {"q5_prior_segments", "q5_prior_segments_frozen"}:
             if (responsibility_prior_head_exponent, responsibility_prior_tail_exponent) not in {
                 (1.0, 1.0), (0.5, 1.0), (1.0, 0.5), (0.75, 0.75),
             }:
                 raise ValueError("q5_prior_segments permits only the declared positional screen")
-            if responsibility_answer_policy != "current" or responsibility_prior_exponent != 1.0:
-                raise ValueError("q5_prior_segments requires moving reader and unmodified global exponent")
+            expected_reader = "frozen_base" if algorithm_profile == "q5_prior_segments_frozen" else "current"
+            if responsibility_answer_policy != expected_reader or responsibility_prior_exponent != 1.0:
+                raise ValueError(f"{algorithm_profile} requires {expected_reader} reader and unmodified global exponent")
             if responsibility_ess_floor != 0.0 or proposal_temperature != 1.0:
                 raise ValueError("q5_prior_segments forbids ESS or sampling-temperature changes")
             if (policy_kl_coef is not None or policy_anchor_mode != "fixed"

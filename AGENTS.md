@@ -15,6 +15,15 @@
 
 ## Change record
 
+- **2026-09-15, frozen positional reader screen:** new nine-task `7a31c9e2`
+  freezes only the E-step answer factor; proposal/prior/marker and joint M-step
+  remain current. Separate fail-closed profile preserves the old moving YAML.
+  Shared receipt validator checks actual reader identity; prepared analysis adds
+  frozen-control and paired moving-reader contrasts. No control reruns, result
+  deletion or official-test access. All 257 local tests pass, including actual
+  E-step reader/mask/RNG checks, runtime-profile rejection and analysis gates.
+  See `qwen3_q5_prior_segments_frozen_20260915` and its protocol.
+
 - **2026-09-14, positional screen ingestion:** all nine tasks and remote
   adapters revalidate; 194 compact/provenance/control files are checksum-mirrored
   without weights or deletion. Frozen analysis and local reconstruction agree.

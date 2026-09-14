@@ -22,10 +22,10 @@ test -z "$(cd "$PROJ" && git status --porcelain --untracked-files=no)" || exit 3
 
 cd "$PROJ/lm_study"
 source "$VENV/bin/activate"
-"$VENV/bin/python" generate_qwen3_17b_q5_prior_segments.py --check "$YAML"
+"$VENV/bin/python" "${GENERATOR:-$PROJ/lm_study/generate_qwen3_17b_q5_prior_segments.py}" --check "$YAML"
 "$VENV/bin/python" validate_qwen3_17b_q5_prior_segments.py \
   --config "$YAML" \
-  --log-glob "$PAYLOAD_PROJ/lm_study/logs/qwen3_q5_prior_segments.${SOURCE_JOB_ID}.*.log" \
+  --log-glob "$PAYLOAD_PROJ/lm_study/logs/${LOG_PREFIX:-qwen3_q5_prior_segments}.${SOURCE_JOB_ID}.*.log" \
   --marker "$MARKER" \
   --expected-commit "$EXECUTION_COMMIT" \
   --expected-config-sha256 "$EXPECTED_CONFIG_SHA256" \

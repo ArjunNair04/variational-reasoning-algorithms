@@ -77,6 +77,16 @@ def runtime_configs():
     return prepare_runtime_configs(build_payload())
 
 
+def study_for_payload(payload):
+    """Resolve only the two immutable, generated positional protocols."""
+    import sys
+    import generate_qwen3_17b_q5_prior_segments_frozen as frozen
+    for study in (sys.modules[__name__], frozen):
+        if payload == study.build_payload():
+            return study
+    raise ValueError("frozen design changed")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--runtime-check", action="store_true")

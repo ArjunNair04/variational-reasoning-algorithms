@@ -2,6 +2,39 @@
   "schema_version": 1,
   "studies": [
     {
+      "registry_id": "qwen3_q5_prior_segments_frozen_20260915",
+      "run_id": "7a31c9e2",
+      "status": "prepared",
+      "account": "amanojna",
+      "config": "lm_study/experiments_qwen3_17b_q5_prior_segments_frozen.yaml",
+      "submitter": "lm_study/submit_qwen3_17b_q5_prior_segments_frozen_ucl.sh",
+      "analyzer": "analysis/analyze_qwen3_q5_prior_segments.py",
+      "validator": "lm_study/validate_qwen3_17b_q5_prior_segments.py",
+      "protocol": "docs/experiments/qwen3_q5_prior_segments/frozen_reader_2026-09-15.md",
+      "expected_tasks": 9,
+      "seeds": [1201, 1213, 1217],
+      "head_tail_exponents": [[0.5, 1.0], [1.0, 0.5], [0.75, 0.75]],
+      "answer_reader": "frozen_base",
+      "rationale_policy": "current",
+      "segment_scope": "reasoning_marker_fixed",
+      "control_run_id": "68078ecc",
+      "control_cell": "Q5-AD-F-LR1e-5-U1-K16",
+      "moving_comparison_run_id": "c7e32a91",
+      "official_test_used": false,
+      "result_root": "~/po_results/2026-09-15/q5-prior-segments-frozen/qwen3-q5-prior-segments-frozen__7a31c9e2",
+      "validator_marker": "~/po_results/auto_state/qwen3_q5_prior_segments_frozen_7a31c9e2.ok",
+      "analysis_prepared_before_training": true,
+      "verification": "All 257 local tests pass; generated frozen and historical YAMLs pass direct runtime validation. Actual E-step tests verify current prior/marker, frozen answer likelihood, detached weights and RNG preservation. Ten paired contrast contracts and reader/provenance rejection tests pass.",
+      "metric_order": ["Final extracted Acc@1", "strict final Acc@1", "normalized extracted Acc@1 AUC"],
+      "limitations": [
+        "Three reused development seeds with historical controls; not fresh-question or bit-exact replay evidence. The midpoint is positional, not an established semantic phase. Frozen reader affects E-step answer likelihood only, not the current rationale prior or joint M-step. No automatic follow-up."
+      ],
+      "next_actions": [
+        "Complete local and cluster runtime/receipt preflight; deploy immutably and publish tracking before releasing only the nine new tasks.",
+        "After terminal validation, collect only with approval and run all ten frozen paired contrasts; refresh canonical views/tests and MLflow."
+      ]
+    },
+    {
       "registry_id": "qwen3_q5_prior_segments_20260914",
       "run_id": "c7e32a91",
       "status": "completed",

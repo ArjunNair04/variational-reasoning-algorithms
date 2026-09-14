@@ -37,7 +37,7 @@ def require_training_gate(config, source, results, logs, evidence_dir=EVIDENCE_D
                 "job", "manifest_sha256", "receipts"):
         if observed[key] != expected[key]:
             raise ValueError(f"revalidated scoring identity differs: {key}")
-    return dict(status="ok", training_run_id=RUN_ID,
+    return dict(status="ok", training_run_id=payload["run_id"],
                 segment_scope=SCORING_EVIDENCE["selected_scope"],
                 scoring_job=SCORING_EVIDENCE["job"],
                 supports=observed["supports"], traces=observed["traces"])

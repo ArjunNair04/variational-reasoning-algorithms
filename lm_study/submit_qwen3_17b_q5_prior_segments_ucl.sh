@@ -6,6 +6,10 @@ SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
 PROJ=${PROJ:-$(cd "$SCRIPT_DIR" && git rev-parse --show-toplevel)}
 VENV=${VENV:-$HOME/vrl_hpc/po_venv}
 YAML=${YAML:-$SCRIPT_DIR/experiments_qwen3_17b_q5_prior_segments.yaml}
+GENERATOR=${GENERATOR:-$SCRIPT_DIR/generate_qwen3_17b_q5_prior_segments.py}
+PAYLOAD_RUNNER=${PAYLOAD_RUNNER:-run_qwen3_17b_q5_prior_segments_ucl.sh}
+VALIDATOR_RUNNER=${VALIDATOR_RUNNER:-validate_qwen3_17b_q5_prior_segments_ucl.sh}
+LOG_PREFIX=${LOG_PREFIX:-qwen3_q5_prior_segments}
 RESULT_OUT=${RESULT_OUT:-$HOME/po_results/2026-09-14/q5-prior-segments/qwen3-q5-prior-segments__c7e32a91}
 MARKER=${MARKER:-$HOME/po_results/auto_state/qwen3_q5_prior_segments_c7e32a91.ok}
 CONTROL_MARKER=${CONTROL_MARKER:-$HOME/po_results/auto_state/qwen3_selected_method_posterity_68078ecc.ok}
@@ -46,9 +50,9 @@ trap 'rmdir "$CLAIM_DIR" 2>/dev/null || true' EXIT
   "$SCRIPT_DIR/validate_qwen3_17b_q5_prior_segments.py" \
   "$PROJ/analysis/analyze_qwen3_q5_prior_segments.py" \
   "$PROJ/analysis/check_q5_segment_training_gate.py"
-bash -n "$SCRIPT_DIR/run_qwen3_17b_q5_prior_segments_ucl.sh"
-bash -n "$SCRIPT_DIR/validate_qwen3_17b_q5_prior_segments_ucl.sh"
-"$VENV/bin/python" "$SCRIPT_DIR/generate_qwen3_17b_q5_prior_segments.py" --check "$YAML" --runtime-check
+bash -n "$SCRIPT_DIR/$PAYLOAD_RUNNER"
+bash -n "$SCRIPT_DIR/$VALIDATOR_RUNNER"
+"$VENV/bin/python" "$GENERATOR" --check "$YAML" --runtime-check
 "$VENV/bin/python" \
   "$PROJ/analysis/analyze_qwen3_q5_prior_segments.py" \
   --config "$YAML" --validate-design-only >/dev/null
@@ -78,14 +82,14 @@ mkdir -p "$SCRIPT_DIR/logs"
 cd "$SCRIPT_DIR"
 payload_output=$(qsub -h \
   -v "PROJ=$PROJ,EXPECTED_COMMIT=$expected_commit,EXPECTED_CONFIG_SHA256=$config_sha,YAML=$YAML" \
-  run_qwen3_17b_q5_prior_segments_ucl.sh)
+  "$PAYLOAD_RUNNER")
 payload_job=$(printf '%s\n' "$payload_output" | sed -nE 's/.*job-array ([0-9]+).*/\1/p')
 test -n "$payload_job" || { echo "ERROR: cannot parse payload: $payload_output" >&2; exit 3; }
 
 set +e
 validator_output=$(qsub -hold_jid "$payload_job" \
-  -v "PROJ=$PROJ,PAYLOAD_PROJ=$PROJ,SOURCE_JOB_ID=$payload_job,VALIDATOR_COMMIT=$expected_commit,EXECUTION_COMMIT=$expected_commit,EXPECTED_CONFIG_SHA256=$config_sha,YAML=$YAML,MARKER=$MARKER" \
-  validate_qwen3_17b_q5_prior_segments_ucl.sh 2>&1)
+  -v "PROJ=$PROJ,PAYLOAD_PROJ=$PROJ,SOURCE_JOB_ID=$payload_job,VALIDATOR_COMMIT=$expected_commit,EXECUTION_COMMIT=$expected_commit,EXPECTED_CONFIG_SHA256=$config_sha,YAML=$YAML,MARKER=$MARKER,GENERATOR=$GENERATOR,LOG_PREFIX=$LOG_PREFIX" \
+  "$VALIDATOR_RUNNER" 2>&1)
 validator_status=$?
 set -e
 if [ "$validator_status" -ne 0 ]; then
@@ -96,5 +100,6 @@ if [ "$validator_status" -ne 0 ]; then
 fi
 validator_job=$(printf '%s\n' "$validator_output" | sed -nE 's/.*job ([0-9]+).*/\1/p')
 test -n "$validator_job" || { qdel "$payload_job" >/dev/null 2>&1 || true; exit 4; }
-printf 'execution_commit=%s\nrun_id=c7e32a91\npayload_job=%s\nvalidator_job=%s\nconfig_sha256=%s\nresult_out=%s\nmarker=%s\nstate=user_held_pending_release\n' \
-  "$expected_commit" "$payload_job" "$validator_job" "$config_sha" "$RESULT_OUT" "$MARKER"
+run_id=$("$VENV/bin/python" -c 'import sys,yaml; print(yaml.safe_load(open(sys.argv[1]))["run_id"])' "$YAML")
+printf 'execution_commit=%s\nrun_id=%s\npayload_job=%s\nvalidator_job=%s\nconfig_sha256=%s\nresult_out=%s\nmarker=%s\nstate=user_held_pending_release\n' \
+  "$expected_commit" "$run_id" "$payload_job" "$validator_job" "$config_sha" "$RESULT_OUT" "$MARKER"
