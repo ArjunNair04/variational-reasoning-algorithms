@@ -4,6 +4,8 @@ import math
 
 import torch
 
+SEGMENT_SCOPE = "reasoning_marker_fixed"
+
 
 def validate_segment_exponents(head, tail):
     if any(not math.isfinite(value) or value < 0 for value in (head, tail)):
@@ -20,6 +22,21 @@ def split_rationale_mask(trace_mask):
     half = trace_mask.sum(1, keepdim=True) // 2
     head = trace_mask & (trace_mask.long().cumsum(1) <= half)
     return head, trace_mask & ~head
+
+
+def split_reasoning_marker_mask(trace_mask, reasoning_counts):
+    """Use the stored token boundary; never tokenize or change the prefix."""
+    split_rationale_mask(trace_mask)  # Validate scored positions before splitting.
+    if len(reasoning_counts) != trace_mask.shape[0] or any(
+        type(n) is not int or n < 0 for n in reasoning_counts
+    ):
+        raise ValueError("one nonnegative integer reasoning count is required per trace")
+    counts = torch.tensor(reasoning_counts, device=trace_mask.device).unsqueeze(1)
+    if (counts >= trace_mask.sum(1, keepdim=True)).any():
+        raise ValueError("each trace requires a nonempty marker suffix outside reasoning")
+    reasoning = trace_mask & (trace_mask.long().cumsum(1) <= counts)
+    head, tail = split_rationale_mask(reasoning)
+    return head, tail, trace_mask & ~reasoning
 
 
 def segment_prior_logits(answer, prior, head, head_exponent, tail_exponent):

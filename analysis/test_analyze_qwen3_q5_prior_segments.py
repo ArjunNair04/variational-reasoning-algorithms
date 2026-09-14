@@ -8,25 +8,29 @@ import pytest
 from analyze_qwen3_q5_prior_segments import mechanism_rows, paired_contrasts, nominate, METRICS
 from generate_qwen3_17b_q5_prior_segments import CELL_ORDER, CONTROL_CELL, SEEDS, build_payload
 from validate_qwen3_17b_q5_prior_segments import _expected_coordinates, _validate_logs
+from ac_alg1_prior_segments import SEGMENT_SCOPE
 
 
 def diagnostics(head=.5, tail=1.):
     traces = [dict(partition="answer_only", pid=7, prior_head_logprob=h,
-        prior_tail_logprob=t, trace_logprob=h+t, answer_logprob=a,
-        responsibility_logit=a+head*h+tail*t, prior_head_tokens=n//2,
-        prior_tail_tokens=n-n//2, objective_tokens=n+2, answer_tokens=2)
+        prior_tail_logprob=t, trace_logprob=h+t-.7, answer_logprob=a,
+        prior_marker_logprob=-.7, prior_marker_tokens=2, reasoning_token_count=n,
+        responsibility_logit=a-.7+head*h+tail*t, prior_head_tokens=n//2,
+        prior_tail_tokens=n-n//2, objective_tokens=n+4, answer_tokens=2)
         for h,t,a,n in ((-4., -1., -.1, 10), (-.2, -.8, -2., 3))]
     weights = np.exp([r["responsibility_logit"] for r in traces])
     weights /= weights.sum()
     for trace, weight in zip(traces, weights):
         trace["responsibility"] = float(weight)
     return [dict(completed_rounds=r, responsibilities=dict(prior_exponent=1.,
-        prior_head_exponent=head, prior_tail_exponent=tail, traces=deepcopy(traces))) for r in range(1,33)]
+        prior_segment_scope=SEGMENT_SCOPE, prior_head_exponent=head,
+        prior_tail_exponent=tail, traces=deepcopy(traces))) for r in range(1,33)]
 
 
 def test_mechanism_identities_and_rejections():
     assert len(mechanism_rows(diagnostics(), .5, 1.)) == 32
-    for key in ("prior_head_logprob", "prior_tail_tokens", "responsibility_logit", "responsibility"):
+    for key in ("prior_head_logprob", "prior_tail_tokens", "responsibility_logit", "responsibility",
+                "prior_marker_logprob", "prior_marker_tokens", "reasoning_token_count"):
         bad = diagnostics()
         bad[0]["responsibilities"]["traces"][0][key] += 1
         with pytest.raises(ValueError):
@@ -35,6 +39,20 @@ def test_mechanism_identities_and_rejections():
         mechanism_rows(diagnostics()[:-1], .5, 1.)
     with pytest.raises(ValueError):
         mechanism_rows(diagnostics(), 1., .5)
+    wrong_scope = diagnostics()
+    wrong_scope[0]["responsibilities"]["prior_segment_scope"] = "historical_prior"
+    with pytest.raises(ValueError, match="fixed marker"):
+        mechanism_rows(wrong_scope, .5, 1.)
+
+
+def test_uniform_control_does_not_attenuate_marker():
+    rows = diagnostics(.75, .75)
+    assert all(not r["top_changed_vs_uniform075"] for r in mechanism_rows(rows, .75, .75))
+    for record in rows:
+        for trace in record["responsibilities"]["traces"]:
+            trace["responsibility_logit"] -= .25 * trace["prior_marker_logprob"]
+    with pytest.raises(ValueError, match="exponents"):
+        mechanism_rows(rows, .75, .75)
 
 
 def test_pairing_and_nomination():

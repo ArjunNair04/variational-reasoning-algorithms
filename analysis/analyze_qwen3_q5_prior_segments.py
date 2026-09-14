@@ -16,6 +16,7 @@ from generate_qwen3_17b_q5_prior_segments import (
     CONTROL_RUN_ID, RUN_ID, SETTINGS, build_payload,
 )
 from run_yaml import _prepare_cells
+from ac_alg1_prior_segments import SEGMENT_SCOPE
 from analyze_qwen3_q5_prior_exponent import load_cell, verify_controls, METRICS
 from analyze_qwen3_jepo_comparator import (
     _artifact, _read_json, _read_jsonl_gz, _normalized_auc,
@@ -39,6 +40,8 @@ def mechanism_rows(diagnostics, head_exponent, tail_exponent):
             raise ValueError("logged segment exponent mismatch")
         if resp.get("prior_exponent") != 1.0:
             raise ValueError("global prior exponent must remain one")
+        if resp.get("prior_segment_scope") != SEGMENT_SCOPE:
+            raise ValueError("reasoning-only split with fixed marker required")
         groups = {}
         for trace in resp["traces"]:
             groups.setdefault((trace["partition"], trace["pid"]), []).append(trace)
@@ -48,18 +51,26 @@ def mechanism_rows(diagnostics, head_exponent, tail_exponent):
             arrays = {key: np.array([t[key] for t in group], dtype=float) for key in (
                 "prior_head_logprob", "prior_tail_logprob", "trace_logprob", "answer_logprob",
                 "responsibility_logit", "prior_head_tokens", "prior_tail_tokens", "responsibility",
+                "prior_marker_logprob", "prior_marker_tokens", "reasoning_token_count",
             )}
             if not all(np.isfinite(v).all() for v in arrays.values()):
                 raise ValueError("nonfinite segment E-step factors")
             h, t = arrays["prior_head_logprob"], arrays["prior_tail_logprob"]
             prior, answer, actual = arrays["trace_logprob"], arrays["answer_logprob"], arrays["responsibility_logit"]
             hn, tn = arrays["prior_head_tokens"], arrays["prior_tail_tokens"]
-            lengths = np.array([r["objective_tokens"] - r["answer_tokens"] for r in group])
+            marker, mn = arrays["prior_marker_logprob"], arrays["prior_marker_tokens"]
+            lengths = arrays["reasoning_token_count"]
+            prior_counts = np.array([r["objective_tokens"] - r["answer_tokens"] for r in group])
+            if (np.any(lengths < 0) or np.any(mn <= 0)
+                    or not np.array_equal(lengths, np.floor(lengths))
+                    or not np.array_equal(mn, np.floor(mn))
+                    or not np.array_equal(lengths + mn, prior_counts)):
+                raise ValueError("reasoning and fixed marker counts do not partition prior")
             if not (np.array_equal(hn, lengths // 2) and np.array_equal(tn, lengths - lengths // 2)):
                 raise ValueError("segment token counts do not partition rationale")
-            if not np.allclose(h + t, prior, atol=2e-3, rtol=2e-6):
+            if not np.allclose(h + t + marker, prior, atol=2e-3, rtol=2e-6):
                 raise ValueError("segment factor sum does not match rationale prior")
-            if not np.allclose(actual, answer + head_exponent*h + tail_exponent*t, atol=2e-3, rtol=2e-6):
+            if not np.allclose(actual, answer + marker + head_exponent*h + tail_exponent*t, atol=2e-3, rtol=2e-6):
                 raise ValueError("E-step does not match registered segment exponents")
             weights = np.exp(actual - actual.max())
             weights /= weights.sum()
@@ -74,13 +85,14 @@ def mechanism_rows(diagnostics, head_exponent, tail_exponent):
                 max_weight=float(weights.max()), ess=float(1/np.square(weights).sum()),
                 weight_length_spearman=corr,
                 top_changed_vs_joint=bool(np.argmax(actual) != np.argmax(prior + answer)),
-                top_changed_vs_uniform075=bool(np.argmax(actual) != np.argmax(.75*prior + answer)),
+                top_changed_vs_uniform075=bool(np.argmax(actual) != np.argmax(.75*(h+t) + marker + answer)),
                 mean_head_tokens=float(hn.mean()), mean_tail_tokens=float(tn.mean()),
                 mean_head_logprob=float(h.mean()), mean_tail_logprob=float(t.mean()),
+                mean_marker_tokens=float(mn.mean()), mean_marker_logprob=float(marker.mean()),
                 odd_length_fraction=float(np.mean(lengths % 2)),
-                mean_nominal_exponent=float(np.mean(np.divide(
-                    head_exponent*hn + tail_exponent*tn, lengths,
-                    out=np.full(len(lengths), np.nan), where=lengths > 0))),
+                mean_nominal_exponent=(float(np.mean((
+                    head_exponent*hn[lengths > 0] + tail_exponent*tn[lengths > 0]
+                ) / lengths[lengths > 0])) if np.any(lengths > 0) else None),
             ))
     return output
 

@@ -1,12 +1,13 @@
 # Q5 positional rationale-prior weighting
 
 Status: [token-resolved scoring audit completed and validated](scoring_results_2026-09-14.md);
-training remains paused before submission. The preceding
+the user approved the nine-task marker-fixed training screen on 14 September.
+The preceding
 [pre-training audit](pretraining_findings_2026-09-14.md) records the semantic
 review and historical saved-score comparison. Job 7412300 adds fixed-final-
 checkpoint scoring on all 384 saved supports. The original partial manifest
-is preserved; it must not be manually edited to release training. Resolve the
-marker convention and update its tested protocol/gate before any training run.
+is preserved, including its blocked-training boolean. The new submission gate
+revalidates all three scoring receipts, logs and token tapes before submission.
 
 ## Question
 
@@ -35,7 +36,8 @@ These findings support treating the proposed split as positional, not semantic.
 | Q5-LATE-HALF | 1 | 0.5 | 3 |
 | Q5-UNIFORM075 | 0.75 | 0.75 | 3 |
 
-Run `a2f46c91` contains nine new tasks, using seeds 1201, 1213 and 1217.
+Run `c7e32a91` contains nine new tasks, using seeds 1201, 1213 and 1217.
+It supersedes the unsubmitted `a2f46c91` draft, whose halves included the marker.
 The control is `Q5-AD-M-LR1e-5-U1-K16` in validated historical run `68078ecc`.
 It is a historical comparator, not a contemporaneous or bit-exact GPU replay.
 
@@ -49,12 +51,11 @@ M-step masking or generation stopping rule.
 
 ## Scoring
 
-For a trace with n historical trace-prior positions, the early segment contains the
-first floor(n/2); the late segment contains the remainder. Prompt, padding,
-answer digits and EOS positions are excluded using the existing masks. The
-retained `####` marker is included in the historical prior. The earlier
-description incorrectly said that the existing mask excluded it; the scoring
-audit now also compares pure-reasoning halves with the marker held fixed.
+For a trace with n reasoning positions, the early segment contains the first
+floor(n/2); the late segment contains the remainder. Prompt, padding, `####`,
+answer digits and EOS positions are excluded from both halves. The historical
+prior mask includes `####`; the new rule separates that suffix using the native
+stored reasoning-token count and retains its probability at full weight.
 The boundary is computed from rationale positions, not padded sequence length.
 A one-token rationale belongs entirely to the late segment; an empty rationale
 has two empty segments. No text or token is removed from the conditioning
@@ -62,18 +63,19 @@ prefix, and neither segment is independently retokenized.
 
 Let H and T be the sums of token log probabilities in the early and late
 segments. Let A be the answer-reader log probability of the known answer
-target (space, answer digits and EOS). The marker belongs to H or T under
-the historical mask. The E-step uses:
+target (space, answer digits and EOS). Let M be the marker log probability.
+The E-step uses:
 
-    score = A + alpha * H + beta * T
+    score = A + M + alpha * H + beta * T
     weight = exp(score - max_score) / sum(exp(score - max_score))
 
 Weights are detached before the unchanged joint M-step. This is a modified
 finite-buffer weighting rule, not an importance correction or an exact
 posterior. The neutral (1,1) setting takes the original branch without an
 additional model forward. Equal non-unit exponents retain the existing
-uniform-prior arithmetic. All three new cells log both segment factors; the
-extra early-segment scoring pass preserves the PyTorch CPU/CUDA RNG states.
+uniform-reasoning-prior arithmetic, with M unchanged. All three new cells log
+both segment factors and M. The two additional scoring passes preserve the
+PyTorch CPU/CUDA RNG states. Neither pass changes the M-step token mask.
 
 Uniform075 matches the nominal average exponent exactly at even lengths.
 For odd lengths, early and late differ by one token. It also does not match
@@ -106,7 +108,7 @@ sensitivity. Its completion does not automatically release the training array.
 Report Final extracted Acc@1, strict final Acc@1, then normalized extracted
 AUC over rounds 0-32. Include strict AUC, backward tokens, training generations,
 optimizer steps and accelerator-hours. Evaluation time is included in the
-recorded accelerator-hours, and the new scoring pass may add runtime.
+recorded accelerator-hours, and the additional scoring passes may add runtime.
 
 The six paired contrasts are each new cell versus historical moving Q5,
 early versus late, and each positional cell versus concurrent uniform075.
@@ -123,8 +125,8 @@ only the historical control. No further training is launched automatically.
 The validator requires nine terminal task logs, complete hashed receipts,
 expected adapters, the exact execution/configuration identity, the frozen
 checkpoint schedule, 32 diagnostic rounds and budget checks. For every logged
-trace, it checks that segment counts partition the rationale, segment factors
-sum to its prior, logits follow the declared exponents, and recorded weights
+trace, it checks that segment counts partition the reasoning, reasoning and
+marker factors sum to the historical prior, logits follow the declared exponents, and recorded weights
 match the softmax. Diagnostics include effective support, largest weight,
 weight-length correlation and top-trace changes against joint and uniform075
 scores on the same buffer.
@@ -152,8 +154,10 @@ python -m pytest
 bash lm_study/submit_qwen3_17b_q5_prior_segments_ucl.sh
 ```
 
-Before submission, complete the token-resolved pre-training ranking audit and
-its checksum-bound training gate. The archived total scores cannot identify
+Before submission, the checksum-bound training gate reruns the completed
+token-resolved audit against its original inputs and compares receipt identities.
+The frozen configuration records the explicit marker-fixed choice separately
+from the old partial audit. The archived total scores cannot identify
 early and late scores; do not manufacture them by dividing by token count.
 Submission is AMN-only after a pushed account-specific coordination lease,
 immutable source deployment, live quota/scheduler checks and receipt-bound

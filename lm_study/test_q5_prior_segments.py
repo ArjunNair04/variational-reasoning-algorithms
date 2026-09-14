@@ -7,7 +7,7 @@ import pytest
 import torch
 
 import ac_alg1 as alg
-from ac_alg1_prior_segments import split_rationale_mask, segment_prior_logits
+from ac_alg1_prior_segments import split_rationale_mask, split_reasoning_marker_mask, segment_prior_logits
 from generate_qwen3_17b_q5_prior_segments import (
     CELL_ORDER, CONTROL_CELL, SEEDS, SETTINGS, build_payload, runtime_configs,
 )
@@ -37,6 +37,25 @@ def test_bad_masks_and_factors():
             segment_prior_logits(a, a, a, value, 1)
 
 
+@pytest.mark.parametrize("length", [0, 1, 2, 3, 7])
+def test_reasoning_split_leaves_multitoken_marker_fixed(length):
+    mask = torch.zeros((2, length + 8), dtype=torch.bool)
+    mask[0, 2:2+length+2] = True
+    mask[1, 4:4+length+2] = True
+    head, tail, marker = split_reasoning_marker_mask(mask, [length, length])
+    assert head.sum(1).tolist() == [length//2]*2
+    assert tail.sum(1).tolist() == [length-length//2]*2
+    assert marker.sum(1).tolist() == [2, 2]
+    assert torch.equal(head | tail | marker, mask)
+    assert not ((head & tail) | (head & marker) | (tail & marker)).any()
+    for i in range(2):
+        assert torch.equal(marker[i].nonzero(), mask[i].nonzero()[-2:])
+    for counts in ([None, length], [True, length], [-1, length],
+                   [length+2, length], [length], [1.5, length]):
+        with pytest.raises(ValueError):
+            split_reasoning_marker_mask(mask, counts)
+
+
 @pytest.mark.parametrize("head,tail", [(1, 1), (0.5, 1), (1, 0.5), (0.75, 0.75)])
 def test_actual_estep_and_rng(monkeypatch, head, tail):
     ids = torch.tensor([[9, 8, 7, 6, 5, 4, 3], [9, 8, 7, 6, 5, 4, 3]])
@@ -54,7 +73,7 @@ def test_actual_estep_and_rng(monkeypatch, head, tail):
     monkeypatch.setattr(alg, "seq_logprobs", logprobs)
     monkeypatch.setattr(alg, "_pad_trace_rows", lambda *_: (ids, span, ans))
     rows = [alg.TraceRow(ids=ids[i], span=span[i], ans=ans[i], pid=7,
-                         round_added=0, source="test") for i in range(2)]
+                         round_added=0, source="test", reasoning_token_count=2) for i in range(2)]
     model = SimpleNamespace()
     torch.manual_seed(7)
     legacy = alg._buffer_weights_for_questions(model, None, {7: rows}, [7], record_joint_logprobs=True)
@@ -64,17 +83,20 @@ def test_actual_estep_and_rng(monkeypatch, head, tail):
     actual = alg._buffer_weights_for_questions(model, None, {7: rows}, [7], record_joint_logprobs=True,
         responsibility_prior_head_exponent=head, responsibility_prior_tail_exponent=tail)
     assert torch.equal(torch.random.get_rng_state(), old_rng)
-    early, late = split_rationale_mask(span & ~ans)
-    expected = (token_lp * ans).sum(1) + head * (token_lp * early).sum(1) + tail * (token_lp * late).sum(1)
+    early, late, marker = split_reasoning_marker_mask(span & ~ans, [2, 2])
+    expected = (token_lp * (ans | marker)).sum(1) + head * (token_lp * early).sum(1) + tail * (token_lp * late).sum(1)
     torch.testing.assert_close(actual[7], torch.softmax(expected, dim=0))
     assert not actual[7].requires_grad
-    assert len(calls) == (2 if head == tail == 1 else 3)
+    assert len(calls) == (2 if head == tail == 1 else 4)
     if head == tail == 1:
         assert torch.equal(legacy[7], actual[7])
         assert all(row.prior_head_logprob is None for row in rows)
     else:
-        assert all(row.prior_head_tokens == 1 and row.prior_tail_tokens == 2 for row in rows)
-        assert torch.equal(calls[-1], early)
+        assert all(row.prior_head_tokens == row.prior_tail_tokens == row.prior_marker_tokens == 1 for row in rows)
+        assert torch.equal(calls[-2], early) and torch.equal(calls[-1], marker)
+        for i, row in enumerate(rows):
+            assert row.prior_marker_logprob == pytest.approx(float((token_lp * marker).sum(1)[i]))
+            assert row.prior_head_logprob + row.prior_tail_logprob + row.prior_marker_logprob == pytest.approx(row.trace_logprob)
 
 
 def test_uniform_matches_global_exponent_arithmetic():

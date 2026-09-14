@@ -8,6 +8,7 @@ import torch
 
 from score_q5_prior_segments import SETTINGS, SCOPES, four_way, masks_for_row, reconstruct
 from analyze_q5_segment_scoring import summarize, verify_record
+from ac_alg1_prior_segments import split_reasoning_marker_mask
 
 
 class CharacterTokenizer:
@@ -42,6 +43,8 @@ def test_native_reconstruction_preserves_prompt_and_gold_eos():
         assert torch.equal((head|tail|marker)[0],row.span & ~row.ans)
         assert not ((head & tail)|(head & marker)|(tail & marker)).any()
     head,tail,marker = masks["reasoning_marker_fixed"]
+    train_masks = split_reasoning_marker_mask((row.span & ~row.ans).unsqueeze(0), [row.reasoning_token_count])
+    assert all(torch.equal(a,b) for a,b in zip(train_masks, (head,tail,marker)))
     assert tok.decode(row.ids[marker[0]]) == "####"
     assert not marker[0][row.ans].any()
     assert head.sum() == row.reasoning_token_count//2

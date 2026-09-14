@@ -68,7 +68,8 @@ from ac_alg1_age_one_reuse import (
 )
 from ac_alg1_uncertainty_allocation import allocate_uncertainty_budget
 from ac_alg1_prior_segments import (
-    segment_prior_logits, split_rationale_mask, validate_segment_exponents,
+    SEGMENT_SCOPE, segment_prior_logits, split_reasoning_marker_mask,
+    validate_segment_exponents,
 )
 from ac_alg1_two_witness import two_witness_responsibilities
 from ac_alg1_update_geometry import (
@@ -437,6 +438,8 @@ class TraceRow:
     prior_tail_logprob: float | None = None
     prior_head_tokens: int | None = None
     prior_tail_tokens: int | None = None
+    prior_marker_logprob: float | None = None
+    prior_marker_tokens: int | None = None
     answer_logprob: float = float("-inf")
     responsibility_logit: float = float("-inf")
     proposal_trace_logprob: float = float("-inf")
@@ -3515,21 +3518,29 @@ def _buffer_weights_for_questions(
                     else answer_logprobs + responsibility_prior_exponent * trace_logprobs
                 )
             if segmented_prior:
-                head_mask, tail_mask = split_rationale_mask(trace_span)
-                # This extra scoring pass must not advance training/generation RNG.
+                head_mask, tail_mask, marker_mask = split_reasoning_marker_mask(
+                    trace_span, [row.reasoning_token_count for row in rows],
+                )
+                # Additional E-step forwards must not advance training/generation RNG.
                 with torch.random.fork_rng(), _adapter_policy_context(model, responsibility_policy):
                     head_logprobs = seq_logprobs(
                         model, ids, head_mask, micro=16, length_norm=False,
                     )
+                    marker_logprobs = seq_logprobs(
+                        model, ids, marker_mask, micro=16, length_norm=False,
+                    )
+                reasoning_logprobs = trace_logprobs - marker_logprobs
                 base_logits = segment_prior_logits(
-                    answer_logprobs, trace_logprobs, head_logprobs,
+                    answer_logprobs + marker_logprobs, reasoning_logprobs, head_logprobs,
                     responsibility_prior_head_exponent, responsibility_prior_tail_exponent,
                 )
                 for index, row in enumerate(rows):
                     row.prior_head_logprob = float(head_logprobs[index])
-                    row.prior_tail_logprob = float(trace_logprobs[index] - head_logprobs[index])
+                    row.prior_tail_logprob = float(reasoning_logprobs[index] - head_logprobs[index])
                     row.prior_head_tokens = int(head_mask[index].sum())
                     row.prior_tail_tokens = int(tail_mask[index].sum())
+                    row.prior_marker_logprob = float(marker_logprobs[index])
+                    row.prior_marker_tokens = int(marker_mask[index].sum())
             if responsibility_score == "token_mean":
                 if variational_estimator != "delta_joint":
                     raise ValueError(
@@ -7469,6 +7480,8 @@ def _responsibility_diagnostics(
                         "prior_tail_logprob": _finite_or_none(row.prior_tail_logprob),
                         "prior_head_tokens": row.prior_head_tokens,
                         "prior_tail_tokens": row.prior_tail_tokens,
+                        "prior_marker_logprob": _finite_or_none(row.prior_marker_logprob),
+                        "prior_marker_tokens": row.prior_marker_tokens,
                     } if row.prior_head_logprob is not None else {}),
                     "answer_logprob": _finite_or_none(row.answer_logprob),
                     "proposal_trace_logprob": _finite_or_none(
@@ -11790,6 +11803,10 @@ def _emit_ac_alg1_round_diagnostics(
                 "prior_exponent": responsibility_prior_exponent,
                 "prior_head_exponent": responsibility_prior_head_exponent,
                 "prior_tail_exponent": responsibility_prior_tail_exponent,
+                **({"prior_segment_scope": SEGMENT_SCOPE} if (
+                    responsibility_prior_head_exponent != 1.0
+                    or responsibility_prior_tail_exponent != 1.0
+                ) else {}),
                 "ess_floor_fraction": responsibility_ess_floor,
                 "abstention": {
                     "mode": responsibility_abstention,

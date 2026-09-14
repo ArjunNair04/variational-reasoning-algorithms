@@ -11,8 +11,17 @@ from generate_qwen3_17b_q5_prior_exponent import (
     runtime_configs as prepare_runtime_configs,
 )
 from generate_qwen3_17b_selected_method_posterity import build_payload as controls
+from ac_alg1_prior_segments import SEGMENT_SCOPE
 
-RUN_ID = "a2f46c91"
+RUN_ID = "c7e32a91"
+SCORING_EVIDENCE = {
+    "job": "7412300",
+    "execution_commit": "802c174e0e1a20842b757ce8b25aea70d8730b6d",
+    "manifest_sha256": "292f80620f6e90e34b5051778e2a1b28f70c7efa30d06572512356f88568caa9",
+    "summary_sha256": "0de6cdca7137bc346ac8849f1c678a2f1b8a1dd05332ad750fa7ecdbf7971abc",
+    "selected_scope": SEGMENT_SCOPE,
+    "decision": "User approved the marker-fixed nine-task training screen after reviewing the completed scoring audit on 2026-09-14. The old partial audit remains unchanged.",
+}
 CONTROL_CELL = "Q5-AD-M-LR1e-5-U1-K16"
 SETTINGS = {
     "Q5-EARLY-HALF": (0.5, 1.0),
@@ -43,8 +52,11 @@ def build_payload():
             "control_run_id": CONTROL_RUN_ID, "control_commit": CONTROL_COMMIT,
             "control_cell": CONTROL_CELL,
             "design": {"array_tasks": 9, "cell_order": list(CELL_ORDER), "paired_seeds": list(SEEDS)},
-            "split": "First floor(n/2) historical trace-prior positions; remaining ceil(n/2) are late. The retained answer marker belongs to this historical prior; prompt, answer digits and EOS do not. Training remains blocked pending marker-fixed scoring sensitivity.",
-            "weighting": "softmax(answer_logprob + head_exponent*head_logprob + tail_exponent*tail_logprob)",
+            "split": "First floor(n/2) reasoning tokens; remaining ceil(n/2) are late. Keep the retained #### marker, answer digits and EOS contributions unchanged; exclude prompt and padding. Use the stored native token boundary, with no segment retokenization.",
+            "segment_scope": SEGMENT_SCOPE,
+            "pretraining_evidence": dict(SCORING_EVIDENCE),
+            "supersedes_unsubmitted_run": "a2f46c91",
+            "weighting": "softmax(answer_logprob + marker_logprob + head_exponent*head_logprob + tail_exponent*tail_logprob)",
             "fixed_contract": {"official_test_used": False, "answer_target": "answer_plus_eos",
                 "proposal": "answer_derive", "reader": "current", "mstep": "unchanged_joint_weighted_mle"},
             "analysis_contract": [
@@ -53,7 +65,7 @@ def build_payload():
                 "Pair each new cell with historical moving-reader Q5; compare early versus late and each positional cell versus concurrent uniform075.",
                 "Three reused development seeds; no checkpoint selection or automatic follow-up. A positive mean final change with no strict-final loss nominates at most one setting for discussion, not deployment.",
                 "Uniform075 matches nominal exponent mass at even lengths; odd lengths and realized logprob mass are not exactly matched. Report token counts and factor sums.",
-                "Log head/tail factors, count identities, top-trace changes versus joint and uniform scores, ESS, weight-length rank correlation, backward tokens and compute.",
+                "Log head/tail/fixed-marker factors, count identities, top-trace changes versus joint and marker-fixed uniform scores, ESS, weight-length rank correlation, backward tokens and compute.",
                 "This tests token position, not a demonstrated understanding-versus-solving decomposition. Semantic prompting, M-step masking and KL are excluded.",
             ],
         },

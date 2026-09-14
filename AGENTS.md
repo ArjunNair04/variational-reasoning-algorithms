@@ -15,6 +15,15 @@
 
 ## Change record
 
+- **2026-09-14, marker-fixed positional training screen:** run `c7e32a91`
+  supersedes the unsubmitted historical-mask draft. Early/late exponents apply
+  only to native reasoning positions; marker, answer and EOS retain full weight.
+  Default (1,1), prompts and M-step are unchanged. Added receipt-bound scoring
+  revalidation before submission and marker-aware prepared analysis. All 248
+  local tests pass, including RNG isolation, native-mask parity, factor identities,
+  fail-closed gates and generated nine-task runtime validation. See
+  `qwen3_q5_prior_segments_20260914` and its protocol README.
+
 - **2026-09-14, scoring ingestion:** all three tasks of 7412300 passed the
   prepared token/receipt/log validator; 384 supports and 2987 rows are mirrored
   without checkpoints. Marker-fixed winner changes: early 38, late 43,

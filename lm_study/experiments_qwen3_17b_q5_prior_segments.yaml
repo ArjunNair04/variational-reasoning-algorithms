@@ -1,5 +1,5 @@
 # Generated; edit generate_qwen3_17b_q5_prior_segments.py.
-run_id: a2f46c91
+run_id: c7e32a91
 tag_prefix: q3_q5_prior_segments
 diagnostic:
   stage: three_seed_positional_prior_screen
@@ -17,10 +17,21 @@ diagnostic:
     - 1201
     - 1213
     - 1217
-  split: First floor(n/2) historical trace-prior positions; remaining ceil(n/2) are
-    late. The retained answer marker belongs to this historical prior; prompt, answer
-    digits and EOS do not. Training remains blocked pending marker-fixed scoring sensitivity.
-  weighting: softmax(answer_logprob + head_exponent*head_logprob + tail_exponent*tail_logprob)
+  split: 'First floor(n/2) reasoning tokens; remaining ceil(n/2) are late. Keep the
+    retained #### marker, answer digits and EOS contributions unchanged; exclude prompt
+    and padding. Use the stored native token boundary, with no segment retokenization.'
+  segment_scope: reasoning_marker_fixed
+  pretraining_evidence:
+    job: '7412300'
+    execution_commit: 802c174e0e1a20842b757ce8b25aea70d8730b6d
+    manifest_sha256: 292f80620f6e90e34b5051778e2a1b28f70c7efa30d06572512356f88568caa9
+    summary_sha256: 0de6cdca7137bc346ac8849f1c678a2f1b8a1dd05332ad750fa7ecdbf7971abc
+    selected_scope: reasoning_marker_fixed
+    decision: User approved the marker-fixed nine-task training screen after reviewing
+      the completed scoring audit on 2026-09-14. The old partial audit remains unchanged.
+  supersedes_unsubmitted_run: a2f46c91
+  weighting: softmax(answer_logprob + marker_logprob + head_exponent*head_logprob
+    + tail_exponent*tail_logprob)
   fixed_contract:
     official_test_used: false
     answer_target: answer_plus_eos
@@ -39,8 +50,9 @@ diagnostic:
     for discussion, not deployment.
   - Uniform075 matches nominal exponent mass at even lengths; odd lengths and realized
     logprob mass are not exactly matched. Report token counts and factor sums.
-  - Log head/tail factors, count identities, top-trace changes versus joint and uniform
-    scores, ESS, weight-length rank correlation, backward tokens and compute.
+  - Log head/tail/fixed-marker factors, count identities, top-trace changes versus
+    joint and marker-fixed uniform scores, ESS, weight-length rank correlation, backward
+    tokens and compute.
   - This tests token position, not a demonstrated understanding-versus-solving decomposition.
     Semantic prompting, M-step masking and KL are excluded.
 defaults:
@@ -70,7 +82,7 @@ defaults:
   lora_r: 16
   lora_alpha: 32
   lora_target_set: attention_mlp
-  out: ~/po_results/2026-09-14/q5-prior-segments/qwen3-q5-prior-segments__a2f46c91
+  out: ~/po_results/2026-09-14/q5-prior-segments/qwen3-q5-prior-segments__c7e32a91
   eval_rounds:
   - 1
   - 2
