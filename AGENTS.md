@@ -15,6 +15,11 @@
 
 ## Change record
 
+- **2026-09-14, scoring release:** after explicit provenance-upload approval,
+  published both tracking records and released only 7412300.1-3; all three
+  were verified ordinary queued, uncapped. Execution stays at 802c174 and
+  analysis is prepared at 41b964e. Training remains blocked; no result claim.
+
 - **2026-09-14, scoring submission:** AMN job 7412300 contains only three
   scoring tasks at immutable 802c174. All 2987 native-tokenizer reconstructions
   and the three source adapter hashes pass. The nine training tasks remain

@@ -17,7 +17,7 @@
       "pretraining_analyzer": "analysis/audit_q5_prior_segments_pretraining.py",
       "scoring_only_audit": {
         "audit_id": "q5_segment_scoring_20260914",
-        "status": "held",
+        "status": "queued",
         "manifest": "docs/experiments/qwen3_q5_prior_segments/scoring_manifest.json",
         "runner": "lm_study/run_qwen3_17b_q5_segment_scoring_ucl.sh",
         "analyzer": "analysis/analyze_q5_segment_scoring.py",
@@ -27,7 +27,7 @@
             "job_id": "7412300",
             "role": "scoring_only",
             "tasks": 3,
-            "state": "held"
+            "state": "queued"
           }
         ],
         "checkpoint_scope": "Each seed's final Q5 adapter, fixed for all 128 archived question supports; retokenized saved candidates, not historical per-round replay",
@@ -40,7 +40,7 @@
         "verification": "238 local tests passed; live AMN access and all final adapters verified. Actual-tokenizer CPU preflight must pass before scoring submission. Training remains blocked.",
         "execution_revision": "802c174e0e1a20842b757ce8b25aea70d8730b6d",
         "result_root": "/home/amanojna/po_results/2026-09-14/q5-segment-scoring/q5-fixed-final-scoring__802c174",
-        "summary": "Scoring-only audit submitted after all 238 local tests, immutable isolated deployment and native-tokenizer CPU preflight. Original prompts, source membership, adapters and training checkout are preserved. No ranking or accuracy outcome is claimed before all three receipts and logs pass the prepared analyzer."
+        "summary": "User approved provenance publication; held-job records pushed to both existing repositories. Rechecked immutable execution 802c174, manifest SHA, owner and tasks, then qrls released exactly 7412300.1-3 at 2026-09-14 14:22 UTC. Scheduler snapshot: all three qw, no concurrency cap. All 238 local tests, 2987 native-tokenizer reconstructions and three adapter/source hash checks passed. No training or new generations; nine training tasks remain unsubmitted."
       },
       "expected_tasks": 9,
       "seeds": [1201, 1213, 1217],
