@@ -4,12 +4,14 @@ Status: [token-resolved scoring audit completed and validated](scoring_results_2
 the user approved the nine-task marker-fixed training screen on 14 September.
 Payload **7413571** (tasks 1-9) has completed. Validator **7413572** passed at
 20:36 BST on 14 September, confirming all nine tasks and adapters. All payload
-logs have terminal markers and no failure signatures. Compact collection is
-approval-gated; the prepared paired analysis has not yet been run.
+logs have terminal markers and no failure signatures. Approved compact
+collection and the frozen paired analysis are complete; see the
+[completed results](results_2026-09-14.md). Second-half attenuation is the sole
+screen nominee, with an unresolved +1.08 pp final gain over historical Q5.
 The user explicitly approved publication of job IDs and AMN paths, and both
 tracking pushes succeeded before release. Execution remains
 at `037b1d3`; there is no artificial concurrency limit. The prepared analyzer
-will report all six paired contrasts after complete task-level validation.
+reports all six paired contrasts after complete task-level validation.
 The preceding
 [pre-training audit](pretraining_findings_2026-09-14.md) records the semantic
 review and historical saved-score comparison. Job 7412300 adds fixed-final-

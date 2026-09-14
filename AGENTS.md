@@ -15,6 +15,14 @@
 
 ## Change record
 
+- **2026-09-14, positional screen ingestion:** all nine tasks and remote
+  adapters revalidate; 194 compact/provenance/control files are checksum-mirrored
+  without weights or deletion. Frozen analysis and local reconstruction agree.
+  Second-half attenuation is the sole development nominee: final/strict/AUC
+  81.25/73.08/79.58%, with unresolved +1.08 pp final gain versus historical Q5.
+  All 248 tests pass. See `qwen3_q5_prior_segments_20260914` and its dated report;
+  no new runs or thesis prose changes.
+
 - **2026-09-14, positional screen completion:** all nine 7413571 task logs have
   terminal markers and no failure signatures. Validator 7413572 passed at
   19:36 UTC with nine adapters and the expected run/commit/YAML identity.

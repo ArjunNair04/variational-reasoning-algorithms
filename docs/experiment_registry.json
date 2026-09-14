@@ -4,7 +4,7 @@
     {
       "registry_id": "qwen3_q5_prior_segments_20260914",
       "run_id": "c7e32a91",
-      "status": "validated_pending_collection_and_analysis",
+      "status": "completed",
       "superseded_unsubmitted_draft": "a2f46c91",
       "segment_scope": "reasoning_marker_fixed",
       "training_gate": "analysis/check_q5_segment_training_gate.py",
@@ -93,14 +93,10 @@
         "Uniform075 changes the top trace on 5/384 supports; mean ESS 1.098 to 1.134 and largest weight 95.90% to 94.55%. Half-specific rankings are not determined by total prior scores."
       ],
       "limitations": [
-        "Token-position ablation, not semantic role labels",
-        "Three reused development seeds and historical control",
-        "Odd-length traces have an extra late token; uniform075 is only nominally matched",
-        "Completed audit uses final adapters and retokenized archived text, not historical intermediate checkpoint replay. No accuracy outcome is measured."
+        "Three reused development seeds and repeatedly used train-derived validation; historical Q5 controls are not contemporaneous or bit-exact replays. Seed-bootstrap intervals are descriptive and do not include fresh-question uncertainty or multiple-comparison adjustment. A token midpoint does not identify understanding versus calculation. Mechanistic counterfactuals share support within each cell, not across evolving training runs. GPU hours include evaluation and two additional segment-scoring forwards; not an isolated timing benchmark. Adapter files are verified remotely, deliberately excluded from the compact mirror. Official test remains unused. Superseded unsubmitted a2f46c91 is not pooled."
       ],
       "next_actions": [
-        "Obtain approval to mirror compact result artifacts and logs, excluding checkpoints; no deletion.",
-        "Verify the mirror and run the prepared six paired contrasts and efficiency analysis. No promotion or further runs before the registered decision rule is evaluated."
+        "Review the sole frozen-rule nominee Q5-LATE-HALF. Keep standard Q5 as established; consider fresh paired seeds against standard Q5 and uniform075 to separate a positional benefit from general attenuation. No submission without an explicit decision and frozen design."
       ],
       "historical_pretraining_verification": "Full curated suite: 234 tests pass, including 12 focused pre-training audit tests. Outcome-blind semantic review covers 24 saved final evaluations; exact saved-factor uniform reweighting covers 384 question-rounds and 2987 trace rows. All six source hashes match completion receipts and original softmax weights reconstruct. Early/late scores remain unavailable and the submitter rejects the partial audit. AMN briefly reachable; subsequent checkpoint inventory returned exit 255. No model inference, training or submission. Canonical views, nine registry/importer tests and MLflow refresh pass.",
       "execution_revision": "037b1d38b484f207e5bff9cf437a3ea421860f53",
@@ -117,9 +113,77 @@
         "trained_adapter_count": 9,
         "official_test_used": false,
         "validated_at": "2026-09-14T19:36:26.964437+00:00",
-        "check_basis": "Existing validator marker and terminal log, plus all nine payload terminals and full-log failure scan"
+        "check_basis": "Full original validator rerun, including receipt-relative artifact and adapter hashes; no problems",
+        "revalidated_at": "2026-09-14T22:31:59.520772Z"
       },
-      "completion_summary": "All nine payload logs contain terminal completion markers and no failure signatures. Validator 7413572 passed at 2026-09-14T19:36:26.964437Z, confirming nine tasks and nine trained adapters under the expected execution commit, YAML hash and run c7e32a91. AMN qstat is empty at the 22:20 UTC check. Results remain on Beaker; compact collection and the prepared paired accuracy/efficiency analysis have not been performed."
+      "completion_summary": "All nine tasks and adapters revalidate; the frozen analyzer completed and 194 compact/provenance/control files (24,777,438 bytes) match source SHA-256, with no checkpoint transfer or deletion. Local metric, AUC, contrast and mechanism reconstruction agrees. Three-seed Final Acc@1/strict/AUC: historical Q5 80.17/69.25/79.30%; early-half 80.17/67.17/79.82%; late-half 81.25/73.08/79.58%; uniform075 80.17/69.75/79.32%; paired frozen base 75.50/61.50/75.50%. Late-half is the sole frozen-rule nominee: +1.08 pp final versus Q5, descriptive interval [-1.50,+3.50]; +3.83 pp strict and +0.27 pp AUC. Late-half beats early-half on all three final/strict endpoints but beats historical Q5 and concurrent uniform on only two seeds. Responsibilities remain concentrated (mean ESS1.15, largest weight93.76%); first-half learns faster then declines. All cells retain 2048 generations and32 optimizer steps. No automatic confirmation or manuscript edits.",
+      "findings": "All nine tasks and adapters revalidate; the frozen analyzer completed and 194 compact/provenance/control files (24,777,438 bytes) match source SHA-256, with no checkpoint transfer or deletion. Local metric, AUC, contrast and mechanism reconstruction agrees. Three-seed Final Acc@1/strict/AUC: historical Q5 80.17/69.25/79.30%; early-half 80.17/67.17/79.82%; late-half 81.25/73.08/79.58%; uniform075 80.17/69.75/79.32%; paired frozen base 75.50/61.50/75.50%. Late-half is the sole frozen-rule nominee: +1.08 pp final versus Q5, descriptive interval [-1.50,+3.50]; +3.83 pp strict and +0.27 pp AUC. Late-half beats early-half on all three final/strict endpoints but beats historical Q5 and concurrent uniform on only two seeds. Responsibilities remain concentrated (mean ESS1.15, largest weight93.76%); first-half learns faster then declines. All cells retain 2048 generations and32 optimizer steps. No automatic confirmation or manuscript edits.",
+      "collection": {
+        "status": "ok",
+        "files": 194,
+        "bytes": 24777438,
+        "manifest_sha256": "5f6e34716d71e57c1451ce87227718ecab56d6365da2aa728f4b3854b2fce15f",
+        "checkpoint_files_copied": 0,
+        "deleted_files": 0,
+        "remote_adapter_validation": "Full original validator rerun before frozen remote analysis; adapter weights intentionally excluded from local mirror."
+      },
+      "local_verification": {
+        "status": "ok",
+        "local_receipt_artifacts_checked": 135,
+        "remote_only_adapter_files": 30,
+        "all_compact_json_gzip_csv_parse": true,
+        "independent_final_accuracy_and_auc": true,
+        "local_recomputed_frozen_contrasts": true,
+        "local_recomputed_mechanisms": true,
+        "validation_questions": 400,
+        "remote_full_validation": "Passed 2026-09-14T22:31:59.520772Z; 9 tasks and adapters; no problems",
+        "local_tests": 248,
+        "checkpoint_files_copied": 0
+      },
+      "method_summary": [
+        {
+          "cell": "CTRL-base",
+          "final_extracted": 0.7549999999999999,
+          "final_strict": 0.615,
+          "extracted_auc": 0.7549999999999999,
+          "strict_auc": 0.615
+        },
+        {
+          "cell": "Q5-AD-M-LR1e-5-U1-K16",
+          "final_extracted": 0.8016666666666667,
+          "final_strict": 0.6925,
+          "extracted_auc": 0.7930338541666666,
+          "strict_auc": 0.6875520833333333
+        },
+        {
+          "cell": "Q5-EARLY-HALF",
+          "final_extracted": 0.8016666666666666,
+          "final_strict": 0.6716666666666667,
+          "extracted_auc": 0.7981640625,
+          "strict_auc": 0.6815625000000001
+        },
+        {
+          "cell": "Q5-LATE-HALF",
+          "final_extracted": 0.8125,
+          "final_strict": 0.7308333333333333,
+          "extracted_auc": 0.7957552083333334,
+          "strict_auc": 0.6925911458333333
+        },
+        {
+          "cell": "Q5-UNIFORM075",
+          "final_extracted": 0.8016666666666667,
+          "final_strict": 0.6975000000000001,
+          "extracted_auc": 0.7931640624999999,
+          "strict_auc": 0.6870442708333334
+        }
+      ],
+      "local_mirror": "/Users/vigneshmohanarajan1/Desktop/MScThesis/ResultsArchive/beaker-amanojna/20260914T223000Z_q5_prior_segments_c7e32a91",
+      "report": "docs/experiments/qwen3_q5_prior_segments/results_2026-09-14.md",
+      "analysis_results": "docs/experiments/qwen3_q5_prior_segments/results_2026-09-14",
+      "decision": {
+        "nominee": "Q5-LATE-HALF",
+        "automatic_followup": false
+      }
     },
     {
       "registry_id": "qwen3_q5_prior_exponent_reader_20260912",

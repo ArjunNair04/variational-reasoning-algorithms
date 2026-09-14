@@ -1,0 +1,24 @@
+{
+  "run_id": "c7e32a91",
+  "marker": {
+    "configuration_sha256": "c73b7c65c97aff185b3c73ab04019ac2ed1be9f31d1bd30fa17ebdd2c2a13084",
+    "execution_commit": "037b1d38b484f207e5bff9cf437a3ea421860f53",
+    "official_test_used": false,
+    "run_id": "c7e32a91",
+    "schema_version": 1,
+    "source_job_id": "7413571",
+    "status": "ok",
+    "task_count": 9,
+    "trained_adapter_count": 9,
+    "validated_at": "2026-09-14T19:36:26.964437+00:00"
+  },
+  "nominee": "Q5-LATE-HALF",
+  "automatic_followup": false,
+  "evidence": "three-seed development screen; historical controls; descriptive intervals",
+  "metric_order": [
+    "final_extracted",
+    "final_strict",
+    "extracted_auc",
+    "strict_auc"
+  ]
+}
