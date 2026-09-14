@@ -15,6 +15,13 @@
 
 ## Change record
 
+- **2026-09-15, frozen positional submission:** payload 7414007 has nine held
+  tasks; validator 7414008 depends on it. Immutable execution 2927112, YAML
+  hash, all nine coordinates, historical controls and moving-result revalidation
+  pass; 257 local tests pass. No cluster pytest or installed dependencies.
+  Publish tracking before releasing only this uncapped payload. Registry:
+  `qwen3_q5_prior_segments_frozen_20260915`; no result claim.
+
 - **2026-09-15, frozen positional reader screen:** new nine-task `7a31c9e2`
   freezes only the E-step answer factor; proposal/prior/marker and joint M-step
   remain current. Separate fail-closed profile preserves the old moving YAML.

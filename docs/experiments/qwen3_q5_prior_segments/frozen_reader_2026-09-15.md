@@ -3,6 +3,11 @@
 Run `7a31c9e2` contains nine new tasks, authorized on 15 September 2026.
 No standard-Q5 or moving-reader controls are rerun.
 
+Submitted as held payload **7414007** (tasks 1-9), with dependent validator
+**7414008**, at immutable execution `2927112`. No concurrency cap. All local
+tests and cluster preflight gates passed, including revalidation of the nine
+moving comparison tasks and adapters. Tracking publication precedes release.
+
 | Tasks | Cell | First-half weight | Second-half weight | Seeds |
 |---|---|---:|---:|---|
 | 1-3 | Q5-EARLY-HALF-F | 0.5 | 1 | 1201, 1213, 1217 |
