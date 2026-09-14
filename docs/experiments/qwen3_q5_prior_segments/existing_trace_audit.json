@@ -1,0 +1,2724 @@
+{
+  "scope": "300 saved final evaluation completions from three historical moving-Q5 seeds; not training buffers or the full 400-question evaluation pool per seed",
+  "method": "Text-only syntactic audit; an equation sign is not a semantic understanding label. No tokenization, scoring or generation.",
+  "records": 300,
+  "single_line_rationales": 32,
+  "first_line_equation_sign": 232,
+  "first_line_numeric_operation": 176,
+  "sources": [
+    {
+      "path": "/Users/vigneshmohanarajan1/Desktop/MScThesis/ResultsArchive/beaker-amanojna/20260902T151747Z__qwen3_selected_method_posterity_68078ecc/artifacts/dump_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1201__AC-ALG1_s1201.json",
+      "sha256": "ebd70570bffe2836213ea8bff92a00a3b4bef6c6769bfddbb4f86233e4564860"
+    },
+    {
+      "path": "/Users/vigneshmohanarajan1/Desktop/MScThesis/ResultsArchive/beaker-amanojna/20260902T151747Z__qwen3_selected_method_posterity_68078ecc/artifacts/dump_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1213__AC-ALG1_s1213.json",
+      "sha256": "22f6b938b1231a0e1b463d4b48f10007d59edf3e7a841f020a2a6ceea08c25d5"
+    },
+    {
+      "path": "/Users/vigneshmohanarajan1/Desktop/MScThesis/ResultsArchive/beaker-amanojna/20260902T151747Z__qwen3_selected_method_posterity_68078ecc/artifacts/dump_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1217__AC-ALG1_s1217.json",
+      "sha256": "cb2fe0602ef5495b76dba6dd74593a27ecc886a2c9e62eab0dc53a50b1dc3eaf"
+    }
+  ],
+  "samples": [
+    {
+      "seed": 1201,
+      "question_id": 6737,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.42857142857142855,
+      "first_line": "First, find 4 times the depth of the Southton time capsule: 4 * 15 feet = 60 feet"
+    },
+    {
+      "seed": 1201,
+      "question_id": 5324,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.25,
+      "first_line": "The ratio of Parker's share to Richie's share is 2:3, which means that for every 2 parts Parker gets, Richie gets 3 parts."
+    },
+    {
+      "seed": 1201,
+      "question_id": 2243,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.3013698630136986,
+      "first_line": "First, find the number of roses sold by multiplying the number of lilacs by 3: 10 lilacs * 3 = 30 roses"
+    },
+    {
+      "seed": 1201,
+      "question_id": 989,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.4,
+      "first_line": "First, we need to find the total amount of water Caleb and Cynthia can add to the pool in one trip. Caleb adds 7 gallons and Cynthia adds 8 gallons, so together they add 7 + 8 = 15 gallons per trip."
+    },
+    {
+      "seed": 1201,
+      "question_id": 1022,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "Let's use algebra to solve this problem. Let R be Rachel's age and L be Leah's age. We know that R = L + 4 and R + L = 34. We can substitute the first equation into the second equation to get (L + 4) + L = 34. Combining like terms, we get 2L + 4 = 34. Subtracting 4 from both sides, we get 2L = 30. Dividing both sides by 2, we get L = 15. Now we can substitute this value back into the first equation to find Rachel's age: R = 15 + 4 = 19. So Rachel is 19 years old."
+    },
+    {
+      "seed": 1201,
+      "question_id": 725,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.5,
+      "first_line": "First, find the number of toads Jim has by adding 20 to the number of toads Tim has: 30 + 20 = 50 toads."
+    },
+    {
+      "seed": 1201,
+      "question_id": 450,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.2912621359223301,
+      "first_line": "First, we need to find out how many days are in 3 weeks. There are 7 days in a week, so 3 weeks is 3 * 7 = 21 days."
+    },
+    {
+      "seed": 1201,
+      "question_id": 5185,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.28125,
+      "first_line": "Shelly catches 2 less than five swordfish, so she catches 5 - 2 = 3 swordfish each time."
+    },
+    {
+      "seed": 1201,
+      "question_id": 5386,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.38461538461538464,
+      "first_line": "First, find the number of trolls hiding under the bridge by adding 6 to four times the number of trolls hiding by the path: 4 * 6 trolls + 6 trolls = 24 trolls + 6 trolls = <<24+6=30>>30 trolls"
+    },
+    {
+      "seed": 1201,
+      "question_id": 3815,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.373015873015873,
+      "first_line": "First, let's find out how many miles Richard walked on the second day. He walked 6 miles less than half as much as he walked the first day, so he walked (1/2 * 20) - 6 = 10 - 6 = 4 miles on the second day."
+    },
+    {
+      "seed": 1201,
+      "question_id": 5903,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "Let's denote the number of teas sold as T and the number of lattes sold as L. According to the problem, T = 6. The coffee shop sold 8 more than four times the number of lattes as it did teas, so we can write the equation: L = 4T + 8. Substituting the value of T, we get: L = 4(6) + 8 = 24 + 8 = 32. Therefore, the coffee shop sold 32 lattes."
+    },
+    {
+      "seed": 1201,
+      "question_id": 620,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "Let's call the number of rabbits Jasper saw in the park today \"x\". If seven more rabbits are added to the thirteen in the cage, the total number of rabbits in the cage will be 13 + 7 = 20. According to the problem, this number is 1/3 of the number of rabbits Jasper saw in the park today. So we can write the equation: 20 = 1/3 * x. To solve for x, we can multiply both sides of the equation by 3: 20 * 3 = x. This gives us x = 60. Therefore, Jasper saw 60 rabbits in the park today."
+    },
+    {
+      "seed": 1201,
+      "question_id": 1331,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.46153846153846156,
+      "first_line": "To find the total number of hours Jane has exercised, we need to multiply the number of hours she exercises per day by the number of days she exercises per week, and then multiply that by the number of weeks she exercises."
+    },
+    {
+      "seed": 1201,
+      "question_id": 5935,
+      "nonempty_lines": 6,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.1895424836601307,
+      "first_line": "First, we need to find the distance of the detour. Since the detour is 20% longer, we can calculate it as follows: 30 miles * 1.20 = 36 miles."
+    },
+    {
+      "seed": 1201,
+      "question_id": 5019,
+      "nonempty_lines": 6,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.1016949152542373,
+      "first_line": "Let's work backwards to find out how many suckers Jen had initially."
+    },
+    {
+      "seed": 1201,
+      "question_id": 646,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.323943661971831,
+      "first_line": "First, find the number of people on the first trip by multiplying the bus's capacity by 3/4: 200 * 3/4 = 150 people."
+    },
+    {
+      "seed": 1201,
+      "question_id": 3584,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3173076923076923,
+      "first_line": "First, let's find out how much money Mary earns each month. She earns $20 washing cars and $40 walking dogs, so she earns a total of $20 + $40 = $<<20+40=60>>60 each month."
+    },
+    {
+      "seed": 1201,
+      "question_id": 2753,
+      "nonempty_lines": 12,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.22962962962962963,
+      "first_line": "To find the total number of eyes among Nina's pet insects, we need to calculate the number of eyes for the spiders and the ants separately and then add them together."
+    },
+    {
+      "seed": 1201,
+      "question_id": 1402,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.3114754098360656,
+      "first_line": "To find the total time it takes Dan to dig 5 adult graves, we multiply the time it takes to dig one adult grave by the number of adult graves: 3 hours/grave * 5 graves = 15 hours."
+    },
+    {
+      "seed": 1201,
+      "question_id": 3978,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.3595505617977528,
+      "first_line": "First, let's find out how many pages James writes in a day. He writes 5 pages to each of 2 people, so he writes 5 pages/person * 2 people = 10 pages/day."
+    },
+    {
+      "seed": 1201,
+      "question_id": 3684,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.19285714285714287,
+      "first_line": "To find the total time it will take Amelia to wash and dry all three loads, we need to add the time it takes for each load."
+    },
+    {
+      "seed": 1201,
+      "question_id": 4446,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.28431372549019607,
+      "first_line": "First, find the number of adults in the party by subtracting the number of children from the total number of people: 12 people - 2 children = <<12-2=10>>10 adults"
+    },
+    {
+      "seed": 1201,
+      "question_id": 7206,
+      "nonempty_lines": 8,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.08823529411764706,
+      "first_line": "Let's denote the total number of chocolates in the box as C."
+    },
+    {
+      "seed": 1201,
+      "question_id": 6767,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.2777777777777778,
+      "first_line": "First, we need to find out how many days Jenna will be able to read. She will be busy for 4 weekdays starting on the 13th, so she will be able to read for 30 - 4 = 26 days."
+    },
+    {
+      "seed": 1201,
+      "question_id": 6911,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.4084507042253521,
+      "first_line": "The pharmacy needs a total of 100 tubs for the week and already has 20 tubs in storage, so they need to buy 100 - 20 = 80 tubs."
+    },
+    {
+      "seed": 1201,
+      "question_id": 376,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3442622950819672,
+      "first_line": "First, find out how many apples Caleb picked by subtracting 5 from Kayla's 20 apples: 20 - 5 = 15 apples."
+    },
+    {
+      "seed": 1201,
+      "question_id": 1157,
+      "nonempty_lines": 12,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.07386363636363637,
+      "first_line": "First, let's calculate the total weight of the clothes Tony has already selected:"
+    },
+    {
+      "seed": 1201,
+      "question_id": 1379,
+      "nonempty_lines": 6,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.24786324786324787,
+      "first_line": "In the first spring, Lola's 10 breeding rabbits had 10 times as many kittens as the number of breeding rabbits, so they had 10 * 10 = 100 kittens."
+    },
+    {
+      "seed": 1201,
+      "question_id": 5858,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.6065573770491803,
+      "first_line": "First, we need to find the cost of Stephanie's bike. Since Stephanie's bike is worth twice as much as Marion's bike, we can calculate it by multiplying Marion's bike cost by 2: $356 * 2 = $<<356*2=712>>712"
+    },
+    {
+      "seed": 1201,
+      "question_id": 6837,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3333333333333333,
+      "first_line": "Annie had 36 crayons in her locker, so Bobby gave her 36/2 = 18 crayons."
+    },
+    {
+      "seed": 1201,
+      "question_id": 5564,
+      "nonempty_lines": 7,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.06451612903225806,
+      "first_line": "Let's break down the problem step by step:"
+    },
+    {
+      "seed": 1201,
+      "question_id": 6119,
+      "nonempty_lines": 7,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.1347517730496454,
+      "first_line": "First, find the total amount of oats each horse eats per day: 4 pounds * 2 = 8 pounds"
+    },
+    {
+      "seed": 1201,
+      "question_id": 7249,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.4594594594594595,
+      "first_line": "First, we need to find the total number of words Vinnie wrote. We can do this by adding the words he wrote on Saturday and Sunday: 450 words + 650 words = 1100 words."
+    },
+    {
+      "seed": 1201,
+      "question_id": 4186,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.3364485981308411,
+      "first_line": "First, we need to find out how many loot boxes John bought. To do this, we divide the total amount he spent by the cost of each loot box: $40 / $5 = 8 loot boxes."
+    },
+    {
+      "seed": 1201,
+      "question_id": 2555,
+      "nonempty_lines": 10,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.1597222222222222,
+      "first_line": "Let's denote the weight of the moon as M tons. Since Mars weighs twice as much as the moon, Mars weighs 2M tons."
+    },
+    {
+      "seed": 1201,
+      "question_id": 3560,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.5930232558139535,
+      "first_line": "First, we need to find out how many salads Anna needs to have after accounting for the loss. Since half of the lettuce will be lost, Anna needs to have twice as many salads as she wants to have after the loss. So, she needs 12 * 2 = 24 salads."
+    },
+    {
+      "seed": 1201,
+      "question_id": 4678,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.36538461538461536,
+      "first_line": "For the second showing, three times as many people show up, so 200 * 3 = 600 people attend."
+    },
+    {
+      "seed": 1201,
+      "question_id": 6861,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "To afford the game, Ronald and Max need to earn $60. They sell each ice cream for $5, so they need to sell $60 / $5 = <<60/5=12>>12 ice creams to earn enough money to buy the game."
+    },
+    {
+      "seed": 1201,
+      "question_id": 468,
+      "nonempty_lines": 6,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.14423076923076922,
+      "first_line": "First, calculate the total cost of the T-shirts: 6 T-shirts * $8 each = $<<6*8=48>>48"
+    },
+    {
+      "seed": 1201,
+      "question_id": 3709,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.4020618556701031,
+      "first_line": "First, we need to find the total number of stickers June and Bonnie had before their grandparents gave them more. June had 76 stickers, and Bonnie had 63 stickers, so together they had 76 + 63 = 139 stickers."
+    },
+    {
+      "seed": 1201,
+      "question_id": 3969,
+      "nonempty_lines": 6,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.1553398058252427,
+      "first_line": "First, calculate the extra minutes for the As: 10 As * 2 minutes = 20 minutes"
+    },
+    {
+      "seed": 1201,
+      "question_id": 3662,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.32653061224489793,
+      "first_line": "Tory has sold a total of 12 + 7 + 5 = 24 packs of cookies."
+    },
+    {
+      "seed": 1201,
+      "question_id": 4176,
+      "nonempty_lines": 7,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.22321428571428573,
+      "first_line": "Let's assume there are x dogs in the pool. Each dog has 4 legs, so the total number of legs from the dogs is 4x."
+    },
+    {
+      "seed": 1201,
+      "question_id": 2227,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.375,
+      "first_line": "Jen played the shooting game twice, so she used 2 * 5 = 10 tickets."
+    },
+    {
+      "seed": 1201,
+      "question_id": 6782,
+      "nonempty_lines": 8,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.14864864864864866,
+      "first_line": "Let's denote the amount Gerald paid for his guitar as G."
+    },
+    {
+      "seed": 1201,
+      "question_id": 1525,
+      "nonempty_lines": 6,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.2318840579710145,
+      "first_line": "Let's denote the number of boys in the Biology class as B. Since there are three times as many girls as boys, the number of girls in the Biology class is 3B."
+    },
+    {
+      "seed": 1201,
+      "question_id": 4411,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.33653846153846156,
+      "first_line": "To find out how long it takes Alexis to sew 6 skirts, we multiply the time it takes to sew one skirt by the number of skirts: 2 hours/skirt * 6 skirts = 12 hours."
+    },
+    {
+      "seed": 1201,
+      "question_id": 6925,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.3076923076923077,
+      "first_line": "First, we need to find out how many minutes the treatment lasts: 2 hours * 60 minutes/hour = 120 minutes"
+    },
+    {
+      "seed": 1201,
+      "question_id": 172,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.5,
+      "first_line": "First, find the total number of glass bottles Kyle bought: 2 bottles + 3 bottles = <<2+3=5>>5 bottles"
+    },
+    {
+      "seed": 1201,
+      "question_id": 5551,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.515625,
+      "first_line": "First, we need to find the total cost of the computer and the printer. The computer costs $400 and the printer costs $40, so the total cost is $400 + $40 = $<<400+40=440>>440."
+    },
+    {
+      "seed": 1201,
+      "question_id": 5833,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.3283582089552239,
+      "first_line": "To calculate the total cost, we need to multiply the quantity of each item by its price and then add them together."
+    },
+    {
+      "seed": 1201,
+      "question_id": 5002,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 1.0,
+      "first_line": "Let's use x to represent the number of Oreos Jordan has. Then James has 2x + 3 Oreos. The total number of Oreos is x + (2x + 3) = 36. Combining like terms, we get 3x + 3 = 36. Subtracting 3 from both sides, we get 3x = 33. Dividing both sides by 3, we get x = 11. So Jordan has 11 Oreos."
+    },
+    {
+      "seed": 1201,
+      "question_id": 1746,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.2647058823529412,
+      "first_line": "First, let's calculate the total number of employees after the new hires: 500 + 200 = 700 employees."
+    },
+    {
+      "seed": 1201,
+      "question_id": 5317,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.43037974683544306,
+      "first_line": "The couple agreed to split the expenses equally, so each person should pay half of the total expenses. The total expenses for the house help are $128 (medical bill) + $160 (salary) = $288."
+    },
+    {
+      "seed": 1201,
+      "question_id": 6792,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.1523809523809524,
+      "first_line": "First, find the weight gain for the labrador puppy: 40 pounds * 25% = 10 pounds"
+    },
+    {
+      "seed": 1201,
+      "question_id": 2789,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.4485981308411215,
+      "first_line": "To find the score Maria needs on the fourth test, we first need to find the total score she needs to have an average of 85 for four tests. We can do this by multiplying the desired average by the number of tests: 85 * 4 = 340."
+    },
+    {
+      "seed": 1201,
+      "question_id": 7285,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.45,
+      "first_line": "First, find the number of students in the band by multiplying the number of students in the orchestra by 2: 20 students * 2 = 40 students"
+    },
+    {
+      "seed": 1201,
+      "question_id": 2760,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "Let's call Joel's age J and his dad's age D. We know that J = 5 and D = 32. We want to find out how old Joel will be when his dad is twice as old as him. Let's call this age X. So we have the equation D = 2J. We can substitute the values of J and D into the equation to get 32 = 2(5). Solving for X, we get X = 32/2 = 16. So Joel will be 16 years old when his dad is twice as old as him."
+    },
+    {
+      "seed": 1201,
+      "question_id": 511,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.53125,
+      "first_line": "First, we need to find the total mass of vegetables installed by adding the mass of each type of vegetable: 15 kg (carrots) + 13 kg (zucchini) + 8 kg (broccoli) = 36 kg"
+    },
+    {
+      "seed": 1201,
+      "question_id": 7130,
+      "nonempty_lines": 9,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.16304347826086957,
+      "first_line": "Let's call the number of people lifting weights at the start of Bethany's shift \"x\"."
+    },
+    {
+      "seed": 1201,
+      "question_id": 4269,
+      "nonempty_lines": 6,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.16049382716049382,
+      "first_line": "First, calculate the cost of the land: 30 acres * $20/acre = $<<30*20=600>>600"
+    },
+    {
+      "seed": 1201,
+      "question_id": 2679,
+      "nonempty_lines": 7,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.43137254901960786,
+      "first_line": "To find the average bowling score, we need to add up all the scores and then divide by the number of people."
+    },
+    {
+      "seed": 1201,
+      "question_id": 4591,
+      "nonempty_lines": 7,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.13333333333333333,
+      "first_line": "First, let's find the total number of sodas Tina bought: 3 packs * 12 sodas/pack = 36 sodas"
+    },
+    {
+      "seed": 1201,
+      "question_id": 1548,
+      "nonempty_lines": 7,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.2689655172413793,
+      "first_line": "First, we need to find the total number of bugs after Bill sprays the garden. Since the spray reduces the bug population to 80% of what it was previously, we can calculate the new number of bugs as follows:"
+    },
+    {
+      "seed": 1201,
+      "question_id": 560,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.5283018867924528,
+      "first_line": "First, find the total number of erasers by multiplying the number of boxes by the number of erasers per box: 48 boxes * 24 erasers/box = 1152 erasers"
+    },
+    {
+      "seed": 1201,
+      "question_id": 3257,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.2459016393442623,
+      "first_line": "At the first stop, there are 50 + 16 = 66 passengers on the bus."
+    },
+    {
+      "seed": 1201,
+      "question_id": 5195,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.26506024096385544,
+      "first_line": "Era had 5 burgers, and each burger was sliced into halves, so there were 5 * 2 = 10 slices in total."
+    },
+    {
+      "seed": 1201,
+      "question_id": 3621,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3684210526315789,
+      "first_line": "First, we need to find the total number of hours worked by all employees in a week. Fiona worked 40 hours, John worked 30 hours, and Jeremy worked 25 hours. So, the total number of hours worked in a week is 40 + 30 + 25 = 95 hours."
+    },
+    {
+      "seed": 1201,
+      "question_id": 6244,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.6344086021505376,
+      "first_line": "First, we need to find the total square footage of the cottage. The master bedroom and bath is 500 sq ft, the 2 guest bedrooms are 200 sq ft each, and the kitchen, guest bath, and living area is 600 sq ft. So the total square footage is 500 + 200 + 200 + 600 = 1500 sq ft."
+    },
+    {
+      "seed": 1201,
+      "question_id": 5115,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.21686746987951808,
+      "first_line": "First, calculate Janet's regular pay for the first 40 hours per week: 40 hours * $20/hour = $<<40*20=800>>800"
+    },
+    {
+      "seed": 1201,
+      "question_id": 5282,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.31958762886597936,
+      "first_line": "First, we need to find the official exchange rate. Since 5 euros is worth 1 dollar, the official exchange rate is 1 dollar / 5 euros = 0.2 dollars per euro."
+    },
+    {
+      "seed": 1201,
+      "question_id": 3499,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.6666666666666666,
+      "first_line": "First, we need to find Isabella's current age in months. Since there are 12 months in a year, Isabella will be 10 years old in 18 months, which is 10 * 12 = 120 months. So, Isabella's current age is 120 - 18 = 102 months."
+    },
+    {
+      "seed": 1201,
+      "question_id": 5286,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.45454545454545453,
+      "first_line": "First, we need to find the total number of flowers the florist has. We can do this by adding the number of narcissus flowers and the number of chrysanthemums: 75 + 90 = 165 flowers."
+    },
+    {
+      "seed": 1201,
+      "question_id": 407,
+      "nonempty_lines": 13,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.19230769230769232,
+      "first_line": "Let's denote Milford's current age as M. Since Eustace is twice as old as Milford, Eustace's current age is 2M."
+    },
+    {
+      "seed": 1201,
+      "question_id": 3880,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.2971014492753623,
+      "first_line": "First, we need to find the total number of bales of hay Farmer Brown wants Chester to deliver. Since he wants double the previous delivery, we multiply the previous number of bales by 2: 10 bales * 2 = 20 bales"
+    },
+    {
+      "seed": 1201,
+      "question_id": 4506,
+      "nonempty_lines": 7,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.2753623188405797,
+      "first_line": "First, let's find the number of petty larceny charges. Since there are six times as many petty larceny charges as burglary charges, and there are 2 burglary charges, there are 2 * 6 = <<2*6=12>>12 petty larceny charges."
+    },
+    {
+      "seed": 1201,
+      "question_id": 7440,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.234375,
+      "first_line": "First, find the total number of cupcakes Carla made by multiplying the number of batches by the number of cupcakes per batch: 45 batches * 65 cupcakes/batch = 2925 cupcakes"
+    },
+    {
+      "seed": 1201,
+      "question_id": 2289,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "First, let's calculate the discounted price of the first two books. Book 1 is 25% off, so the discount is 13.00 * 0.25 = $<<13*0.25=3.25>>3.25. The discounted price of Book 1 is 13.00 - 3.25 = $<<13-3.25=9.75>>9.75. Book 2 is also 25% off, so the discount is 15.00 * 0.25 = $<<15*0.25=3.75>>3.75. The discounted price of Book 2 is 15.00 - 3.75 = $<<15-3.75=11.25>>11.25. Now, let's add the prices of the discounted books and the regular books: 9.75 (Book 1) + 11.25 (Book 2) + 10.00 (Book 3) + 10.00 (Book 4) ="
+    },
+    {
+      "seed": 1201,
+      "question_id": 1396,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.27927927927927926,
+      "first_line": "First, let's find out how much milk Mrs. Lim got this morning. She got 18 gallons fewer than yesterday morning, so she got 68 - 18 = 50 gallons this morning."
+    },
+    {
+      "seed": 1201,
+      "question_id": 973,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.5333333333333333,
+      "first_line": "First, we need to find the total amount of credit sales. To do this, we multiply the total amount of sales by the fraction of credit sales: $80 * 2/5 = $32."
+    },
+    {
+      "seed": 1201,
+      "question_id": 3030,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "Let's denote the number of videos Ekon watched as E. Then, Kelsey watched E + 43 videos, and Uma watched E + 17 videos. The total number of videos watched by all three friends is E + (E + 43) + (E + 17) = 411. Combining like terms, we get 3E + 60 = 411. Subtracting 60 from both sides, we get 3E = 351. Dividing both sides by 3, we get E = 117. Therefore, Kelsey watched E + 43 = 117 + 43 = <<117+43=160>>160 videos."
+    },
+    {
+      "seed": 1201,
+      "question_id": 1564,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.18181818181818182,
+      "first_line": "Maddie watches a total of 8 episodes x 44 minutes/episode = 352 minutes of TV in a week."
+    },
+    {
+      "seed": 1201,
+      "question_id": 4641,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.5211267605633803,
+      "first_line": "First, we need to find the number of women spectators. We know that there were 10000 spectators in total and 7000 of them were men. So, the number of women spectators is 10000 - 7000 = 3000."
+    },
+    {
+      "seed": 1201,
+      "question_id": 6059,
+      "nonempty_lines": 8,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.1837837837837838,
+      "first_line": "To find the total number of papers Kyle delivers each week, we need to calculate the number of papers he delivers from Monday to Saturday and the number of papers he delivers on Sunday."
+    },
+    {
+      "seed": 1201,
+      "question_id": 5494,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "Let's denote the number of children as x. The total cost for the adult ticket is $8, and the total cost for the children's tickets is $3x. The total amount of money the adult has is $35. So, we can set up the equation: 8 + 3x = 35. Now, we need to solve for x. First, subtract 8 from both sides of the equation: 3x = 35 - 8. This simplifies to 3x = 27. Now, divide both sides of the equation by 3: x = 27 / 3. This gives us x = 9. Therefore, the adult can take 9 children with her to the movies."
+    },
+    {
+      "seed": 1201,
+      "question_id": 5146,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.21875,
+      "first_line": "First, find the cost per bagel when buying individually: $2.25 / 12 = $0.1875"
+    },
+    {
+      "seed": 1201,
+      "question_id": 195,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.21212121212121213,
+      "first_line": "First, calculate the total cost of the drinks: 5 boxes * $6/box = $<<5*6=30>>30"
+    },
+    {
+      "seed": 1201,
+      "question_id": 4346,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3422818791946309,
+      "first_line": "First, let's find the total amount of soda Julio has. He has 4 bottles of orange soda and 7 bottles of grape soda, so that's 4 + 7 = 11 bottles of soda in total. Since each bottle is 2 liters, Julio has 11 * 2 = 22 liters of soda."
+    },
+    {
+      "seed": 1201,
+      "question_id": 5095,
+      "nonempty_lines": 10,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.3163265306122449,
+      "first_line": "Let's denote the number of birthday presents as B. According to the problem, the number of Christmas presents is twice the number of birthday presents, so we can write the equation:"
+    },
+    {
+      "seed": 1201,
+      "question_id": 1358,
+      "nonempty_lines": 15,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.22981366459627328,
+      "first_line": "Let's denote the number of guests who want chicken as C. Then, the number of guests who want steak is 3C. We know that the total number of guests is 80, so we can write the equation:"
+    },
+    {
+      "seed": 1201,
+      "question_id": 1356,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3130434782608696,
+      "first_line": "First, we need to find out how many rooms Johan painted green. To do this, we multiply the total number of rooms by the fraction of rooms painted green: 10 rooms * 3/5 = 6 rooms"
+    },
+    {
+      "seed": 1201,
+      "question_id": 4436,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.5277777777777778,
+      "first_line": "First, we need to find out how much money Mike already has. To do this, we multiply the total cost of the phone by the percentage he already has: $1300 * 40% = $1300 * 0.4 = $<<1300*0.4=520>>520"
+    },
+    {
+      "seed": 1201,
+      "question_id": 3805,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.2857142857142857,
+      "first_line": "First, calculate the amount of money Janet makes from her exterminator work: 20 hours * $70/hour = $<<20*70=1400>>1400"
+    },
+    {
+      "seed": 1201,
+      "question_id": 6110,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.3125,
+      "first_line": "Ginger drank 8 hours x 2 cups/hour = 16 cups of water from her bottle."
+    },
+    {
+      "seed": 1201,
+      "question_id": 2611,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3028169014084507,
+      "first_line": "First, we need to find out how old Trevor's older brother will be when he is three times as old as Trevor is now. Trevor is currently 11 years old, so three times that age is 3 * 11 = 33 years old."
+    },
+    {
+      "seed": 1201,
+      "question_id": 7379,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.20606060606060606,
+      "first_line": "First, we need to convert the land area from hectares to square meters. Since 1 hectare is equal to 10,000 square meters, 3 hectares is equal to 3 * 10,000 = 30,000 square meters."
+    },
+    {
+      "seed": 1201,
+      "question_id": 7274,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.26881720430107525,
+      "first_line": "To find the odds of a candidate knowing Excel and being willing to work nights, we need to find the intersection of the two events."
+    },
+    {
+      "seed": 1201,
+      "question_id": 5433,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "To find the distance covered, we can set up a proportion using the given ratio of fuel used to distance covered. The ratio is 4:7, which means for every 4 gallons of fuel used, the car covers 7 miles. We can write this as a fraction: 4/7 = 44/x, where x is the distance covered in miles. To solve for x, we can cross-multiply: 4x = 44 * 7. Simplifying, we get 4x = 308. Dividing both sides by 4, we find that x = 77. Therefore, Haley's car covered 77 miles when it used 44 gallons of gas."
+    },
+    {
+      "seed": 1201,
+      "question_id": 241,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.24096385542168675,
+      "first_line": "To find the number of desktop computers sold, we need to first find the number of laptops and netbooks sold."
+    },
+    {
+      "seed": 1201,
+      "question_id": 656,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.6060606060606061,
+      "first_line": "If Zig wrote four times as many books as Flo, then Flo wrote 60 books / 4 = 15 books."
+    },
+    {
+      "seed": 1213,
+      "question_id": 1147,
+      "nonempty_lines": 8,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.2682926829268293,
+      "first_line": "First, we need to find the number of people in each city. To do this, we multiply the number of people per cubic yard by the number of cubic yards in each city."
+    },
+    {
+      "seed": 1213,
+      "question_id": 4744,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.18699186991869918,
+      "first_line": "First, we need to calculate the total amount of water consumed by the linemen: 12 linemen * 8 ounces each = 96 ounces."
+    },
+    {
+      "seed": 1213,
+      "question_id": 669,
+      "nonempty_lines": 20,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.14634146341463414,
+      "first_line": "Let's denote the number of frisbees Bella has as F, the number of deck cards as D, and the number of marbles as M."
+    },
+    {
+      "seed": 1213,
+      "question_id": 6792,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "First, we need to calculate the weight gain for each dog. The labrador puppy starts at 40 pounds and gains 25% of its starting weight, so it gains 40 * 0.25 = 10 pounds. The dachshund puppy starts at 12 pounds and gains 25% of its starting weight, so it gains 12 * 0.25 = 3 pounds. Now, we can calculate the final weight of each dog by adding the weight gain to their starting weight. The labrador puppy's final weight is 40 + 10 = 50 pounds, and the dachshund puppy's final weight is 12 + 3 = 15 pounds. The difference in their weight at the end of the year is 50 - 15 = 35 pounds. So, the answer is 35."
+    },
+    {
+      "seed": 1213,
+      "question_id": 6837,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "Annie had 36 crayons in her locker. Bobby gave her half of that, so he gave her 36 / 2 = 18 crayons. Now, Annie has 21 (from the pack) + 36 (in her locker) + 18 (from Bobby) = 75 crayons in total. She gives 1/3 of her total crayons to Mary, so she gives 75 / 3 = 25 crayons to Mary."
+    },
+    {
+      "seed": 1213,
+      "question_id": 7245,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.5256410256410257,
+      "first_line": "First, we need to find out how many napkins Amelia gave William. Since Amelia gave him twice the number of napkins Olivia gave him, we multiply the number of napkins Olivia gave (10) by 2: 10 * 2 = 20 napkins."
+    },
+    {
+      "seed": 1213,
+      "question_id": 4313,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "Bob has already won 2 weeks, so he has earned 2 * 100 = 200 dollars. He needs 1000 - 200 = 800 more dollars to buy the puppy. Since he wins 100 dollars each week, he needs to win 800 / 100 = 8 more weeks to reach his goal. Therefore, the minimum number of additional weeks Bob must win first place is 8."
+    },
+    {
+      "seed": 1213,
+      "question_id": 2824,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.30701754385964913,
+      "first_line": "First, we need to find out how many tacos they can make with 100 pounds of beef. Since they use 0.25 pounds of beef per taco, they can make 100 / 0.25 = 400 tacos."
+    },
+    {
+      "seed": 1213,
+      "question_id": 5261,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3710691823899371,
+      "first_line": "First, we need to calculate the volume of the pool in cubic feet. The pool measures 10 feet by 10 feet by 6 feet, so its volume is 10 * 10 * 6 = 600 cubic feet. Since each gallon of water fills 1 cubic foot of the pool, the pool requires 600 gallons of water to be filled."
+    },
+    {
+      "seed": 1213,
+      "question_id": 1839,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.3780487804878049,
+      "first_line": "First, we need to find the weight of the donkey in pounds. Since the donkey weighs 90% less than the elephant, it means the donkey weighs 10% of the elephant's weight."
+    },
+    {
+      "seed": 1213,
+      "question_id": 5,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3767123287671233,
+      "first_line": "First, we need to find out how many purple flowers there are. Since there are 80% more purple flowers than yellow flowers, we can calculate this by multiplying the number of yellow flowers by 1.8 (which is 100% + 80% = 180% or 1.8 in decimal form). So, 10 * 1.8 = 18 purple flowers."
+    },
+    {
+      "seed": 1213,
+      "question_id": 5384,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3258426966292135,
+      "first_line": "In the second season, the tree produced 20% fewer fruits than the first season, so it produced 200 * (1 - 0.20) = 200 * 0.80 = 160 apples."
+    },
+    {
+      "seed": 1213,
+      "question_id": 5107,
+      "nonempty_lines": 9,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.41304347826086957,
+      "first_line": "Let's denote the original borrowed amount as \"P\". The interest rate is 12%, which can be written as 0.12 in decimal form. The total interest for one year is $1500. We can set up the equation as follows:"
+    },
+    {
+      "seed": 1213,
+      "question_id": 4686,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.3488372093023256,
+      "first_line": "Darcy has a total of 20 shirts + 8 shorts = 28 pieces of clothing."
+    },
+    {
+      "seed": 1213,
+      "question_id": 4436,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "First, we need to find out how much money Mike already has. To do this, we multiply the total cost of the phone by the percentage he already has: $1300 * 0.40 = $520. Now, we subtract the amount he already has from the total cost to find out how much more money he needs: $1300 - $520 = $780. So, Mike needs an additional $780 to buy the new phone."
+    },
+    {
+      "seed": 1213,
+      "question_id": 1288,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.5,
+      "first_line": "First, we need to find out how long James spends on the rest of his chores. Since he spends 3 times as long on the rest of his chores as he does vacuuming, we can calculate this by multiplying the time he spends vacuuming by 3: 3 hours * 3 = 9 hours."
+    },
+    {
+      "seed": 1213,
+      "question_id": 2894,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.35555555555555557,
+      "first_line": "First, we need to find out how much money Ian made in total. He worked 8 hours and earned $18 per hour, so he made 8 * $18 = $144 in total."
+    },
+    {
+      "seed": 1213,
+      "question_id": 431,
+      "nonempty_lines": 6,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.06060606060606061,
+      "first_line": "Javier has 2 legs."
+    },
+    {
+      "seed": 1213,
+      "question_id": 6911,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.4084507042253521,
+      "first_line": "The pharmacy needs a total of 100 tubs for the week and already has 20 tubs in storage, so they need to buy 100 - 20 = 80 tubs."
+    },
+    {
+      "seed": 1213,
+      "question_id": 3326,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.49206349206349204,
+      "first_line": "To find out how many tons the tongue of an adult blue whale can weigh, we need to divide the weight in pounds by the number of pounds in a ton."
+    },
+    {
+      "seed": 1213,
+      "question_id": 2693,
+      "nonempty_lines": 6,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.19444444444444445,
+      "first_line": "First, we need to find John's taxable income by subtracting his deductions from his total income: $100,000 - $30,000 = $70,000."
+    },
+    {
+      "seed": 1213,
+      "question_id": 4506,
+      "nonempty_lines": 8,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3333333333333333,
+      "first_line": "First, let's find out how many petty larceny charges Jean has. Since she has six times as many petty larceny charges as burglary charges, and she has 2 burglary charges, she has 2 * 6 = 12 petty larceny charges."
+    },
+    {
+      "seed": 1213,
+      "question_id": 6580,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.32894736842105265,
+      "first_line": "First, we need to find out how many gallons of water Toby needs to fill the pool. Since the pool takes 50 hours to fill and the hose runs at 100 gallons per hour, Toby needs 50 hours * 100 gallons/hour = 5000 gallons of water to fill the pool."
+    },
+    {
+      "seed": 1213,
+      "question_id": 3219,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.48,
+      "first_line": "The total cost of the chairs is $135 - $55 = $80."
+    },
+    {
+      "seed": 1213,
+      "question_id": 4870,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.265625,
+      "first_line": "First, we need to calculate the ticket price for children. Since the ticket price for children is half of the adult price, we divide the adult price by 2: $26 / 2 = $13."
+    },
+    {
+      "seed": 1213,
+      "question_id": 2798,
+      "nonempty_lines": 6,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.25862068965517243,
+      "first_line": "First, let's find out how many days John works in a 30-day month. Since he works every other day, he works 30 / 2 = 15 days in a month."
+    },
+    {
+      "seed": 1213,
+      "question_id": 7089,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "First, we need to calculate the total number of miles Zach drove. He drove 620 miles on Monday and 744 miles on Thursday, so the total number of miles is 620 + 744 = 1364 miles. Next, we need to calculate the cost of the miles he drove. Since the cost is 50 cents per mile, the cost of the miles is 1364 * 0.50 = $682. Finally, we need to add the cost of the car rental to the cost of the miles. The car rental cost is $150, so the total cost is 150 + 682 = $832. Therefore, Zach spent $832."
+    },
+    {
+      "seed": 1213,
+      "question_id": 5422,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 1.0,
+      "first_line": "Let's call the three consecutive integers x, x+1, and x+2. According to the problem, their sum is 18. So we can write the equation: x + (x+1) + (x+2) = 18. Combining like terms, we get 3x + 3 = 18. Subtracting 3 from both sides, we get 3x = 15. Dividing both sides by 3, we get x = 5. Therefore, the three consecutive integers are 5, 6, and 7. The largest of the three numbers is 7."
+    },
+    {
+      "seed": 1213,
+      "question_id": 7028,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "First, we need to find out how many people have an envelope taped underneath their chairs. 40% of 100 people is 0.40 * 100 = 40 people. Next, we need to find out how many of these people will have \"You Won\" in their envelope. 20% of 40 people is 0.20 * 40 = 8 people. Therefore, 8 people will win a prize."
+    },
+    {
+      "seed": 1213,
+      "question_id": 4003,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "First, we need to find out how much money Joanna's brother has. Since he has thrice as much as Joanna, we multiply Joanna's money by 3: $8 * 3 = $24. Now, we need to find out how much money Joanna's sister has. Since she has half as much as Joanna, we divide Joanna's money by 2: $8 / 2 = $4. Finally, we add up the money that Joanna, her brother, and her sister have: $8 + $24 + $4 = $36. So, the three of them have $36 altogether."
+    },
+    {
+      "seed": 1213,
+      "question_id": 4446,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3269230769230769,
+      "first_line": "First, we need to find out how many adults are in Hans's party. Since there are 12 people in total and 2 of them are children, there are 12 - 2 = 10 adults."
+    },
+    {
+      "seed": 1213,
+      "question_id": 5433,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "To find the distance covered, we can set up a proportion using the given ratio of fuel used to distance covered. The ratio is 4:7, which means for every 4 gallons of fuel used, the car covers 7 miles. We can write this as a fraction: 4/7 = 44/x, where x is the distance covered in miles. To solve for x, we can cross-multiply: 4x = 44 * 7. Now, we can divide both sides of the equation by 4: x = (44 * 7) / 4. Simplifying, we get x = 77. Therefore, Haley's car covered 77 miles when it used 44 gallons of gas."
+    },
+    {
+      "seed": 1213,
+      "question_id": 5903,
+      "nonempty_lines": 9,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.18478260869565216,
+      "first_line": "Let's denote the number of teas sold as T and the number of lattes sold as L."
+    },
+    {
+      "seed": 1213,
+      "question_id": 241,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.13114754098360656,
+      "first_line": "Let's break down the problem step by step:"
+    },
+    {
+      "seed": 1213,
+      "question_id": 701,
+      "nonempty_lines": 11,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.20714285714285716,
+      "first_line": "First, we need to find the cost of one slice of pizza. To do this, we divide the total cost of the pizzas by the total number of slices."
+    },
+    {
+      "seed": 1213,
+      "question_id": 4569,
+      "nonempty_lines": 7,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.25668449197860965,
+      "first_line": "First, let's calculate the total amount of grass consumed by the animals each month. Each cow eats 2 acres of grass per month, and each sheep eats 1 acre of grass per month. There are 5 cows and 8 sheep, so the total grass consumption per month is:"
+    },
+    {
+      "seed": 1213,
+      "question_id": 2438,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.2714285714285714,
+      "first_line": "To find out how many tennis balls Brian has, we need to follow the given information step by step."
+    },
+    {
+      "seed": 1213,
+      "question_id": 5115,
+      "nonempty_lines": 9,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.11403508771929824,
+      "first_line": "First, let's calculate Janet's regular pay for the first 40 hours per week:"
+    },
+    {
+      "seed": 1213,
+      "question_id": 2335,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.5,
+      "first_line": "First, we need to find the total number of slices in 4 loaves of bread. Since each loaf has 15 slices, the total number of slices is 15 slices/loaf * 4 loaves = 60 slices."
+    },
+    {
+      "seed": 1213,
+      "question_id": 3335,
+      "nonempty_lines": 10,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.2376237623762376,
+      "first_line": "First, we need to find Marco's score. Since Marco scored 10% less than the average test score, we can calculate his score as follows:"
+    },
+    {
+      "seed": 1213,
+      "question_id": 695,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.4523809523809524,
+      "first_line": "First, we need to find the total amount of smoothie Carla is making. She uses 500 ml of watermelon puree and 100 ml of cream, so the total amount is 500 ml + 100 ml = 600 ml."
+    },
+    {
+      "seed": 1213,
+      "question_id": 3108,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "First, we need to calculate the total cost of the hamburgers and milkshakes Annie buys. The cost of 8 hamburgers is 8 * $4 = $<<8*4=32>>32. The cost of 6 milkshakes is 6 * $3 = $<<6*3=18>>18. The total cost of the hamburgers and milkshakes is $32 + $18 = $<<32+18=50>>50. Annie starts with $120, so she has $120 - $50 = $<<120-50=70>>70 left."
+    },
+    {
+      "seed": 1213,
+      "question_id": 3709,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3486238532110092,
+      "first_line": "First, we need to find out how many stickers June and Bonnie had before their grandparents gave them more. June had 76 stickers, and Bonnie had 63 stickers. So, together they had 76 + 63 = 139 stickers."
+    },
+    {
+      "seed": 1213,
+      "question_id": 2578,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.5,
+      "first_line": "Harper's brother has 15 - 6 = 9 rubber bands."
+    },
+    {
+      "seed": 1213,
+      "question_id": 6782,
+      "nonempty_lines": 8,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.13095238095238096,
+      "first_line": "Let's denote the amount Gerald paid for the guitar as G."
+    },
+    {
+      "seed": 1213,
+      "question_id": 5816,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "First, we need to find the cost of one football game ticket. Since eight movie tickets cost 2 times as much as one football game ticket, we can set up the equation: 8 * $30 = 2 * (cost of one football game ticket). Solving for the cost of one football game ticket, we get: cost of one football game ticket = (8 * $30) / 2 = $120 / 2 = $60. Now, we can calculate the total amount of money Chandler will pay for eight movie tickets and five football game tickets: (8 * $30) + (5 * $60) = $240 + $300 = $540. So, Chandler will pay a total of $540."
+    },
+    {
+      "seed": 1213,
+      "question_id": 4719,
+      "nonempty_lines": 8,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.07142857142857142,
+      "first_line": "Let's denote the amount Sid spent on computer accessories as x."
+    },
+    {
+      "seed": 1213,
+      "question_id": 7001,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.288135593220339,
+      "first_line": "First, we need to find the total number of balloons Andrew has. He has 303 blue balloons and 453 purple balloons, so the total number of balloons is 303 + 453 = 756 balloons."
+    },
+    {
+      "seed": 1213,
+      "question_id": 7108,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.25735294117647056,
+      "first_line": "First, we need to find out how many jumps Bobby can do in a minute as an adult. Since there are 60 seconds in a minute, we can calculate the number of jumps as follows:"
+    },
+    {
+      "seed": 1213,
+      "question_id": 220,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.352,
+      "first_line": "First, we need to find out how many miles the car can travel on one gallon of gas. To do this, we divide the total miles traveled by the total gallons of gas used: 400 miles / 20 gallons = 20 miles per gallon."
+    },
+    {
+      "seed": 1213,
+      "question_id": 7130,
+      "nonempty_lines": 8,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.1724137931034483,
+      "first_line": "Let's call the number of people lifting weights at the start of Bethany's shift \"x\"."
+    },
+    {
+      "seed": 1213,
+      "question_id": 4591,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.2014388489208633,
+      "first_line": "First, let's find out how many sodas Tina bought in total. She bought 3 packs of 12 sodas each, so she bought 3 * 12 = 36 sodas."
+    },
+    {
+      "seed": 1213,
+      "question_id": 5835,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "Let the price of a single necklace be N. Since the earrings are three times as expensive as any one necklace, the price of the earrings is 3N. Princess Daphne bought three necklaces and a set of earrings for a total of $240,000, so we can write the equation: 3N + 3N = $240,000. Combining like terms, we get 6N = $240,000. To find the price of a single necklace, we divide both sides of the equation by 6: N = $240,000 / 6 = $40,000. Therefore, the cost of a single necklace is $40,000."
+    },
+    {
+      "seed": 1213,
+      "question_id": 3928,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "To find out how many houses can be painted in 3 hours, we need to convert the time to minutes. There are 60 minutes in an hour, so 3 hours is equal to 3 * 60 = 180 minutes. Now, we can divide the total time by the time it takes to paint one house: 180 minutes / 20 minutes per house = 9 houses. So, you can paint 9 houses in 3 hours."
+    },
+    {
+      "seed": 1213,
+      "question_id": 5734,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "Darry climbed his full ladder 10 times, and each time he climbed 11 steps, so he climbed 10 * 11 = 110 steps on his full ladder. He also climbed his smaller ladder 7 times, and each time he climbed 6 steps, so he climbed 7 * 6 = 42 steps on his smaller ladder. In total, Darry climbed 110 + 42 = 152 steps today."
+    },
+    {
+      "seed": 1213,
+      "question_id": 5612,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "Sue initially had 15 books and 6 movies. She returned 8 books, so she now has 15 - 8 = 7 books. She returned a third of the movies, which is 6 / 3 = 2 movies. So, she now has 6 - 2 = 4 movies. She then checked out 9 more books, so she now has 7 + 9 = 16 books. In total, Sue now has 16 books and 4 movies, which is 16 + 4 = 20 items."
+    },
+    {
+      "seed": 1213,
+      "question_id": 3404,
+      "nonempty_lines": 7,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.40625,
+      "first_line": "To find the total number of people who attended the school meeting, we need to add the number of seated students, seated teachers, and standing students."
+    },
+    {
+      "seed": 1213,
+      "question_id": 7127,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.47540983606557374,
+      "first_line": "First, we need to determine how many days are in 2 weeks. There are 7 days in a week, so 2 weeks have 2 * 7 = 14 days."
+    },
+    {
+      "seed": 1213,
+      "question_id": 3121,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.52,
+      "first_line": "Angeli and Marlon ate a total of 3/2 + 3/2 = 3 slices."
+    },
+    {
+      "seed": 1213,
+      "question_id": 594,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.325,
+      "first_line": "Ed found a total of 7 + 2 + 4 = 13 shells."
+    },
+    {
+      "seed": 1213,
+      "question_id": 4698,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.24203821656050956,
+      "first_line": "First, we need to find out how many people are in Andrew's family. Andrew lives with his 2 parents and 2 siblings, so there are 1 (Andrew) + 2 (parents) + 2 (siblings) = 5 people in total."
+    },
+    {
+      "seed": 1213,
+      "question_id": 656,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.6785714285714286,
+      "first_line": "If Zig wrote four times as many books as Flo, then Flo wrote 60 / 4 = 15 books."
+    },
+    {
+      "seed": 1213,
+      "question_id": 4293,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.4444444444444444,
+      "first_line": "First, let's find out how many CDs cost $10 each and how many cost $5 each. Since 40% of the CDs cost $10 each, we have 40% of 200 CDs, which is 0.40 * 200 = 80 CDs. The rest of the CDs, which is 100% - 40% = 60%, cost $5 each, so there are 60% of 200 CDs, which is 0.60 * 200 = 120 CDs."
+    },
+    {
+      "seed": 1213,
+      "question_id": 4411,
+      "nonempty_lines": 10,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.25,
+      "first_line": "To find out how long it takes Alexis to sew 6 skirts and 4 coats, we need to calculate the time it takes to sew each type of garment and then add them together."
+    },
+    {
+      "seed": 1213,
+      "question_id": 2942,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "To calculate the total amount financed, we need to multiply the monthly payment by the number of months in 5 years. There are 12 months in a year, so 5 years is equal to 5 * 12 = 60 months. Now, we can multiply the monthly payment by the number of months: $150.00 * 60 = $<<150*60=9000>>9000. Therefore, Gunther financed the tractor for $9000."
+    },
+    {
+      "seed": 1213,
+      "question_id": 6059,
+      "nonempty_lines": 7,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.07766990291262135,
+      "first_line": "Let's break down the problem step by step:"
+    },
+    {
+      "seed": 1213,
+      "question_id": 5404,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.23076923076923078,
+      "first_line": "On Tuesday, Lauren sent 65 + 10 = 75 pieces of mail."
+    },
+    {
+      "seed": 1213,
+      "question_id": 1499,
+      "nonempty_lines": 6,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.1724137931034483,
+      "first_line": "The family bought 4 hard shell tacos x $5 = $20 for hard shell tacos."
+    },
+    {
+      "seed": 1213,
+      "question_id": 3969,
+      "nonempty_lines": 10,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.06766917293233082,
+      "first_line": "First, let's calculate the extra minutes for each grade:"
+    },
+    {
+      "seed": 1213,
+      "question_id": 4261,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.25,
+      "first_line": "There are 30 students in Ms. Leech's class, and twice as many girls as boys, so there are 30/2 = 15 girls in the class."
+    },
+    {
+      "seed": 1213,
+      "question_id": 6244,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.5841584158415841,
+      "first_line": "First, we need to find the total square footage of the cottage. The master bedroom and bath is 500 sq ft, the 2 guest bedrooms are 200 sq ft each, and the kitchen, guest bath, and living area is 600 sq ft. So the total square footage is 500 + 200 + 200 + 600 = 1500 sq ft."
+    },
+    {
+      "seed": 1213,
+      "question_id": 3447,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3977272727272727,
+      "first_line": "First, we need to find out how many apples they eat in a week. Chandler eats 23 apples and Lucy eats 19 apples, so together they eat 23 + 19 = 42 apples per week."
+    },
+    {
+      "seed": 1213,
+      "question_id": 7187,
+      "nonempty_lines": 10,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.102803738317757,
+      "first_line": "Let's denote the number of cookies in the jar as x."
+    },
+    {
+      "seed": 1213,
+      "question_id": 5203,
+      "nonempty_lines": 7,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.28431372549019607,
+      "first_line": "First, we need to find the total duration of the album in seconds. Since there are 60 seconds in a minute, we can calculate the total duration as follows:"
+    },
+    {
+      "seed": 1213,
+      "question_id": 3978,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3076923076923077,
+      "first_line": "First, let's find out how many pages James writes in a day. He writes 5 pages to each of 2 people, so he writes 5 * 2 = 10 pages a day."
+    },
+    {
+      "seed": 1213,
+      "question_id": 5550,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.42045454545454547,
+      "first_line": "First, let's find the total number of lines in one intersection. Since there are 4 crosswalks and each crosswalk has 20 lines, the total number of lines in one intersection is 4 * 20 = 80 lines."
+    },
+    {
+      "seed": 1213,
+      "question_id": 4209,
+      "nonempty_lines": 10,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.22340425531914893,
+      "first_line": "To find out how many pounds of butter Valerie needs, we can set up a proportion based on the original recipe."
+    },
+    {
+      "seed": 1213,
+      "question_id": 529,
+      "nonempty_lines": 10,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.10674157303370786,
+      "first_line": "To find the minimum number of rides needed, we need to compare the cost per ride for both options."
+    },
+    {
+      "seed": 1213,
+      "question_id": 3560,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.5208333333333334,
+      "first_line": "First, we need to determine how many salads Anna needs to have after accounting for the loss. Since half of the lettuce will be lost, Anna needs to have twice as many salads as she wants to have after the loss. So, she needs 12 * 2 = 24 salads."
+    },
+    {
+      "seed": 1213,
+      "question_id": 5551,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.5076923076923077,
+      "first_line": "First, we need to find the total cost of the computer and the printer. The computer costs $400 and the printer costs $40, so the total cost is $400 + $40 = $440."
+    },
+    {
+      "seed": 1213,
+      "question_id": 4980,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.5853658536585366,
+      "first_line": "The first bowl has a capacity equal to 3/4 the capacity of the second bowl, so it has 3/4 * 600 = 450 marbles."
+    },
+    {
+      "seed": 1213,
+      "question_id": 725,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.45714285714285713,
+      "first_line": "First, we need to find out how many toads Jim has. Since Jim has 20 more toads than Tim, we add 20 to Tim's 30 toads: 30 + 20 = 50 toads."
+    },
+    {
+      "seed": 1213,
+      "question_id": 7171,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.35,
+      "first_line": "The factory produces 2 crayons of each color per box, so they produce 2 * 4 = 8 crayons per box."
+    },
+    {
+      "seed": 1213,
+      "question_id": 5625,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3372093023255814,
+      "first_line": "First, we need to find the discount amount per kilogram. To do this, we multiply the original price per kilogram by the discount percentage: $5 * 0.40 = $2."
+    },
+    {
+      "seed": 1213,
+      "question_id": 1190,
+      "nonempty_lines": 23,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.03773584905660377,
+      "first_line": "Let's break down the information given:"
+    },
+    {
+      "seed": 1213,
+      "question_id": 4529,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3597560975609756,
+      "first_line": "First, let's find out how many floors 6 builders can build in one day. Since 3 builders can build 1 floor in 30 days, 6 builders can build 2 floors in 30 days (because 6 is twice 3). So, 6 builders can build 2 floors in 30 days, which means they can build 1 floor in 15 days (30/2)."
+    },
+    {
+      "seed": 1213,
+      "question_id": 4664,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "Phill starts with 1 whole pizza. He cuts it in half, so he has 2 slices. Then he cuts each of those halves in half again, so he has 4 slices. He then cuts each of those slices in half again, so he has 8 slices. Phill gives 1 slice to 3 friends, so he gives away 3 slices. He gives 2 slices to 2 friends, so he gives away 4 slices. In total, Phill gives away 3 + 4 = 7 slices. Since he started with 8 slices, he has 8 - 7 = 1 slice left for himself."
+    },
+    {
+      "seed": 1213,
+      "question_id": 3405,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.5179856115107914,
+      "first_line": "First, let's find out how long it takes to fix all the shirts and pants. It takes 1.5 hours to fix a shirt, so for 10 shirts, it would take 10 * 1.5 = 15 hours. For pants, it takes twice as long, so it takes 1.5 * 2 = 3 hours to fix a pair of pants. For 12 pairs of pants, it would take 12 * 3 = 36 hours."
+    },
+    {
+      "seed": 1213,
+      "question_id": 172,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3233082706766917,
+      "first_line": "First, we need to find out how many glass bottles Kyle bought in total. He bought 2 glass bottles initially and then bought another 3 identical glass bottles. So, the total number of glass bottles is 2 + 3 = 5 glass bottles."
+    },
+    {
+      "seed": 1213,
+      "question_id": 4394,
+      "nonempty_lines": 15,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.23225806451612904,
+      "first_line": "Let's denote the number of craters in Daniel's ski helmet as D. According to the information given, Dan's skateboarding helmet has ten more craters than Daniel's ski helmet, so Dan's helmet has D + 10 craters."
+    },
+    {
+      "seed": 1213,
+      "question_id": 1354,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.3252032520325203,
+      "first_line": "First, we need to find the area of the backyard. The area of a rectangle is found by multiplying the length by the width. So, the area of the backyard is 20 yards * 13 yards = 260 square yards."
+    },
+    {
+      "seed": 1213,
+      "question_id": 2243,
+      "nonempty_lines": 9,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.24107142857142858,
+      "first_line": "To find the total number of flowers sold on Tuesday, we need to calculate the number of each type of flower sold and then add them together."
+    },
+    {
+      "seed": 1213,
+      "question_id": 4605,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.2625,
+      "first_line": "First, let's find out how many eggs Jane's chickens lay in one week. She has 10 chickens, and each chicken lays 6 eggs per week. So, the total number of eggs per week is 10 chickens * 6 eggs/chicken = 60 eggs."
+    },
+    {
+      "seed": 1213,
+      "question_id": 6497,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.20408163265306123,
+      "first_line": "The total ratio is 4 + 5 = 9 parts."
+    },
+    {
+      "seed": 1213,
+      "question_id": 1684,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3185840707964602,
+      "first_line": "In the second week, 15 bags of chips were sold, which is three times the number sold in the first week. So, 15 * 3 = 45 bags of chips were sold in the second week."
+    },
+    {
+      "seed": 1213,
+      "question_id": 4851,
+      "nonempty_lines": 13,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.11764705882352941,
+      "first_line": "First, let's calculate the total number of each type of silverware Stephanie needs for herself and the guests:"
+    },
+    {
+      "seed": 1213,
+      "question_id": 931,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.22857142857142856,
+      "first_line": "Malcom has 20 + 8 = 28 cards."
+    },
+    {
+      "seed": 1213,
+      "question_id": 4490,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.275,
+      "first_line": "First, we need to find out how many notes Nadia plays in 8 minutes. Since she plays 60 notes per minute, in 8 minutes she will play 60 * 8 = 480 notes."
+    },
+    {
+      "seed": 1213,
+      "question_id": 2600,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.4375,
+      "first_line": "The total cost of the books is $5 + $11 + $5 = $21."
+    },
+    {
+      "seed": 1213,
+      "question_id": 3945,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.36363636363636365,
+      "first_line": "Nelly needs to buy pizza for herself and her 14 friends, so she needs 1 + 14 = 15 pizzas."
+    },
+    {
+      "seed": 1217,
+      "question_id": 7130,
+      "nonempty_lines": 8,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.1724137931034483,
+      "first_line": "Let's call the number of people lifting weights at the start of Bethany's shift \"x\"."
+    },
+    {
+      "seed": 1217,
+      "question_id": 1548,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.36134453781512604,
+      "first_line": "First, we need to calculate the number of bugs left after spraying the garden. Since spraying reduces the bug population to 80% of what it was previously, we can calculate the number of bugs left as follows: 400 * 0.8 = 320 bugs."
+    },
+    {
+      "seed": 1217,
+      "question_id": 1684,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.2413793103448276,
+      "first_line": "In the second week, 15 * 3 = 45 bags of chips were sold."
+    },
+    {
+      "seed": 1217,
+      "question_id": 2760,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "Let's call Joel's age J and his dad's age D. We know that J = 5 and D = 32. We want to find out how old Joel will be when his dad is twice as old as him. Let's call this age X. So, we have the equation D = 2J. Substituting the values we know, we get 32 = 2(5). Solving for X, we get X = 32/2 = 16. So, Joel will be 16 years old when his dad is twice as old as him."
+    },
+    {
+      "seed": 1217,
+      "question_id": 407,
+      "nonempty_lines": 11,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.19801980198019803,
+      "first_line": "Let's denote Milford's current age as M. Since Eustace is twice as old as Milford, Eustace's current age is 2M."
+    },
+    {
+      "seed": 1217,
+      "question_id": 3454,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3192771084337349,
+      "first_line": "Initially, there are 8 students enrolled. 8 more students became interested, but a fourth of them dropped out within a day, so 8/4 = 2 students dropped out. 2 more students got frustrated and left, so the total number of students is now 8 + 8 - 2 - 2 = 12 students."
+    },
+    {
+      "seed": 1217,
+      "question_id": 6579,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.2903225806451613,
+      "first_line": "Megan was the lead actress in 80% of her work, which is 80/100 * 100 = 80 plays."
+    },
+    {
+      "seed": 1217,
+      "question_id": 7206,
+      "nonempty_lines": 9,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.08571428571428572,
+      "first_line": "Let's assume the total number of chocolates in the box is x."
+    },
+    {
+      "seed": 1217,
+      "question_id": 4561,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.3584905660377358,
+      "first_line": "If Ben has $9 less than Jack, and Jack has $26, then Ben has $26 - $9 = $17."
+    },
+    {
+      "seed": 1217,
+      "question_id": 2894,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.36904761904761907,
+      "first_line": "First, we need to find out how much money Ian made doing online surveys. He worked 8 hours and earned $18 per hour, so he made 8 * $18 = $144."
+    },
+    {
+      "seed": 1217,
+      "question_id": 5711,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.20270270270270271,
+      "first_line": "Biff spends a total of $11 + $3 + $16 = $30 on his trip."
+    },
+    {
+      "seed": 1217,
+      "question_id": 6531,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.20588235294117646,
+      "first_line": "The cookfire burns 3 logs every hour, so after 3 hours, it will have burned 3 * 3 = 9 logs."
+    },
+    {
+      "seed": 1217,
+      "question_id": 4568,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.34782608695652173,
+      "first_line": "The payout for a blackjack is 3:2, which means for every $2 bet, you win $3."
+    },
+    {
+      "seed": 1217,
+      "question_id": 6578,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.5606060606060606,
+      "first_line": "First, we need to find out how many books are left in the library. To do this, we can multiply the total number of books by the fraction that is left: 9,900 * (4/6) = 6,600 books."
+    },
+    {
+      "seed": 1217,
+      "question_id": 1577,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.5,
+      "first_line": "After the first year, Steve's account will have $100 + $10 = $110. The interest for the first year is 10% of $110, which is $11. So, after the first year, Steve's account will have $110 + $11 = $121."
+    },
+    {
+      "seed": 1217,
+      "question_id": 6142,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.24166666666666667,
+      "first_line": "The rooms on the first floor cost $15 per month, and there are 3 rooms, so Krystiana earns 15 * 3 = $<<15*3=45>>45 per month from the first floor."
+    },
+    {
+      "seed": 1217,
+      "question_id": 4176,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "Let's assume there are x dogs in the pool. Each dog has 4 legs, so the total number of legs/paws from the dogs is 4x. Daisy and Rose have 2 humans, each with 2 legs, so the total number of legs/paws from them is 2*2 = 4. The total number of legs/paws in the pool is 24, so we can set up the equation: 4x + 4 = 24. Solving for x, we get 4x = 20, and x = 5. Therefore, Daisy and Rose have 5 dogs in the pool."
+    },
+    {
+      "seed": 1217,
+      "question_id": 1980,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.25274725274725274,
+      "first_line": "Janeth bought 5 bags of round balloons with 20 balloons in each bag, so she had 5 * 20 = 100 round balloons."
+    },
+    {
+      "seed": 1217,
+      "question_id": 376,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.32323232323232326,
+      "first_line": "First, we need to find out how many apples Caleb picked. Since Caleb picked 5 apples less than Kayla, and Kayla picked 20 apples, Caleb picked 20 - 5 = 15 apples."
+    },
+    {
+      "seed": 1217,
+      "question_id": 2600,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.5,
+      "first_line": "The total cost of the dictionary, dinosaur book, and children's cookbook is $5 + $11 + $5 = $<<5+11+5=21>>21."
+    },
+    {
+      "seed": 1217,
+      "question_id": 4007,
+      "nonempty_lines": 7,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.125,
+      "first_line": "Liz scores 5 free throws, which is 5 * 1 point = 5 points."
+    },
+    {
+      "seed": 1217,
+      "question_id": 3815,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "On the first day, Richard walks 20 miles. On the second day, he walks 6 miles less than half of 20 miles, which is (1/2)*20 - 6 = 10 - 6 = 4 miles. On the third day, he walks 10 miles. In total, Richard has walked 20 + 4 + 10 = 34 miles. To reach New York City, which is 70 miles away, Richard has 70 - 34 = 36 miles further to walk."
+    },
+    {
+      "seed": 1217,
+      "question_id": 2957,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.39344262295081966,
+      "first_line": "Tim sleeps 6 hours per day for 5 days a week, so he sleeps 6 * 5 = 30 hours in those 5 days."
+    },
+    {
+      "seed": 1217,
+      "question_id": 1123,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.5,
+      "first_line": "David gave Evan $12, so Evan now has $1 + $12 = $13."
+    },
+    {
+      "seed": 1217,
+      "question_id": 5433,
+      "nonempty_lines": 10,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.25806451612903225,
+      "first_line": "The ratio of fuel used to distance covered is 4:7, which means for every 4 gallons of fuel used, the car covers 7 miles."
+    },
+    {
+      "seed": 1217,
+      "question_id": 5523,
+      "nonempty_lines": 9,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.13793103448275862,
+      "first_line": "Joe spends $50 a month on games, so he has $240 - $50 = $190 left after the first month."
+    },
+    {
+      "seed": 1217,
+      "question_id": 931,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.22857142857142856,
+      "first_line": "Malcom has 20 + 8 = 28 cards."
+    },
+    {
+      "seed": 1217,
+      "question_id": 5154,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.23076923076923078,
+      "first_line": "Shay is 6 + 13 = 19 years old."
+    },
+    {
+      "seed": 1217,
+      "question_id": 4263,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "John gets $30 from his grandpa. He gets 3 times that amount from his grandma, so he gets 3 * $30 = $<<3*30=90>>90 from his grandma. In total, John gets $30 + $90 = $<<30+90=120>>120 from both grandparents."
+    },
+    {
+      "seed": 1217,
+      "question_id": 2065,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.36363636363636365,
+      "first_line": "Myrtle's 3 hens lay 3 eggs a day, so in 7 days they lay 3 * 7 = 21 eggs."
+    },
+    {
+      "seed": 1217,
+      "question_id": 676,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3230769230769231,
+      "first_line": "John needs to take 2 pills a day, so he takes 2 * 30 = 60 pills in a 30-day month."
+    },
+    {
+      "seed": 1217,
+      "question_id": 7089,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.44,
+      "first_line": "Zach drove a total of 620 + 744 = 1364 miles."
+    },
+    {
+      "seed": 1217,
+      "question_id": 1023,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.5833333333333334,
+      "first_line": "Each wall of the fence is 20 bricks long, 5 bricks high, and 2 bricks deep, so each wall has 20 * 5 * 2 = 200 bricks."
+    },
+    {
+      "seed": 1217,
+      "question_id": 1034,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.25,
+      "first_line": "Betty used 2 cups of sugar, so she used 2 * 4 = 8 parts of cream cheese."
+    },
+    {
+      "seed": 1217,
+      "question_id": 6925,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.23863636363636365,
+      "first_line": "First, we need to find out how many minutes the treatment lasts. Since the treatment lasts 2 hours, we can convert that to minutes by multiplying 2 hours by 60 minutes per hour, which gives us 2 * 60 = 120 minutes."
+    },
+    {
+      "seed": 1217,
+      "question_id": 177,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.26666666666666666,
+      "first_line": "James sold his car for 80% of its value, which is 0.8 * $20,000 = $16,000."
+    },
+    {
+      "seed": 1217,
+      "question_id": 5625,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.2916666666666667,
+      "first_line": "First, we need to find the discount amount per kilogram. A 40% discount on $5 is 0.40 * $5 = $2."
+    },
+    {
+      "seed": 1217,
+      "question_id": 4770,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.24342105263157895,
+      "first_line": "First, we need to calculate the cost of staying at the hotel for 6 hours last night. The cost per hour is $1.50, so the total cost for last night is 6 hours * $1.50/hour = $<<6*1.50=9>>9."
+    },
+    {
+      "seed": 1217,
+      "question_id": 1859,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.17105263157894737,
+      "first_line": "In one week, Janet reads 80 pages/day * 7 days/week = 560 pages."
+    },
+    {
+      "seed": 1217,
+      "question_id": 5146,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.1553398058252427,
+      "first_line": "The cost of one bagel is $2.25, and the cost of a dozen bagels is $24."
+    },
+    {
+      "seed": 1217,
+      "question_id": 5476,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.19672131147540983,
+      "first_line": "The cost of each pizza is 12 dollars, so the cost of 3 pizzas in the park is 3 * 12 = 36 dollars."
+    },
+    {
+      "seed": 1217,
+      "question_id": 646,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3023255813953488,
+      "first_line": "The bus carried 3/4 * 200 = <<3/4*200=150>>150 people on its first trip."
+    },
+    {
+      "seed": 1217,
+      "question_id": 5529,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.5074626865671642,
+      "first_line": "First, we need to find out how many insects Jacob has. Since Jacob has 5 times as many insects as Dean, and Dean has 30 insects, Jacob has 5 * 30 = 150 insects."
+    },
+    {
+      "seed": 1217,
+      "question_id": 5902,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.189873417721519,
+      "first_line": "The first plant produced 2 dozen tomatoes, which is 2 * 12 = 24 tomatoes."
+    },
+    {
+      "seed": 1217,
+      "question_id": 4781,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.37209302325581395,
+      "first_line": "Joseph drives 50 mph for 2.5 hours, so he drives 50 * 2.5 = 125 miles."
+    },
+    {
+      "seed": 1217,
+      "question_id": 2787,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.2682926829268293,
+      "first_line": "Remi refills his water bottle 3 times a day, so in 7 days he refills it 3 * 7 = 21 times."
+    },
+    {
+      "seed": 1217,
+      "question_id": 4501,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.2545454545454545,
+      "first_line": "Roosevelt high school scores 30 points in the first game, half as much in the second game, so they score 30/2 = 15 points in the second game."
+    },
+    {
+      "seed": 1217,
+      "question_id": 2824,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.4262295081967213,
+      "first_line": "The taco truck uses 100 pounds of beef and each taco uses 0.25 pounds of beef, so they can make 100 / 0.25 = <<100/0.25=400>>400 tacos."
+    },
+    {
+      "seed": 1217,
+      "question_id": 2484,
+      "nonempty_lines": 1,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 1.0,
+      "first_line": "First, we need to calculate the number of people in each row after some of them get up to wade in the water. The first row originally had 24 people, but 3 of them got up, so there are 24 - 3 = 21 people left in the first row. The second row originally had 20 people, but 5 of them got up, so there are 20 - 5 = 15 people left in the second row. The third row originally had 18 people, so there are 18 people left in the third row. To find the total number of people left relaxing on the beach, we add the number of people in each row: 21 + 15 + 18 = 54 people. So, there are 54 people left relaxing on the beach."
+    },
+    {
+      "seed": 1217,
+      "question_id": 4719,
+      "nonempty_lines": 8,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.07051282051282051,
+      "first_line": "Let's denote the amount Sid spent on computer accessories as x."
+    },
+    {
+      "seed": 1217,
+      "question_id": 4746,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3829787234042553,
+      "first_line": "In the first set, 10% of 50 marbles are broken, which is 0.10 * 50 = 5 marbles."
+    },
+    {
+      "seed": 1217,
+      "question_id": 3249,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.42142857142857143,
+      "first_line": "First, we need to find the cost of a pound of cherries. Since a pound of cherries costs 6 times as much as a pound of strawberries, we can calculate the cost of a pound of cherries by multiplying the cost of a pound of strawberries by 6. So, a pound of cherries costs $2.20 * 6 = $<<2.20*6=13.20>>13.20."
+    },
+    {
+      "seed": 1217,
+      "question_id": 4186,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.20930232558139536,
+      "first_line": "John buys 40 / 5 = 8 loot boxes."
+    },
+    {
+      "seed": 1217,
+      "question_id": 7062,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.391304347826087,
+      "first_line": "Ryan caught three times the number of fish that Jason caught, so Ryan caught 60/2 = 30 fish."
+    },
+    {
+      "seed": 1217,
+      "question_id": 6280,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.28,
+      "first_line": "The total number of cheese sticks is 15 + 30 + 45 = 90."
+    },
+    {
+      "seed": 1217,
+      "question_id": 4436,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.45,
+      "first_line": "First, we need to find out how much money Mike already has. He has 40% of the amount he needs, which is 40/100 * $1300 = $520."
+    },
+    {
+      "seed": 1217,
+      "question_id": 5825,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.4188034188034188,
+      "first_line": "First, we need to find out how many slices of fried green tomatoes are needed for the family of 8. Since 20 slices make a meal for one person, we can multiply 20 by 8 to get the total number of slices needed: 20 * 8 = 160 slices."
+    },
+    {
+      "seed": 1217,
+      "question_id": 5282,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.6071428571428571,
+      "first_line": "The official exchange rate is 5 euros per dollar, so Willie would get 70 euros * (1 dollar / 5 euros) = 14 dollars if he exchanged all his euros at the official rate."
+    },
+    {
+      "seed": 1217,
+      "question_id": 4237,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.5555555555555556,
+      "first_line": "The total length of the first three parts of the race is 15.5 + 21.5 + 21.5 = 58.5 kilometers."
+    },
+    {
+      "seed": 1217,
+      "question_id": 4858,
+      "nonempty_lines": 6,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.18518518518518517,
+      "first_line": "The price of lemons increased by $4, so Erick can now sell each lemon for $8 + $4 = $12."
+    },
+    {
+      "seed": 1217,
+      "question_id": 260,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.5084745762711864,
+      "first_line": "Every hour past noon, the shadows from the building stretch an extra 5 feet. So, 6 hours past noon, the shadows will be 6 * 5 = 30 feet long."
+    },
+    {
+      "seed": 1217,
+      "question_id": 5612,
+      "nonempty_lines": 6,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.22727272727272727,
+      "first_line": "Sue initially borrowed 15 books and 6 movies, so she had a total of 15 + 6 = 21 items."
+    },
+    {
+      "seed": 1217,
+      "question_id": 2398,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.49056603773584906,
+      "first_line": "First, convert the length of the wire to inches: 5 feet 4 inches = (5 * 12) + 4 = 60 + 4 = 64 inches."
+    },
+    {
+      "seed": 1217,
+      "question_id": 4209,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.5142857142857142,
+      "first_line": "First, we need to find out how much butter is needed for 1 dozen cookies. Since 4 pounds of butter are needed for 16 dozen cookies, we can divide 4 pounds by 16 to find the amount of butter needed for 1 dozen cookies. 4 pounds / 16 dozen = 0.25 pounds per dozen."
+    },
+    {
+      "seed": 1217,
+      "question_id": 7245,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3333333333333333,
+      "first_line": "Olivia gave William 10 napkins, so he now has 15 + 10 = 25 napkins."
+    },
+    {
+      "seed": 1217,
+      "question_id": 6729,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.4782608695652174,
+      "first_line": "In one minute, the company produces 36 chocolate bars, so in two minutes, they produce 36 * 2 = 72 chocolate bars."
+    },
+    {
+      "seed": 1217,
+      "question_id": 6461,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3305084745762712,
+      "first_line": "First, we need to find out how much money John gave to his mother. To do this, we multiply the total amount of money he had by the fraction he gave to his mother: $200 * 3/8 = $75."
+    },
+    {
+      "seed": 1217,
+      "question_id": 5095,
+      "nonempty_lines": 10,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.28225806451612906,
+      "first_line": "Let's denote the number of birthday presents David found as B. According to the problem, the number of Christmas presents David found is twice the number of birthday presents, so we can write the equation:"
+    },
+    {
+      "seed": 1217,
+      "question_id": 3084,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3953488372093023,
+      "first_line": "Susan eats 1 strawberry for every 5 strawberries she picks, so she eats 60/5 = <<60/5=12>>12 strawberries."
+    },
+    {
+      "seed": 1217,
+      "question_id": 3156,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.4,
+      "first_line": "Kendra made 3 batches of cookies, and each batch contains 12 cookies, so she made a total of 3 * 12 = 36 cookies."
+    },
+    {
+      "seed": 1217,
+      "question_id": 4641,
+      "nonempty_lines": 7,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.14285714285714285,
+      "first_line": "There were 10000 - 7000 = 3000 remaining spectators."
+    },
+    {
+      "seed": 1217,
+      "question_id": 7028,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.42857142857142855,
+      "first_line": "First, we need to find out how many people have an envelope taped underneath their chairs. 40% of 100 people is 0.40 * 100 = 40 people."
+    },
+    {
+      "seed": 1217,
+      "question_id": 6419,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.4112903225806452,
+      "first_line": "First, let's calculate how many bags of candy Amber can buy with her $7. Since each bag of candy costs $1, she can buy 7 / 1 = <<7/1=7>>7 bags of candy. Each bag of candy contains 12 ounces, so she can get 7 * 12 = <<7*12=84>>84 ounces of candy."
+    },
+    {
+      "seed": 1217,
+      "question_id": 163,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.20987654320987653,
+      "first_line": "James scores 4 touchdowns per game, so he scores 4 * 6 = 24 points per game."
+    },
+    {
+      "seed": 1217,
+      "question_id": 6826,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.07954545454545454,
+      "first_line": "Lindsay has 4 dolls with blonde hair."
+    },
+    {
+      "seed": 1217,
+      "question_id": 5019,
+      "nonempty_lines": 6,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.1,
+      "first_line": "Let's work backwards to find out how many suckers Jen had initially."
+    },
+    {
+      "seed": 1217,
+      "question_id": 6273,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.5384615384615384,
+      "first_line": "Stacy grew 6 inches more than her brother, who grew 1 inch, so Stacy grew 1 + 6 = 7 inches."
+    },
+    {
+      "seed": 1217,
+      "question_id": 1883,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.140625,
+      "first_line": "Jim finds 100 gold coins in the treasure chest."
+    },
+    {
+      "seed": 1217,
+      "question_id": 1097,
+      "nonempty_lines": 5,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.18518518518518517,
+      "first_line": "Javier's wife took 30% of 200 cookies, which is 0.30 * 200 = 60 cookies."
+    },
+    {
+      "seed": 1217,
+      "question_id": 612,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3548387096774194,
+      "first_line": "Ali has 125 bottle caps in total. He has 50 red caps, so he has 125 - 50 = 75 green caps."
+    },
+    {
+      "seed": 1217,
+      "question_id": 2813,
+      "nonempty_lines": 12,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.3620689655172414,
+      "first_line": "Let's denote the amount Leila spent at the supermarket as S. According to the problem, the cost of fixing her automobile is $350, which is $50 more than thrice the amount she spent at the supermarket. So, we can write the equation:"
+    },
+    {
+      "seed": 1217,
+      "question_id": 2259,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.5405405405405406,
+      "first_line": "The second laptop is 3 times as costly as the first laptop, so it costs 3 * $500 = $1500."
+    },
+    {
+      "seed": 1217,
+      "question_id": 4231,
+      "nonempty_lines": 2,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.5333333333333333,
+      "first_line": "Olaf and his 25 men need 26 * 1/2 = 13 gallons of water per day."
+    },
+    {
+      "seed": 1217,
+      "question_id": 2096,
+      "nonempty_lines": 12,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.10434782608695652,
+      "first_line": "Let's denote the number of cans of corn Beth bought as C."
+    },
+    {
+      "seed": 1217,
+      "question_id": 525,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.5375722543352601,
+      "first_line": "First, we need to calculate the total distance Carla will drive. She drives 8 miles to the grocery store, 6 miles to pick up her kids from school, 12 miles to drop her kids off at soccer practice, and twice the distance from the school to soccer practice to get everyone home again. The distance from the school to soccer practice is 12 miles, so twice that distance is 12 * 2 = 24 miles. Adding all the distances together, Carla will drive 8 + 6 + 12 + 24 = 50 miles."
+    },
+    {
+      "seed": 1217,
+      "question_id": 1379,
+      "nonempty_lines": 7,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.2457627118644068,
+      "first_line": "In the first spring, Lola's 10 breeding rabbits had 10 times as many kittens as the number of breeding rabbits, so they had 10 * 10 = 100 kittens."
+    },
+    {
+      "seed": 1217,
+      "question_id": 4870,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3333333333333333,
+      "first_line": "The ticket price for children is half of the adult price, so it is $26 / 2 = $13."
+    },
+    {
+      "seed": 1217,
+      "question_id": 4480,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.2736842105263158,
+      "first_line": "In the first 15 minutes, 2 ounces of cleaner run through the pipe per minute, so 2 * 15 = 30 ounces of cleaner are used."
+    },
+    {
+      "seed": 1217,
+      "question_id": 6717,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.18333333333333332,
+      "first_line": "In four years, Peter will be 60/2 = 30 years old."
+    },
+    {
+      "seed": 1217,
+      "question_id": 3584,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.23076923076923078,
+      "first_line": "Mary earns $20 + $40 = $60 each month."
+    },
+    {
+      "seed": 1217,
+      "question_id": 4813,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.3595505617977528,
+      "first_line": "Laura needs to buy a set of sheers and a set of drapes for each of the 3 windows. So, she will need 3 sets of sheers and 3 sets of drapes."
+    },
+    {
+      "seed": 1217,
+      "question_id": 4083,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.2702702702702703,
+      "first_line": "The total number of inches of rain needed for the year is 2 inches/day * 365 days = 730 inches."
+    },
+    {
+      "seed": 1217,
+      "question_id": 2289,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.5047619047619047,
+      "first_line": "First, let's calculate the discounted price of the first two books. Book 1 is 25% off, so it costs 13.00 * 0.25 = $<<13.00*0.25=3.25>>3.25 less. Book 2 is 25% off, so it costs 15.00 * 0.25 = $<<15.00*0.25=3.75>>3.75 less. The discounted price of the first two books is 3.25 + 3.75 = $<<3.25+3.75=7.00>>7.00."
+    },
+    {
+      "seed": 1217,
+      "question_id": 715,
+      "nonempty_lines": 3,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.49230769230769234,
+      "first_line": "The cost of string for each bracelet is $1 and the cost of beads for each bracelet is $3, so the total cost for each bracelet is $1 + $3 = $4."
+    },
+    {
+      "seed": 1217,
+      "question_id": 5564,
+      "nonempty_lines": 7,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.06557377049180328,
+      "first_line": "Let's break down the problem step by step:"
+    },
+    {
+      "seed": 1217,
+      "question_id": 3380,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.2545454545454545,
+      "first_line": "The first reduction was 5% of $500, which is 0.05 * $500 = $25."
+    },
+    {
+      "seed": 1217,
+      "question_id": 4591,
+      "nonempty_lines": 6,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.07920792079207921,
+      "first_line": "Tina buys 3 * 12 = 36 sodas."
+    },
+    {
+      "seed": 1217,
+      "question_id": 648,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.25675675675675674,
+      "first_line": "The band played a total of 5 + 7 + 2 = 14 songs in the first three sets."
+    },
+    {
+      "seed": 1217,
+      "question_id": 6002,
+      "nonempty_lines": 4,
+      "first_line_has_equation_sign": true,
+      "first_line_has_numeric_operation": true,
+      "first_line_word_fraction": 0.3111111111111111,
+      "first_line": "Kathryn's rent is $1200, which is half of what she spends on food and travel expenses. So, her food and travel expenses are $1200 * 2 = $2400."
+    },
+    {
+      "seed": 1217,
+      "question_id": 3030,
+      "nonempty_lines": 11,
+      "first_line_has_equation_sign": false,
+      "first_line_has_numeric_operation": false,
+      "first_line_word_fraction": 0.330188679245283,
+      "first_line": "Let's denote the number of videos Ekon watched as E. Then, Kelsey watched E + 43 videos, and Uma watched E + 17 videos. Together, they watched 411 videos, so we can write the equation:"
+    }
+  ]
+}

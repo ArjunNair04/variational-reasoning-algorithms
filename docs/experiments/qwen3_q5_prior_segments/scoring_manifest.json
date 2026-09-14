@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "audit_id": "q5_segment_scoring_20260914",
+  "source_run": "68078ecc",
+  "source_cell": "Q5-AD-M-LR1e-5-U1-K16",
+  "model_id": "Qwen/Qwen3-1.7B-Base",
+  "model_revision": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+  "seeds": {
+    "1201": {
+      "inputs": {
+        "diagnostics": {
+          "path": "training_diagnostics_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1201__AC-ALG1_s1201.jsonl.gz",
+          "sha256": "7ed18604e85e02fc29faff15789ccbf1e9159e53b8c72493b35824d343c8bd27",
+          "size": 752606
+        },
+        "prompts": {
+          "path": "prompt_contract_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1201__AC-ALG1_s1201.json.gz",
+          "sha256": "8259206478cba318cc12afc485f94e6e50fc1fec8a42a11dcb888a6df1eb18d9",
+          "size": 33916
+        }
+      },
+      "adapter": [
+        {
+          "path": "adapter_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1201__AC-ALG1_s1201/adapter_config.json",
+          "sha256": "7bd42716825c46f19ce79a82f3a5ede0d6f97bff0d5906efdc1ea26ed042aaf9",
+          "size": 722
+        },
+        {
+          "path": "adapter_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1201__AC-ALG1_s1201/adapter_model.safetensors",
+          "sha256": "6319ee319a30313f25b7b46bcfd7b3ce70c3d425ccc29e5ee1e63f20ff79b340",
+          "size": 69782384
+        }
+      ],
+      "receipt": {
+        "path": "complete_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1201__AC-ALG1_s1201.json",
+        "sha256": "7b836fe32231870f89a9acdbcf932dda5ff5ba0e038909911c4dc9e92d663bff",
+        "size": 7503
+      }
+    },
+    "1213": {
+      "inputs": {
+        "diagnostics": {
+          "path": "training_diagnostics_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1213__AC-ALG1_s1213.jsonl.gz",
+          "sha256": "251475f055a53138b83038cc9b08b4f8d28399ff8593908cd4cf7195f3b60283",
+          "size": 743618
+        },
+        "prompts": {
+          "path": "prompt_contract_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1213__AC-ALG1_s1213.json.gz",
+          "sha256": "1bd29292f9ba0e7371de16c573c462dc32a6e22da0f664ba88c135acc948aeed",
+          "size": 31976
+        }
+      },
+      "adapter": [
+        {
+          "path": "adapter_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1213__AC-ALG1_s1213/adapter_config.json",
+          "sha256": "4064e6ec1bb36afbe5249653e1fc96d539de85e2b7340d461149acc7151805d8",
+          "size": 722
+        },
+        {
+          "path": "adapter_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1213__AC-ALG1_s1213/adapter_model.safetensors",
+          "sha256": "6c930ed506bb0f800b1431efdbba3219f45831656cef97687806e0503d2340ff",
+          "size": 69782384
+        }
+      ],
+      "receipt": {
+        "path": "complete_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1213__AC-ALG1_s1213.json",
+        "sha256": "502d96243b83a88efbc235f32a5e78c68b567e7583f2200096b141e02483b334",
+        "size": 7503
+      }
+    },
+    "1217": {
+      "inputs": {
+        "diagnostics": {
+          "path": "training_diagnostics_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1217__AC-ALG1_s1217.jsonl.gz",
+          "sha256": "6d5117a54cbc94a9d1a0b1ddc983889c4893fc4dd782429d9a3a87895619ddc0",
+          "size": 765667
+        },
+        "prompts": {
+          "path": "prompt_contract_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1217__AC-ALG1_s1217.json.gz",
+          "sha256": "364c58f0062cc8631b4dbed8507de8cbb112a2387f5a30048e89e92224dd3911",
+          "size": 34744
+        }
+      },
+      "adapter": [
+        {
+          "path": "adapter_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1217__AC-ALG1_s1217/adapter_config.json",
+          "sha256": "1dbf01529cd72ab527bc4216138c49b07ca240cc8f4958931a56b77a7b0904bb",
+          "size": 722
+        },
+        {
+          "path": "adapter_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1217__AC-ALG1_s1217/adapter_model.safetensors",
+          "sha256": "a8d73b04d3e2de408e93b4f027b55b6c1f79acaec639cfe9d5855d5e34d7703e",
+          "size": 69782384
+        }
+      ],
+      "receipt": {
+        "path": "complete_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1217__AC-ALG1_s1217.json",
+        "sha256": "a9d5c27968ca023f431b3e60da988692fb31d9d08e56609a8f7efa8651b6c0b2",
+        "size": 7503
+      }
+    }
+  },
+  "settings": {
+    "joint": [
+      1.0,
+      1.0
+    ],
+    "early_half": [
+      0.5,
+      1.0
+    ],
+    "late_half": [
+      1.0,
+      0.5
+    ],
+    "uniform075": [
+      0.75,
+      0.75
+    ]
+  },
+  "scopes": [
+    "historical_prior",
+    "reasoning_marker_fixed"
+  ],
+  "checkpoint": "each seed's receipt-bound FINAL adapter held fixed while rescoring every archived support",
+  "tokenization": "retokenize saved generated text once, then use native strict-Q5 reconstruction; not bit-exact historical token replay",
+  "scope": "384 archived training supports, all three seeds and all 32 rounds; no evaluation data loaded",
+  "optimizer_steps": 0,
+  "new_generations": 0,
+  "decision": "No accuracy inference or automatic training release. Inspect marker-boundary sensitivity before approving a training mask."
+}

@@ -57,7 +57,7 @@ def build_payload():
     }
 
 
-def runtime_configs():
+def runtime_configs(payload=None):
     from dataclasses import replace
     import inspect
     from ac_alg1 import run_ac_alg1
@@ -66,7 +66,7 @@ def runtime_configs():
     from run_yaml import _prepare_cells
     values = {k: v.default for k, v in inspect.signature(run_ac_alg1).parameters.items()}
     base = ACAlg1RunConfig.from_call(values)
-    payload = build_payload()
+    payload = build_payload() if payload is None else payload
     defaults = payload["defaults"]
     cells = _prepare_cells(payload, only=None, run_id=payload["run_id"], defaults=defaults)
     for cell in cells:

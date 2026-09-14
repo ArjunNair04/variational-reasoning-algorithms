@@ -1,0 +1,895 @@
+{
+  "scope": "24 length-stratified saved FINAL EVALUATION traces; not a representative estimate of all traces or training buffers",
+  "reviewer": "Codex, one qualitative pass; no independent second annotator",
+  "selection": "q5-semantic-v1: per seed, sort by pre-marker whitespace-word count then question ID; divide 100 saved completions into four groups of 25; choose two smallest SHA256(q5-semantic-v1:{seed}:{idx}) values in each group; do not use correctness",
+  "roles": {
+    "I": "Interpretation: restating givens, assigning variables, or translating a relationship into an equation without solving it",
+    "P": "Plan: choosing an operation or subgoal before carrying it out",
+    "C": "Calculation: executing arithmetic, substitution, simplification, or a derivation",
+    "S": "Summary or conclusion within the pre-marker rationale",
+    "V": "Independent check of the solution rather than repeating the result",
+    "O": "Other, including an unfinished sentence"
+  },
+  "conventions": "Label each nonempty pre-marker line with all applicable roles. Equation construction is I; solving is C. Brief task-restatements attached to arithmetic may be I+C. A line is a pure pre-calculation prefix only if it contains I/P and no C. These labels describe text functions, not hidden model cognition. Word positions are not model-token positions.",
+  "count": 24,
+  "initial_plan_or_interpretation_block": 7,
+  "initial_block_with_interpretation": 4,
+  "calculation_on_first_line": 17,
+  "mixed_first_line": 16,
+  "interpretation_reappears_after_calculation": 8,
+  "planning_reappears_after_calculation": 14,
+  "single_line_with_internal_transition": 3,
+  "independent_verification": 0,
+  "sources": [
+    {
+      "path": "/Users/vigneshmohanarajan1/Desktop/MScThesis/ResultsArchive/beaker-amanojna/20260902T151747Z__qwen3_selected_method_posterity_68078ecc/artifacts/dump_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1201__AC-ALG1_s1201.json",
+      "sha256": "ebd70570bffe2836213ea8bff92a00a3b4bef6c6769bfddbb4f86233e4564860"
+    },
+    {
+      "path": "/Users/vigneshmohanarajan1/Desktop/MScThesis/ResultsArchive/beaker-amanojna/20260902T151747Z__qwen3_selected_method_posterity_68078ecc/artifacts/dump_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1213__AC-ALG1_s1213.json",
+      "sha256": "22f6b938b1231a0e1b463d4b48f10007d59edf3e7a841f020a2a6ceea08c25d5"
+    },
+    {
+      "path": "/Users/vigneshmohanarajan1/Desktop/MScThesis/ResultsArchive/beaker-amanojna/20260902T151747Z__qwen3_selected_method_posterity_68078ecc/artifacts/dump_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1217__AC-ALG1_s1217.json",
+      "sha256": "cb2fe0602ef5495b76dba6dd74593a27ecc886a2c9e62eab0dc53a50b1dc3eaf"
+    }
+  ],
+  "records": [
+    {
+      "seed": 1201,
+      "question_id": 195,
+      "length_quartile": 1,
+      "question": "Mary bought 5 boxes of drinks at $6 each box and 10 boxes of pizzas at $14 each box for her pizza party. She paid $200 for all the items. How much change did she get back?",
+      "completion": " First, calculate the total cost of the drinks: 5 boxes * $6/box = $<<5*6=30>>30\nNext, calculate the total cost of the pizzas: 10 boxes * $14/box = $<<10*14=140>>140\nNow, add the cost of the drinks and pizzas to find the total cost: $30 + $140 = $<<30+140=170>>170\nFinally, subtract the total cost from the amount Mary paid to find the change: $200 - $170 = $<<200-170=30>>30\n#### 30",
+      "completion_sha256": "3321c8084d4b8a085674efc9f0839f2e52af420eee63a9905cb2f92757282982",
+      "lines": [
+        {
+          "text": "First, calculate the total cost of the drinks: 5 boxes * $6/box = $<<5*6=30>>30",
+          "roles": "PC"
+        },
+        {
+          "text": "Next, calculate the total cost of the pizzas: 10 boxes * $14/box = $<<10*14=140>>140",
+          "roles": "PC"
+        },
+        {
+          "text": "Now, add the cost of the drinks and pizzas to find the total cost: $30 + $140 = $<<30+140=170>>170",
+          "roles": "PC"
+        },
+        {
+          "text": "Finally, subtract the total cost from the amount Mary paid to find the change: $200 - $170 = $<<200-170=30>>30",
+          "roles": "PC"
+        }
+      ],
+      "pure_initial_lines": 0,
+      "pure_initial_word_fraction": 0.0,
+      "initial_prefix_includes_interpretation": false,
+      "interpretation_after_calculation": false,
+      "planning_after_calculation": true,
+      "mixed_first_line": true,
+      "has_independent_check": false,
+      "note": "Each line announces and immediately executes an operation; no separate initial interpretation block.",
+      "within_line_transition": null
+    },
+    {
+      "seed": 1201,
+      "question_id": 973,
+      "length_quartile": 1,
+      "question": "The buyers who came to Mr. Brandon's shop yesterday bought goods worth $80. If 2/5 of the total amount of sales Mr. Brandon made yesterday were credit sales, and the rest were cash sales, how much did Mr. Brandon get from cash sales?",
+      "completion": " First, we need to find the total amount of credit sales. To do this, we multiply the total amount of sales by the fraction of credit sales: $80 * 2/5 = $32.\nNext, we need to find the total amount of cash sales. To do this, we subtract the credit sales from the total sales: $80 - $32 = $48.\n#### 48",
+      "completion_sha256": "17d6ffeb688046075429ae3b922e95f4b65399f056bac69e30ba40b0020806ce",
+      "lines": [
+        {
+          "text": "First, we need to find the total amount of credit sales. To do this, we multiply the total amount of sales by the fraction of credit sales: $80 * 2/5 = $32.",
+          "roles": "PC"
+        },
+        {
+          "text": "Next, we need to find the total amount of cash sales. To do this, we subtract the credit sales from the total sales: $80 - $32 = $48.",
+          "roles": "PC"
+        }
+      ],
+      "pure_initial_lines": 0,
+      "pure_initial_word_fraction": 0.0,
+      "initial_prefix_includes_interpretation": false,
+      "interpretation_after_calculation": false,
+      "planning_after_calculation": true,
+      "mixed_first_line": true,
+      "has_independent_check": false,
+      "note": "Credit and cash subgoals are immediately calculated on the same lines.",
+      "within_line_transition": null
+    },
+    {
+      "seed": 1201,
+      "question_id": 4641,
+      "length_quartile": 2,
+      "question": "There were 10000 spectators at a basketball match. 7000 of them were men. Of the remaining spectators, there were 5 times as many children as women. How many children were there?",
+      "completion": " First, we need to find the number of women spectators. We know that there were 10000 spectators in total and 7000 of them were men. So, the number of women spectators is 10000 - 7000 = 3000.\nNext, we need to find the number of children spectators. We know that there were 5 times as many children as women. So, the number of children spectators is 5 * 3000 = 15000.\n#### 15000",
+      "completion_sha256": "366345fa164b1b6936e63b85fb181274c3edccf3d7160ef4a44e0b2786249b56",
+      "lines": [
+        {
+          "text": "First, we need to find the number of women spectators. We know that there were 10000 spectators in total and 7000 of them were men. So, the number of women spectators is 10000 - 7000 = 3000.",
+          "roles": "IPC"
+        },
+        {
+          "text": "Next, we need to find the number of children spectators. We know that there were 5 times as many children as women. So, the number of children spectators is 5 * 3000 = 15000.",
+          "roles": "IPC"
+        }
+      ],
+      "pure_initial_lines": 0,
+      "pure_initial_word_fraction": 0.0,
+      "initial_prefix_includes_interpretation": false,
+      "interpretation_after_calculation": true,
+      "planning_after_calculation": true,
+      "mixed_first_line": true,
+      "has_independent_check": false,
+      "note": "Restatement and arithmetic are interleaved. The remaining spectators are incorrectly treated as women, illustrating a relationship-interpretation error rather than an arithmetic failure.",
+      "within_line_transition": null
+    },
+    {
+      "seed": 1201,
+      "question_id": 5833,
+      "length_quartile": 2,
+      "question": "In a shop, there is a sale of clothes. Every shirt costs $5, every hat $4, and a pair of jeans $10. How much do you need to pay for three shirts, two pairs of jeans, and four hats?",
+      "completion": " To calculate the total cost, we need to multiply the quantity of each item by its price and then add them together.\nFor the shirts: 3 shirts * $5/shirt = $<<3*5=15>>15\nFor the jeans: 2 pairs of jeans * $10/pair = $<<2*10=20>>20\nFor the hats: 4 hats * $4/hat = $<<4*4=16>>16\nNow, we add the costs of each item together: $15 + $20 + $16 = $<<15+20+16=51>>51\n#### 51",
+      "completion_sha256": "9e5d63c9ae3ae15c603dccc1df8409363c07de37d6dd030c1836eb67f48beeb0",
+      "lines": [
+        {
+          "text": "To calculate the total cost, we need to multiply the quantity of each item by its price and then add them together.",
+          "roles": "P"
+        },
+        {
+          "text": "For the shirts: 3 shirts * $5/shirt = $<<3*5=15>>15",
+          "roles": "PC"
+        },
+        {
+          "text": "For the jeans: 2 pairs of jeans * $10/pair = $<<2*10=20>>20",
+          "roles": "PC"
+        },
+        {
+          "text": "For the hats: 4 hats * $4/hat = $<<4*4=16>>16",
+          "roles": "PC"
+        },
+        {
+          "text": "Now, we add the costs of each item together: $15 + $20 + $16 = $<<15+20+16=51>>51",
+          "roles": "PC"
+        }
+      ],
+      "pure_initial_lines": 1,
+      "pure_initial_word_fraction": 0.3283582089552239,
+      "initial_prefix_includes_interpretation": false,
+      "interpretation_after_calculation": false,
+      "planning_after_calculation": true,
+      "mixed_first_line": false,
+      "has_independent_check": false,
+      "note": "One general multiply-then-add plan precedes item calculations.",
+      "within_line_transition": null
+    },
+    {
+      "seed": 1201,
+      "question_id": 5386,
+      "length_quartile": 3,
+      "question": "Erin counts six trolls hiding by the path in the forest, 6 less than four times that number of trolls hiding under the bridge, and half as many trolls hiding in the plains as under the bridge. How many trolls did she count in total?",
+      "completion": " First, find the number of trolls hiding under the bridge by adding 6 to four times the number of trolls hiding by the path: 4 * 6 trolls + 6 trolls = 24 trolls + 6 trolls = <<24+6=30>>30 trolls\nThen, find the number of trolls hiding in the plains by dividing the number of trolls under the bridge by 2: 30 trolls / 2 = 15 trolls\nFinally, add the number of trolls by the path, under the bridge, and in the plains to find the total number of trolls Erin counted: 6 trolls + 30 trolls + 15 trolls = <<6+30+15=51>>51 trolls\n#### 51",
+      "completion_sha256": "9a8b4a5ca9e791b5b25e3663c70bab50b59f3600f0c15da93d1648b9c615fbee",
+      "lines": [
+        {
+          "text": "First, find the number of trolls hiding under the bridge by adding 6 to four times the number of trolls hiding by the path: 4 * 6 trolls + 6 trolls = 24 trolls + 6 trolls = <<24+6=30>>30 trolls",
+          "roles": "IPC"
+        },
+        {
+          "text": "Then, find the number of trolls hiding in the plains by dividing the number of trolls under the bridge by 2: 30 trolls / 2 = 15 trolls",
+          "roles": "PC"
+        },
+        {
+          "text": "Finally, add the number of trolls by the path, under the bridge, and in the plains to find the total number of trolls Erin counted: 6 trolls + 30 trolls + 15 trolls = <<6+30+15=51>>51 trolls",
+          "roles": "PC"
+        }
+      ],
+      "pure_initial_lines": 0,
+      "pure_initial_word_fraction": 0.0,
+      "initial_prefix_includes_interpretation": false,
+      "interpretation_after_calculation": false,
+      "planning_after_calculation": true,
+      "mixed_first_line": true,
+      "has_independent_check": false,
+      "note": "The first line mistranslates the relation involving six less than four times. Later arithmetic follows that erroneous setup.",
+      "within_line_transition": null
+    },
+    {
+      "seed": 1201,
+      "question_id": 5433,
+      "length_quartile": 3,
+      "question": "The ratio of fuel used in gallons to the distance covered in miles by Haley's car is 4:7. If Haley's car used 44 gallons of gas, calculate the distance it covered in miles.",
+      "completion": " To find the distance covered, we can set up a proportion using the given ratio of fuel used to distance covered. The ratio is 4:7, which means for every 4 gallons of fuel used, the car covers 7 miles. We can write this as a fraction: 4/7 = 44/x, where x is the distance covered in miles. To solve for x, we can cross-multiply: 4x = 44 * 7. Simplifying, we get 4x = 308. Dividing both sides by 4, we find that x = 77. Therefore, Haley's car covered 77 miles when it used 44 gallons of gas.\n#### 77",
+      "completion_sha256": "4361198249c7b4003e1dce77914475db1769c3d7aea91af911516bffcfbd17ce",
+      "lines": [
+        {
+          "text": "To find the distance covered, we can set up a proportion using the given ratio of fuel used to distance covered. The ratio is 4:7, which means for every 4 gallons of fuel used, the car covers 7 miles. We can write this as a fraction: 4/7 = 44/x, where x is the distance covered in miles. To solve for x, we can cross-multiply: 4x = 44 * 7. Simplifying, we get 4x = 308. Dividing both sides by 4, we find that x = 77. Therefore, Haley's car covered 77 miles when it used 44 gallons of gas.",
+          "roles": "IPCS"
+        }
+      ],
+      "pure_initial_lines": 0,
+      "pure_initial_word_fraction": 0.0,
+      "initial_prefix_includes_interpretation": false,
+      "interpretation_after_calculation": false,
+      "planning_after_calculation": false,
+      "mixed_first_line": true,
+      "has_independent_check": false,
+      "note": "A proportion is interpreted and set up before solving, but everything occupies one paragraph. A newline split cannot identify the transition.",
+      "within_line_transition": "To solve for x,"
+    },
+    {
+      "seed": 1201,
+      "question_id": 1402,
+      "length_quartile": 4,
+      "question": "Dan is digging graves for a family killed by COVID-19. If it takes Dan 3 hours to dig an adult grave and 2 hours to dig a child's grave, how long does it take him to dig 5 adult graves and one child's grave?",
+      "completion": " To find the total time it takes Dan to dig 5 adult graves, we multiply the time it takes to dig one adult grave by the number of adult graves: 3 hours/grave * 5 graves = 15 hours.\nTo find the total time it takes Dan to dig one child's grave, we multiply the time it takes to dig one child's grave by the number of child's graves: 2 hours/grave * 1 grave = 2 hours.\nTo find the total time it takes Dan to dig 5 adult graves and one child's grave, we add the time it takes to dig the adult graves and the time it takes to dig the child's grave: 15 hours + 2 hours = 17 hours.\n#### 17",
+      "completion_sha256": "8b5b48c7bf0925c190369c3663cbe8aec71d4d389f3d3a3179ee391bba3dc4d9",
+      "lines": [
+        {
+          "text": "To find the total time it takes Dan to dig 5 adult graves, we multiply the time it takes to dig one adult grave by the number of adult graves: 3 hours/grave * 5 graves = 15 hours.",
+          "roles": "PC"
+        },
+        {
+          "text": "To find the total time it takes Dan to dig one child's grave, we multiply the time it takes to dig one child's grave by the number of child's graves: 2 hours/grave * 1 grave = 2 hours.",
+          "roles": "PC"
+        },
+        {
+          "text": "To find the total time it takes Dan to dig 5 adult graves and one child's grave, we add the time it takes to dig the adult graves and the time it takes to dig the child's grave: 15 hours + 2 hours = 17 hours.",
+          "roles": "PC"
+        }
+      ],
+      "pure_initial_lines": 0,
+      "pure_initial_word_fraction": 0.0,
+      "initial_prefix_includes_interpretation": false,
+      "interpretation_after_calculation": false,
+      "planning_after_calculation": true,
+      "mixed_first_line": true,
+      "has_independent_check": false,
+      "note": "Every subgoal is immediately calculated; no standalone understanding section.",
+      "within_line_transition": null
+    },
+    {
+      "seed": 1201,
+      "question_id": 6059,
+      "length_quartile": 4,
+      "question": "Kyle has a newspaper-delivery route. Every Monday through Saturday, he delivers the daily paper for the 100 houses on his route. On Sunday, 10 of his customers do not get the Sunday paper, but he delivers 30 papers to other houses that get the newspaper only on Sunday. How many papers does Kyle deliver each week?",
+      "completion": " To find the total number of papers Kyle delivers each week, we need to calculate the number of papers he delivers from Monday to Saturday and the number of papers he delivers on Sunday.\n\nFrom Monday to Saturday, Kyle delivers the daily paper to 100 houses each day. Since there are 6 days in this period, the total number of papers delivered from Monday to Saturday is:\n100 papers/day * 6 days = 600 papers\n\nOn Sunday, Kyle delivers the Sunday paper to 100 houses - 10 houses that do not get the Sunday paper = 90 houses. Additionally, he delivers 30 papers to other houses that get the newspaper only on Sunday. So, the total number of papers delivered on Sunday is:\n90 houses + 30 papers = 120 papers\n\nNow, we can find the total number of papers Kyle delivers each week by adding the number of papers delivered from Monday to Saturday and the number of papers delivered on Sunday:\n600 papers (Monday to Saturday) + 120 papers (Sunday) = 720 papers\n\nSo, Kyle delivers a total of 720 papers each week.",
+      "completion_sha256": "1d63c0051d7f23c713da371f129d85d7a716165684811fe5996dc670897650f0",
+      "lines": [
+        {
+          "text": "To find the total number of papers Kyle delivers each week, we need to calculate the number of papers he delivers from Monday to Saturday and the number of papers he delivers on Sunday.",
+          "roles": "P"
+        },
+        {
+          "text": "From Monday to Saturday, Kyle delivers the daily paper to 100 houses each day. Since there are 6 days in this period, the total number of papers delivered from Monday to Saturday is:",
+          "roles": "IP"
+        },
+        {
+          "text": "100 papers/day * 6 days = 600 papers",
+          "roles": "C"
+        },
+        {
+          "text": "On Sunday, Kyle delivers the Sunday paper to 100 houses - 10 houses that do not get the Sunday paper = 90 houses. Additionally, he delivers 30 papers to other houses that get the newspaper only on Sunday. So, the total number of papers delivered on Sunday is:",
+          "roles": "IPC"
+        },
+        {
+          "text": "90 houses + 30 papers = 120 papers",
+          "roles": "C"
+        },
+        {
+          "text": "Now, we can find the total number of papers Kyle delivers each week by adding the number of papers delivered from Monday to Saturday and the number of papers delivered on Sunday:",
+          "roles": "P"
+        },
+        {
+          "text": "600 papers (Monday to Saturday) + 120 papers (Sunday) = 720 papers",
+          "roles": "C"
+        },
+        {
+          "text": "So, Kyle delivers a total of 720 papers each week.",
+          "roles": "S"
+        }
+      ],
+      "pure_initial_lines": 2,
+      "pure_initial_word_fraction": 0.3621621621621622,
+      "initial_prefix_includes_interpretation": true,
+      "interpretation_after_calculation": true,
+      "planning_after_calculation": true,
+      "mixed_first_line": false,
+      "has_independent_check": false,
+      "note": "Initial decomposition precedes arithmetic, but the Sunday exception is interpreted only after weekday computation. Treating the six-day span as a given is a borderline annotation choice.",
+      "within_line_transition": null
+    },
+    {
+      "seed": 1213,
+      "question_id": 3121,
+      "length_quartile": 1,
+      "question": "A whole pizza was cut into 8 slices. Angeli and Marlon ate 3/2 slices each. How many slices of pizza are left?",
+      "completion": " Angeli and Marlon ate a total of 3/2 + 3/2 = 3 slices.\nSo, there are 8 - 3 = 5 slices of pizza left.\n#### 5",
+      "completion_sha256": "712371d45313cda5062a106e3baa687ad13177b91909b76ec3af012b50182666",
+      "lines": [
+        {
+          "text": "Angeli and Marlon ate a total of 3/2 + 3/2 = 3 slices.",
+          "roles": "C"
+        },
+        {
+          "text": "So, there are 8 - 3 = 5 slices of pizza left.",
+          "roles": "C"
+        }
+      ],
+      "pure_initial_lines": 0,
+      "pure_initial_word_fraction": 0.0,
+      "initial_prefix_includes_interpretation": false,
+      "interpretation_after_calculation": false,
+      "planning_after_calculation": false,
+      "mixed_first_line": false,
+      "has_independent_check": false,
+      "note": "Starts directly with fraction addition, then subtraction.",
+      "within_line_transition": null
+    },
+    {
+      "seed": 1213,
+      "question_id": 3326,
+      "length_quartile": 1,
+      "question": "The largest animal to have ever lived on earth is the blue whale.  The tongue of an adult blue whale can weigh 6000 pounds.  If one ton is 2000 pounds, how many tons can the tongue of an adult blue whale weigh?",
+      "completion": " To find out how many tons the tongue of an adult blue whale can weigh, we need to divide the weight in pounds by the number of pounds in a ton. \n\nStep 1: Convert the weight of the tongue from pounds to tons.\n6000 pounds \u00f7 2000 pounds/ton = 3 tons\n\nSo, the tongue of an adult blue whale can weigh 3 tons.",
+      "completion_sha256": "53e7e187a461a97456871668cc7b4c6a4ba2e4b7a54ea8fc2643a9d47b1931ed",
+      "lines": [
+        {
+          "text": "To find out how many tons the tongue of an adult blue whale can weigh, we need to divide the weight in pounds by the number of pounds in a ton.",
+          "roles": "P"
+        },
+        {
+          "text": "Step 1: Convert the weight of the tongue from pounds to tons.",
+          "roles": "P"
+        },
+        {
+          "text": "6000 pounds \u00f7 2000 pounds/ton = 3 tons",
+          "roles": "C"
+        },
+        {
+          "text": "So, the tongue of an adult blue whale can weigh 3 tons.",
+          "roles": "S"
+        }
+      ],
+      "pure_initial_lines": 2,
+      "pure_initial_word_fraction": 0.6825396825396826,
+      "initial_prefix_includes_interpretation": false,
+      "interpretation_after_calculation": false,
+      "planning_after_calculation": false,
+      "mixed_first_line": false,
+      "has_independent_check": false,
+      "note": "Two short conversion instructions precede the division; these are planning, not a detailed interpretation of the question.",
+      "within_line_transition": null
+    },
+    {
+      "seed": 1213,
+      "question_id": 5625,
+      "length_quartile": 2,
+      "question": "Hannah is buying some apples for $5 per kilogram. If she would get a 40% discount on each kilogram of apples, how much would she pay for 10 kilograms of them?",
+      "completion": " First, we need to find the discount amount per kilogram. To do this, we multiply the original price per kilogram by the discount percentage: $5 * 0.40 = $2.\nNow, we subtract the discount amount from the original price to find the discounted price per kilogram: $5 - $2 = $3.\nFinally, we multiply the discounted price per kilogram by the number of kilograms Hannah wants to buy: $3 * 10 = $30.\nHannah would pay $30 for 10 kilograms of apples with a 40% discount.\n#### 30",
+      "completion_sha256": "66727ec8a13671e1d3eec01c50fa3a716ffae18fe8706f2d0bb30a2a0f6b613f",
+      "lines": [
+        {
+          "text": "First, we need to find the discount amount per kilogram. To do this, we multiply the original price per kilogram by the discount percentage: $5 * 0.40 = $2.",
+          "roles": "PC"
+        },
+        {
+          "text": "Now, we subtract the discount amount from the original price to find the discounted price per kilogram: $5 - $2 = $3.",
+          "roles": "PC"
+        },
+        {
+          "text": "Finally, we multiply the discounted price per kilogram by the number of kilograms Hannah wants to buy: $3 * 10 = $30.",
+          "roles": "PC"
+        },
+        {
+          "text": "Hannah would pay $30 for 10 kilograms of apples with a 40% discount.",
+          "roles": "S"
+        }
+      ],
+      "pure_initial_lines": 0,
+      "pure_initial_word_fraction": 0.0,
+      "initial_prefix_includes_interpretation": false,
+      "interpretation_after_calculation": false,
+      "planning_after_calculation": true,
+      "mixed_first_line": true,
+      "has_independent_check": false,
+      "note": "Discount amount, discounted price and total cost each mix a subgoal with its execution.",
+      "within_line_transition": null
+    },
+    {
+      "seed": 1213,
+      "question_id": 695,
+      "length_quartile": 2,
+      "question": "Carla is making smoothies. If she uses 500 ml of watermelon puree and 100 ml of cream, how many 150 ml servings can she make?",
+      "completion": " First, we need to find the total amount of smoothie Carla is making. She uses 500 ml of watermelon puree and 100 ml of cream, so the total amount is 500 ml + 100 ml = 600 ml.\nNow, we need to find out how many 150 ml servings she can make. To do this, we divide the total amount of smoothie by the size of each serving: 600 ml / 150 ml = 4.\nCarla can make 4 servings of 150 ml each.\n#### 4",
+      "completion_sha256": "8ee7390ea0db98daacf05d9d7ab9536338ad3275eaee045ccd09b31ead67dbad",
+      "lines": [
+        {
+          "text": "First, we need to find the total amount of smoothie Carla is making. She uses 500 ml of watermelon puree and 100 ml of cream, so the total amount is 500 ml + 100 ml = 600 ml.",
+          "roles": "IPC"
+        },
+        {
+          "text": "Now, we need to find out how many 150 ml servings she can make. To do this, we divide the total amount of smoothie by the size of each serving: 600 ml / 150 ml = 4.",
+          "roles": "PC"
+        },
+        {
+          "text": "Carla can make 4 servings of 150 ml each.",
+          "roles": "S"
+        }
+      ],
+      "pure_initial_lines": 0,
+      "pure_initial_word_fraction": 0.0,
+      "initial_prefix_includes_interpretation": false,
+      "interpretation_after_calculation": false,
+      "planning_after_calculation": true,
+      "mixed_first_line": true,
+      "has_independent_check": false,
+      "note": "The ingredients are restated and added in the same line, followed by division into servings.",
+      "within_line_transition": null
+    },
+    {
+      "seed": 1213,
+      "question_id": 5816,
+      "length_quartile": 3,
+      "question": "If eight movie tickets cost 2 times as much as one football game ticket, and each movie ticket is sold at $30, calculate the total amount of money Chandler will pay if he buys eight movie tickets and five football game tickets.",
+      "completion": " First, we need to find the cost of one football game ticket. Since eight movie tickets cost 2 times as much as one football game ticket, we can set up the equation: 8 * $30 = 2 * (cost of one football game ticket). Solving for the cost of one football game ticket, we get: cost of one football game ticket = (8 * $30) / 2 = $120 / 2 = $60. Now, we can calculate the total amount of money Chandler will pay for eight movie tickets and five football game tickets: (8 * $30) + (5 * $60) = $240 + $300 = $540. So, Chandler will pay a total of $540.\n#### 540",
+      "completion_sha256": "5b9c9d796e0b368c3806e4004ae15a4cb4f3802dee6cacd7ce264eefb6f6a380",
+      "lines": [
+        {
+          "text": "First, we need to find the cost of one football game ticket. Since eight movie tickets cost 2 times as much as one football game ticket, we can set up the equation: 8 * $30 = 2 * (cost of one football game ticket). Solving for the cost of one football game ticket, we get: cost of one football game ticket = (8 * $30) / 2 = $120 / 2 = $60. Now, we can calculate the total amount of money Chandler will pay for eight movie tickets and five football game tickets: (8 * $30) + (5 * $60) = $240 + $300 = $540. So, Chandler will pay a total of $540.",
+          "roles": "IPCS"
+        }
+      ],
+      "pure_initial_lines": 0,
+      "pure_initial_word_fraction": 0.0,
+      "initial_prefix_includes_interpretation": false,
+      "interpretation_after_calculation": false,
+      "planning_after_calculation": false,
+      "mixed_first_line": true,
+      "has_independent_check": false,
+      "note": "Equation setup and solution share one paragraph. The numerical evaluation divides twice; the trace contains both setup and calculation errors without a line boundary between phases.",
+      "within_line_transition": "Solving for the cost"
+    },
+    {
+      "seed": 1213,
+      "question_id": 5433,
+      "length_quartile": 3,
+      "question": "The ratio of fuel used in gallons to the distance covered in miles by Haley's car is 4:7. If Haley's car used 44 gallons of gas, calculate the distance it covered in miles.",
+      "completion": " To find the distance covered, we can set up a proportion using the given ratio of fuel used to distance covered. The ratio is 4:7, which means for every 4 gallons of fuel used, the car covers 7 miles. We can write this as a fraction: 4/7 = 44/x, where x is the distance covered in miles. To solve for x, we can cross-multiply: 4x = 44 * 7. Now, we can divide both sides of the equation by 4: x = (44 * 7) / 4. Simplifying, we get x = 77. Therefore, Haley's car covered 77 miles when it used 44 gallons of gas.",
+      "completion_sha256": "134495a92e98c10a569a205b41d7b9a31f3e50e3958c6a10e01f368cac0fb28d",
+      "lines": [
+        {
+          "text": "To find the distance covered, we can set up a proportion using the given ratio of fuel used to distance covered. The ratio is 4:7, which means for every 4 gallons of fuel used, the car covers 7 miles. We can write this as a fraction: 4/7 = 44/x, where x is the distance covered in miles. To solve for x, we can cross-multiply: 4x = 44 * 7. Now, we can divide both sides of the equation by 4: x = (44 * 7) / 4. Simplifying, we get x = 77. Therefore, Haley's car covered 77 miles when it used 44 gallons of gas.",
+          "roles": "IPCS"
+        }
+      ],
+      "pure_initial_lines": 0,
+      "pure_initial_word_fraction": 0.0,
+      "initial_prefix_includes_interpretation": false,
+      "interpretation_after_calculation": false,
+      "planning_after_calculation": false,
+      "mixed_first_line": true,
+      "has_independent_check": false,
+      "note": "A clear sentence-level change from proportion setup to solving exists within one paragraph.",
+      "within_line_transition": "To solve for x,"
+    },
+    {
+      "seed": 1213,
+      "question_id": 4394,
+      "length_quartile": 4,
+      "question": "Dan's skateboarding helmet has ten more craters than Daniel's ski helmet. Rin's snorkel helmet has 15 more craters than Dan's and Daniel's helmets combined. If Rin's helmet has 75 craters, how many craters are in Dan's helmet?",
+      "completion": " Let's denote the number of craters in Daniel's ski helmet as D. According to the information given, Dan's skateboarding helmet has ten more craters than Daniel's ski helmet, so Dan's helmet has D + 10 craters.\n\nRin's snorkel helmet has 15 more craters than the combined number of craters in Dan's and Daniel's helmets. So, Rin's helmet has (D + 10) + D + 15 craters.\n\nWe are given that Rin's helmet has 75 craters, so we can set up the equation:\n\n(D + 10) + D + 15 = 75\n\nNow, let's solve for D:\n\n2D + 25 = 75\n2D = 75 - 25\n2D = 50\nD = 50 / 2\nD = 25\n\nSo, Daniel's ski helmet has 25 craters. Now, we can find the number of craters in Dan's skateboarding helmet:\n\nDan's helmet = D + 10\nDan's helmet = 25 + 10\nDan's helmet = 35\n\nDan's helmet has",
+      "completion_sha256": "58674cc11aaf9a71e86380229cfce2bf41ecf4e265b6b3379d3e91c08edc3735",
+      "lines": [
+        {
+          "text": "Let's denote the number of craters in Daniel's ski helmet as D. According to the information given, Dan's skateboarding helmet has ten more craters than Daniel's ski helmet, so Dan's helmet has D + 10 craters.",
+          "roles": "I"
+        },
+        {
+          "text": "Rin's snorkel helmet has 15 more craters than the combined number of craters in Dan's and Daniel's helmets. So, Rin's helmet has (D + 10) + D + 15 craters.",
+          "roles": "I"
+        },
+        {
+          "text": "We are given that Rin's helmet has 75 craters, so we can set up the equation:",
+          "roles": "IP"
+        },
+        {
+          "text": "(D + 10) + D + 15 = 75",
+          "roles": "I"
+        },
+        {
+          "text": "Now, let's solve for D:",
+          "roles": "P"
+        },
+        {
+          "text": "2D + 25 = 75",
+          "roles": "C"
+        },
+        {
+          "text": "2D = 75 - 25",
+          "roles": "C"
+        },
+        {
+          "text": "2D = 50",
+          "roles": "C"
+        },
+        {
+          "text": "D = 50 / 2",
+          "roles": "C"
+        },
+        {
+          "text": "D = 25",
+          "roles": "C"
+        },
+        {
+          "text": "So, Daniel's ski helmet has 25 craters. Now, we can find the number of craters in Dan's skateboarding helmet:",
+          "roles": "SP"
+        },
+        {
+          "text": "Dan's helmet = D + 10",
+          "roles": "IP"
+        },
+        {
+          "text": "Dan's helmet = 25 + 10",
+          "roles": "C"
+        },
+        {
+          "text": "Dan's helmet = 35",
+          "roles": "C"
+        },
+        {
+          "text": "Dan's helmet has",
+          "roles": "O"
+        }
+      ],
+      "pure_initial_lines": 5,
+      "pure_initial_word_fraction": 0.6193548387096774,
+      "initial_prefix_includes_interpretation": true,
+      "interpretation_after_calculation": true,
+      "planning_after_calculation": true,
+      "mixed_first_line": false,
+      "has_independent_check": false,
+      "note": "The clearest initial interpretation block in this sample: variables and relationships precede solving. A relationship is revisited afterward; the final pre-marker sentence is unfinished.",
+      "within_line_transition": null
+    },
+    {
+      "seed": 1213,
+      "question_id": 3969,
+      "length_quartile": 4,
+      "question": "The teacher decided to rewards his students with extra recess on report card day if they got good grades. Students normally get 20 minutes for recess. He told the students that every A got them 2 extra minutes of recess. Every B got them one extra minute. Every C got them zero extra minutes, but every D got them 1 less minute. When report cards came out there were 10 As, 12 Bs, 14Cs, and 5Ds. In total, how much recess would the students get that day?",
+      "completion": " First, let's calculate the extra minutes for each grade:\n- 10 As: 10 As * 2 extra minutes = 20 extra minutes\n- 12 Bs: 12 Bs * 1 extra minute = 12 extra minutes\n- 14 Cs: 14 Cs * 0 extra minutes = 0 extra minutes\n- 5 Ds: 5 Ds * -1 extra minute = -5 extra minutes\n\nNow, let's add up the extra minutes:\n20 extra minutes (from As) + 12 extra minutes (from Bs) + 0 extra minutes (from Cs) - 5 extra minutes (from Ds) = 27 extra minutes\n\nFinally, let's add the extra minutes to the normal recess time:\n20 minutes (normal recess) + 27 extra minutes (from grades) = 47 minutes\n\nSo, the students would get a total of 47 minutes of recess that day.",
+      "completion_sha256": "2cafaa465ceba5cd28712a60182f92c60409a86cd4d0525c3a8184afa48f16d0",
+      "lines": [
+        {
+          "text": "First, let's calculate the extra minutes for each grade:",
+          "roles": "P"
+        },
+        {
+          "text": "- 10 As: 10 As * 2 extra minutes = 20 extra minutes",
+          "roles": "C"
+        },
+        {
+          "text": "- 12 Bs: 12 Bs * 1 extra minute = 12 extra minutes",
+          "roles": "C"
+        },
+        {
+          "text": "- 14 Cs: 14 Cs * 0 extra minutes = 0 extra minutes",
+          "roles": "C"
+        },
+        {
+          "text": "- 5 Ds: 5 Ds * -1 extra minute = -5 extra minutes",
+          "roles": "C"
+        },
+        {
+          "text": "Now, let's add up the extra minutes:",
+          "roles": "P"
+        },
+        {
+          "text": "20 extra minutes (from As) + 12 extra minutes (from Bs) + 0 extra minutes (from Cs) - 5 extra minutes (from Ds) = 27 extra minutes",
+          "roles": "C"
+        },
+        {
+          "text": "Finally, let's add the extra minutes to the normal recess time:",
+          "roles": "P"
+        },
+        {
+          "text": "20 minutes (normal recess) + 27 extra minutes (from grades) = 47 minutes",
+          "roles": "C"
+        },
+        {
+          "text": "So, the students would get a total of 47 minutes of recess that day.",
+          "roles": "S"
+        }
+      ],
+      "pure_initial_lines": 1,
+      "pure_initial_word_fraction": 0.06766917293233082,
+      "initial_prefix_includes_interpretation": false,
+      "interpretation_after_calculation": false,
+      "planning_after_calculation": true,
+      "mixed_first_line": false,
+      "has_independent_check": false,
+      "note": "One initial plan, then repeated plan/calculate alternation for grade totals and final recess.",
+      "within_line_transition": null
+    },
+    {
+      "seed": 1217,
+      "question_id": 6729,
+      "length_quartile": 1,
+      "question": "To produce one chocolate bar, a company needs 1.5 grams of sugar. Every minute the company produces 36 chocolate bars. How many grams of sugar will the company use in two minutes?",
+      "completion": " In one minute, the company produces 36 chocolate bars, so in two minutes, they produce 36 * 2 = 72 chocolate bars.\nSince each chocolate bar requires 1.5 grams of sugar, the company will use 72 * 1.5 = 108 grams of sugar in two minutes.\n#### 108",
+      "completion_sha256": "ce3277f520e05533f477ae05f6095681494cae8b9ab861e535d5a0725eb85102",
+      "lines": [
+        {
+          "text": "In one minute, the company produces 36 chocolate bars, so in two minutes, they produce 36 * 2 = 72 chocolate bars.",
+          "roles": "IC"
+        },
+        {
+          "text": "Since each chocolate bar requires 1.5 grams of sugar, the company will use 72 * 1.5 = 108 grams of sugar in two minutes.",
+          "roles": "IC"
+        }
+      ],
+      "pure_initial_lines": 0,
+      "pure_initial_word_fraction": 0.0,
+      "initial_prefix_includes_interpretation": false,
+      "interpretation_after_calculation": true,
+      "planning_after_calculation": false,
+      "mixed_first_line": true,
+      "has_independent_check": false,
+      "note": "Each line reintroduces a given and immediately computes with it.",
+      "within_line_transition": null
+    },
+    {
+      "seed": 1217,
+      "question_id": 4231,
+      "length_quartile": 1,
+      "question": "Olaf is sailing across the ocean with 25 men, including himself. He needs 1/2 a gallon of water per day per man. The boat can go 200 miles per day and he needs to travel 4,000 miles. How many gallons of water does he need?",
+      "completion": " Olaf and his 25 men need 26 * 1/2 = 13 gallons of water per day.\nThey need 13 * 4 = 52 gallons of water to travel 4,000 miles.\n#### 52",
+      "completion_sha256": "1616bc1f4bd3212fd2a8a66e5170cb85294ac059460472dc9a591e926b78a5d3",
+      "lines": [
+        {
+          "text": "Olaf and his 25 men need 26 * 1/2 = 13 gallons of water per day.",
+          "roles": "IC"
+        },
+        {
+          "text": "They need 13 * 4 = 52 gallons of water to travel 4,000 miles.",
+          "roles": "C"
+        }
+      ],
+      "pure_initial_lines": 0,
+      "pure_initial_word_fraction": 0.0,
+      "initial_prefix_includes_interpretation": false,
+      "interpretation_after_calculation": false,
+      "planning_after_calculation": false,
+      "mixed_first_line": true,
+      "has_independent_check": false,
+      "note": "Starts with the wrong headcount and then uses four rather than twenty travel days; interpretation and execution are not separable by lines.",
+      "within_line_transition": null
+    },
+    {
+      "seed": 1217,
+      "question_id": 6578,
+      "length_quartile": 2,
+      "question": "The library has 9,900 books. Over the summer, they sold some books. If only four sixths of the books are left, how many did they sell?",
+      "completion": " First, we need to find out how many books are left in the library. To do this, we can multiply the total number of books by the fraction that is left: 9,900 * (4/6) = 6,600 books.\nNow, we can subtract the number of books left from the total number of books to find out how many books were sold: 9,900 - 6,600 = 3,300 books.\n#### 3300",
+      "completion_sha256": "485b03f5d8e0a9333b7eed3669d26cab26dceda5930a4fc7895df65a6f2f8e7c",
+      "lines": [
+        {
+          "text": "First, we need to find out how many books are left in the library. To do this, we can multiply the total number of books by the fraction that is left: 9,900 * (4/6) = 6,600 books.",
+          "roles": "PC"
+        },
+        {
+          "text": "Now, we can subtract the number of books left from the total number of books to find out how many books were sold: 9,900 - 6,600 = 3,300 books.",
+          "roles": "PC"
+        }
+      ],
+      "pure_initial_lines": 0,
+      "pure_initial_word_fraction": 0.0,
+      "initial_prefix_includes_interpretation": false,
+      "interpretation_after_calculation": false,
+      "planning_after_calculation": true,
+      "mixed_first_line": true,
+      "has_independent_check": false,
+      "note": "The books-left and books-sold operations are announced and executed on their respective lines.",
+      "within_line_transition": null
+    },
+    {
+      "seed": 1217,
+      "question_id": 1883,
+      "length_quartile": 2,
+      "question": "Jim spends 8 hours scuba diving.  In that time he finds a treasure chest with 100 gold coins in it.  He also finds 2 smaller bags that have half as much gold each.  How much gold does he find per hour?",
+      "completion": " Jim finds 100 gold coins in the treasure chest.\nHe also finds 2 smaller bags with half as much gold each, so each bag has 100/2 = 50 gold coins.\nIn total, he finds 100 + 50 + 50 = 200 gold coins.\nJim spends 8 hours scuba diving, so he finds 200 gold coins / 8 hours = 25 gold coins per hour.\n#### 25",
+      "completion_sha256": "a9c691a554f9d1b0c914bd0102c22d0abe23afa28cdfb6f691b710a5c1c572e8",
+      "lines": [
+        {
+          "text": "Jim finds 100 gold coins in the treasure chest.",
+          "roles": "I"
+        },
+        {
+          "text": "He also finds 2 smaller bags with half as much gold each, so each bag has 100/2 = 50 gold coins.",
+          "roles": "IC"
+        },
+        {
+          "text": "In total, he finds 100 + 50 + 50 = 200 gold coins.",
+          "roles": "C"
+        },
+        {
+          "text": "Jim spends 8 hours scuba diving, so he finds 200 gold coins / 8 hours = 25 gold coins per hour.",
+          "roles": "IC"
+        }
+      ],
+      "pure_initial_lines": 1,
+      "pure_initial_word_fraction": 0.140625,
+      "initial_prefix_includes_interpretation": true,
+      "interpretation_after_calculation": true,
+      "planning_after_calculation": false,
+      "mixed_first_line": false,
+      "has_independent_check": false,
+      "note": "One restated given precedes calculation. The eight-hour duration is interpreted after total coins have been computed.",
+      "within_line_transition": null
+    },
+    {
+      "seed": 1217,
+      "question_id": 6002,
+      "length_quartile": 3,
+      "question": "Kathryn moved to a new city for the new job she had landed two weeks ago. Her rent was $1200, 1/2 of what she spent on food and travel expenses in a month. Luckily, she found a new friend Shelby, who moved in with her to share the rent. If her salary was $5000 per month, how much money remained after her expenses?",
+      "completion": " Kathryn's rent is $1200, which is half of what she spends on food and travel expenses. So, her food and travel expenses are $1200 * 2 = $2400.\nWith Shelby moving in, Kathryn's rent is now shared between the two of them, so each person pays $1200 / 2 = $600.\nHer total expenses for the month are her rent ($600) + her food and travel expenses ($2400) = $3000.\nWith a monthly salary of $5000, the amount of money remaining after her expenses is $5000 - $3000 = $2000.\n#### 2000",
+      "completion_sha256": "3df07509f0b3195f5fe5d90b5d5470f55a34d8eaf8e6c9dd4a3c02cf1e24c349",
+      "lines": [
+        {
+          "text": "Kathryn's rent is $1200, which is half of what she spends on food and travel expenses. So, her food and travel expenses are $1200 * 2 = $2400.",
+          "roles": "IC"
+        },
+        {
+          "text": "With Shelby moving in, Kathryn's rent is now shared between the two of them, so each person pays $1200 / 2 = $600.",
+          "roles": "IC"
+        },
+        {
+          "text": "Her total expenses for the month are her rent ($600) + her food and travel expenses ($2400) = $3000.",
+          "roles": "C"
+        },
+        {
+          "text": "With a monthly salary of $5000, the amount of money remaining after her expenses is $5000 - $3000 = $2000.",
+          "roles": "IC"
+        }
+      ],
+      "pure_initial_lines": 0,
+      "pure_initial_word_fraction": 0.0,
+      "initial_prefix_includes_interpretation": false,
+      "interpretation_after_calculation": true,
+      "planning_after_calculation": false,
+      "mixed_first_line": true,
+      "has_independent_check": false,
+      "note": "Rent/expense relationships and salary are interpreted as needed throughout the calculation.",
+      "within_line_transition": null
+    },
+    {
+      "seed": 1217,
+      "question_id": 163,
+      "length_quartile": 3,
+      "question": "James joins a football team and becomes the star.  He scores 4 touchdowns per game and each touchdown is worth 6 points.  There are 15 games in the season.  He also manages to score 2 point conversions 6 times during the season.  The old record was 300 points during the season.  How many points did James beat the old record by?",
+      "completion": " James scores 4 touchdowns per game, so he scores 4 * 6 = 24 points per game.\nIn 15 games, he scores 24 * 15 = 360 points from touchdowns.\nHe also scores 2 point conversions 6 times, so he scores 2 * 6 = 12 points from conversions.\nIn total, James scores 360 + 12 = 372 points during the season.\nThe old record was 300 points, so James beats the old record by 372 - 300 = 72 points.\n#### 72",
+      "completion_sha256": "d708c9bf07f40bf49ee1c26a6cc89575cbe00f8ce74b6b822ebdb4ff1c271e91",
+      "lines": [
+        {
+          "text": "James scores 4 touchdowns per game, so he scores 4 * 6 = 24 points per game.",
+          "roles": "IC"
+        },
+        {
+          "text": "In 15 games, he scores 24 * 15 = 360 points from touchdowns.",
+          "roles": "C"
+        },
+        {
+          "text": "He also scores 2 point conversions 6 times, so he scores 2 * 6 = 12 points from conversions.",
+          "roles": "IC"
+        },
+        {
+          "text": "In total, James scores 360 + 12 = 372 points during the season.",
+          "roles": "C"
+        },
+        {
+          "text": "The old record was 300 points, so James beats the old record by 372 - 300 = 72 points.",
+          "roles": "IC"
+        }
+      ],
+      "pure_initial_lines": 0,
+      "pure_initial_word_fraction": 0.0,
+      "initial_prefix_includes_interpretation": false,
+      "interpretation_after_calculation": true,
+      "planning_after_calculation": false,
+      "mixed_first_line": true,
+      "has_independent_check": false,
+      "note": "Scoring rules and the old record are introduced at separate points during arithmetic.",
+      "within_line_transition": null
+    },
+    {
+      "seed": 1217,
+      "question_id": 5095,
+      "length_quartile": 4,
+      "question": "The number of Christmas presents David found was twice as many as the number of birthday presents. If David found a total of 60 Christmas presents, how many presents did he get all together?",
+      "completion": " Let's denote the number of birthday presents David found as B. According to the problem, the number of Christmas presents David found is twice the number of birthday presents, so we can write the equation:\n\n2B = 60\n\nNow, we need to find the value of B. To do this, we can divide both sides of the equation by 2:\n\nB = 60 / 2\nB = 30\n\nSo, David found 30 birthday presents. Now, we can find the total number of presents David got all together by adding the number of Christmas presents and birthday presents:\n\nTotal presents = Christmas presents + Birthday presents\nTotal presents = 60 + 30\nTotal presents = 90\n\nDavid got a total of 90 presents all together.\n#### 90",
+      "completion_sha256": "1525f2471cb91cb1e630f8b19ddd776770e5f3ad1ee708fc6bb4e691d399fa5d",
+      "lines": [
+        {
+          "text": "Let's denote the number of birthday presents David found as B. According to the problem, the number of Christmas presents David found is twice the number of birthday presents, so we can write the equation:",
+          "roles": "IP"
+        },
+        {
+          "text": "2B = 60",
+          "roles": "I"
+        },
+        {
+          "text": "Now, we need to find the value of B. To do this, we can divide both sides of the equation by 2:",
+          "roles": "P"
+        },
+        {
+          "text": "B = 60 / 2",
+          "roles": "C"
+        },
+        {
+          "text": "B = 30",
+          "roles": "C"
+        },
+        {
+          "text": "So, David found 30 birthday presents. Now, we can find the total number of presents David got all together by adding the number of Christmas presents and birthday presents:",
+          "roles": "SP"
+        },
+        {
+          "text": "Total presents = Christmas presents + Birthday presents",
+          "roles": "P"
+        },
+        {
+          "text": "Total presents = 60 + 30",
+          "roles": "C"
+        },
+        {
+          "text": "Total presents = 90",
+          "roles": "C"
+        },
+        {
+          "text": "David got a total of 90 presents all together.",
+          "roles": "S"
+        }
+      ],
+      "pure_initial_lines": 3,
+      "pure_initial_word_fraction": 0.4838709677419355,
+      "initial_prefix_includes_interpretation": true,
+      "interpretation_after_calculation": false,
+      "planning_after_calculation": true,
+      "mixed_first_line": false,
+      "has_independent_check": false,
+      "note": "Variable and equation setup form an initial block; planning resumes before the final total.",
+      "within_line_transition": null
+    },
+    {
+      "seed": 1217,
+      "question_id": 1548,
+      "length_quartile": 4,
+      "question": "Bill is trying to control the pests in his garden. Each spider he introduces eats 7 bugs, and each time he sprays the garden he reduces the total bug population to 80% of what it was previously. If the garden has 400 bugs to start, and Bill sprays once and introduces 12 spiders, how many bugs are left?",
+      "completion": " First, we need to calculate the number of bugs left after spraying the garden. Since spraying reduces the bug population to 80% of what it was previously, we can calculate the number of bugs left as follows: 400 * 0.8 = 320 bugs.\nNext, we need to calculate the number of bugs eaten by the spiders. Since each spider eats 7 bugs, and Bill introduces 12 spiders, the total number of bugs eaten by the spiders is 12 * 7 = 84 bugs.\nFinally, we can calculate the number of bugs left in the garden by subtracting the number of bugs eaten by the spiders from the number of bugs left after spraying: 320 - 84 = 236 bugs.\n#### 236",
+      "completion_sha256": "4ee14ebf7d729b7fbe331d26a333019dde147796b80e88d6b2ef8cb484142be6",
+      "lines": [
+        {
+          "text": "First, we need to calculate the number of bugs left after spraying the garden. Since spraying reduces the bug population to 80% of what it was previously, we can calculate the number of bugs left as follows: 400 * 0.8 = 320 bugs.",
+          "roles": "IPC"
+        },
+        {
+          "text": "Next, we need to calculate the number of bugs eaten by the spiders. Since each spider eats 7 bugs, and Bill introduces 12 spiders, the total number of bugs eaten by the spiders is 12 * 7 = 84 bugs.",
+          "roles": "IPC"
+        },
+        {
+          "text": "Finally, we can calculate the number of bugs left in the garden by subtracting the number of bugs eaten by the spiders from the number of bugs left after spraying: 320 - 84 = 236 bugs.",
+          "roles": "PC"
+        }
+      ],
+      "pure_initial_lines": 0,
+      "pure_initial_word_fraction": 0.0,
+      "initial_prefix_includes_interpretation": false,
+      "interpretation_after_calculation": true,
+      "planning_after_calculation": true,
+      "mixed_first_line": true,
+      "has_independent_check": false,
+      "note": "Spraying and predation rules are translated directly into arithmetic, one subgoal per line.",
+      "within_line_transition": null
+    }
+  ]
+}

@@ -73,6 +73,10 @@ The settings used in the comparisons, including the KL and clipping values, are 
 
 ## Reproducibility replay
 
+The prepared [Q5 positional-prior screen](docs/experiments/qwen3_q5_prior_segments/README.md)
+tests early-half, late-half and uniform attenuation using three paired seeds.
+It changes E-step weighting only; historical Q5 controls are reused.
+
 The repository includes two frozen Qwen3-1.7B/GSM8K replay studies:
 
 - `68078ecc`: 13 selected methods or controls across seven paired seeds, 91 tasks.

@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "reviewer": "Codex, one qualitative pass; no independent second annotator",
+  "selection": "q5-semantic-v1: per seed, sort by pre-marker whitespace-word count then question ID; divide 100 saved completions into four groups of 25; choose two smallest SHA256(q5-semantic-v1:{seed}:{idx}) values in each group; do not use correctness",
+  "roles": {
+    "I": "Interpretation: restating givens, assigning variables, or translating a relationship into an equation without solving it",
+    "P": "Plan: choosing an operation or subgoal before carrying it out",
+    "C": "Calculation: executing arithmetic, substitution, simplification, or a derivation",
+    "S": "Summary or conclusion within the pre-marker rationale",
+    "V": "Independent check of the solution rather than repeating the result",
+    "O": "Other, including an unfinished sentence"
+  },
+  "conventions": "Label each nonempty pre-marker line with all applicable roles. Equation construction is I; solving is C. Brief task-restatements attached to arithmetic may be I+C. A line is a pure pre-calculation prefix only if it contains I/P and no C. These labels describe text functions, not hidden model cognition. Word positions are not model-token positions.",
+  "annotations": [
+    {"seed":1201,"question_id":195,"roles":["PC","PC","PC","PC"],"note":"Each line announces and immediately executes an operation; no separate initial interpretation block."},
+    {"seed":1201,"question_id":973,"roles":["PC","PC"],"note":"Credit and cash subgoals are immediately calculated on the same lines."},
+    {"seed":1201,"question_id":4641,"roles":["IPC","IPC"],"note":"Restatement and arithmetic are interleaved. The remaining spectators are incorrectly treated as women, illustrating a relationship-interpretation error rather than an arithmetic failure."},
+    {"seed":1201,"question_id":5833,"roles":["P","PC","PC","PC","PC"],"note":"One general multiply-then-add plan precedes item calculations."},
+    {"seed":1201,"question_id":5386,"roles":["IPC","PC","PC"],"note":"The first line mistranslates the relation involving six less than four times. Later arithmetic follows that erroneous setup."},
+    {"seed":1201,"question_id":5433,"roles":["IPCS"],"within_line_transition":"To solve for x,","note":"A proportion is interpreted and set up before solving, but everything occupies one paragraph. A newline split cannot identify the transition."},
+    {"seed":1201,"question_id":1402,"roles":["PC","PC","PC"],"note":"Every subgoal is immediately calculated; no standalone understanding section."},
+    {"seed":1201,"question_id":6059,"roles":["P","IP","C","IPC","C","P","C","S"],"note":"Initial decomposition precedes arithmetic, but the Sunday exception is interpreted only after weekday computation. Treating the six-day span as a given is a borderline annotation choice."},
+    {"seed":1213,"question_id":3121,"roles":["C","C"],"note":"Starts directly with fraction addition, then subtraction."},
+    {"seed":1213,"question_id":3326,"roles":["P","P","C","S"],"note":"Two short conversion instructions precede the division; these are planning, not a detailed interpretation of the question."},
+    {"seed":1213,"question_id":5625,"roles":["PC","PC","PC","S"],"note":"Discount amount, discounted price and total cost each mix a subgoal with its execution."},
+    {"seed":1213,"question_id":695,"roles":["IPC","PC","S"],"note":"The ingredients are restated and added in the same line, followed by division into servings."},
+    {"seed":1213,"question_id":5816,"roles":["IPCS"],"within_line_transition":"Solving for the cost","note":"Equation setup and solution share one paragraph. The numerical evaluation divides twice; the trace contains both setup and calculation errors without a line boundary between phases."},
+    {"seed":1213,"question_id":5433,"roles":["IPCS"],"within_line_transition":"To solve for x,","note":"A clear sentence-level change from proportion setup to solving exists within one paragraph."},
+    {"seed":1213,"question_id":4394,"roles":["I","I","IP","I","P","C","C","C","C","C","SP","IP","C","C","O"],"note":"The clearest initial interpretation block in this sample: variables and relationships precede solving. A relationship is revisited afterward; the final pre-marker sentence is unfinished."},
+    {"seed":1213,"question_id":3969,"roles":["P","C","C","C","C","P","C","P","C","S"],"note":"One initial plan, then repeated plan/calculate alternation for grade totals and final recess."},
+    {"seed":1217,"question_id":6729,"roles":["IC","IC"],"note":"Each line reintroduces a given and immediately computes with it."},
+    {"seed":1217,"question_id":4231,"roles":["IC","C"],"note":"Starts with the wrong headcount and then uses four rather than twenty travel days; interpretation and execution are not separable by lines."},
+    {"seed":1217,"question_id":6578,"roles":["PC","PC"],"note":"The books-left and books-sold operations are announced and executed on their respective lines."},
+    {"seed":1217,"question_id":1883,"roles":["I","IC","C","IC"],"note":"One restated given precedes calculation. The eight-hour duration is interpreted after total coins have been computed."},
+    {"seed":1217,"question_id":6002,"roles":["IC","IC","C","IC"],"note":"Rent/expense relationships and salary are interpreted as needed throughout the calculation."},
+    {"seed":1217,"question_id":163,"roles":["IC","C","IC","C","IC"],"note":"Scoring rules and the old record are introduced at separate points during arithmetic."},
+    {"seed":1217,"question_id":5095,"roles":["IP","I","P","C","C","SP","P","C","C","S"],"note":"Variable and equation setup form an initial block; planning resumes before the final total."},
+    {"seed":1217,"question_id":1548,"roles":["IPC","IPC","PC"],"note":"Spraying and predation rules are translated directly into arithmetic, one subgoal per line."}
+  ]
+}

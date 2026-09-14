@@ -67,6 +67,9 @@ from ac_alg1_age_one_reuse import (
     select_age_one_reuse,
 )
 from ac_alg1_uncertainty_allocation import allocate_uncertainty_budget
+from ac_alg1_prior_segments import (
+    segment_prior_logits, split_rationale_mask, validate_segment_exponents,
+)
 from ac_alg1_two_witness import two_witness_responsibilities
 from ac_alg1_update_geometry import (
     STEP_ACCEPTANCE_MODES,
@@ -153,6 +156,7 @@ ALGORITHM_PROFILES = (
     "barber_fixed_kl_ablation",
     "barber_q5_control",
     "q5_prior_exponent",
+    "q5_prior_segments",
     "barber_q5_token_mean_followup",
     "l2r_common_factorial",
     "l2r_pis_rationale_kl_followup",
@@ -429,6 +433,10 @@ class TraceRow:
     elite_score: float = float("-inf")
     joint_logprob: float = float("-inf")
     trace_logprob: float = float("-inf")
+    prior_head_logprob: float | None = None
+    prior_tail_logprob: float | None = None
+    prior_head_tokens: int | None = None
+    prior_tail_tokens: int | None = None
     answer_logprob: float = float("-inf")
     responsibility_logit: float = float("-inf")
     proposal_trace_logprob: float = float("-inf")
@@ -2993,6 +3001,8 @@ def _buffer_weights_for_questions(
     responsibility_posterior: str = "softmax_entropy",
     responsibility_temperature: float = 1.0,
     responsibility_prior_exponent: float = 1.0,
+    responsibility_prior_head_exponent: float = 1.0,
+    responsibility_prior_tail_exponent: float = 1.0,
     responsibility_ess_floor: float = 0.0,
     responsibility_abstention: str = "none",
     responsibility_rejection_threshold: float = 0.0,
@@ -3109,6 +3119,15 @@ def _buffer_weights_for_questions(
         )
     if not math.isfinite(responsibility_prior_exponent) or responsibility_prior_exponent < 0:
         raise ValueError("responsibility_prior_exponent must be finite and nonnegative")
+    segmented_prior = validate_segment_exponents(
+        responsibility_prior_head_exponent, responsibility_prior_tail_exponent,
+    )
+    if segmented_prior and (
+        responsibility_prior_exponent != 1.0
+        or variational_estimator != "delta_joint" or responsibility_score != "joint"
+        or responsibility_posterior != "softmax_entropy"
+    ):
+        raise ValueError("segment prior requires joint delta scoring and no global exponent")
     if responsibility_prior_exponent != 1.0 and (
         variational_estimator != "delta_joint" or responsibility_score != "joint"
         or responsibility_posterior != "softmax_entropy"
@@ -3334,7 +3353,7 @@ def _buffer_weights_for_questions(
                         micro=16,
                         length_norm=False,
                     )
-                    if record_joint_logprobs or responsibility_prior_exponent != 1.0:
+                    if record_joint_logprobs or responsibility_prior_exponent != 1.0 or segmented_prior:
                         answer_logprobs = seq_logprobs(
                             model,
                             ids,
@@ -3495,6 +3514,22 @@ def _buffer_weights_for_questions(
                     answer_logprobs if responsibility_prior_exponent == 0.0
                     else answer_logprobs + responsibility_prior_exponent * trace_logprobs
                 )
+            if segmented_prior:
+                head_mask, tail_mask = split_rationale_mask(trace_span)
+                # This extra scoring pass must not advance training/generation RNG.
+                with torch.random.fork_rng(), _adapter_policy_context(model, responsibility_policy):
+                    head_logprobs = seq_logprobs(
+                        model, ids, head_mask, micro=16, length_norm=False,
+                    )
+                base_logits = segment_prior_logits(
+                    answer_logprobs, trace_logprobs, head_logprobs,
+                    responsibility_prior_head_exponent, responsibility_prior_tail_exponent,
+                )
+                for index, row in enumerate(rows):
+                    row.prior_head_logprob = float(head_logprobs[index])
+                    row.prior_tail_logprob = float(trace_logprobs[index] - head_logprobs[index])
+                    row.prior_head_tokens = int(head_mask[index].sum())
+                    row.prior_tail_tokens = int(tail_mask[index].sum())
             if responsibility_score == "token_mean":
                 if variational_estimator != "delta_joint":
                     raise ValueError(
@@ -4579,6 +4614,8 @@ def _refresh_minibatch_weights(
     responsibility_posterior: str = "softmax_entropy",
     responsibility_temperature: float = 1.0,
     responsibility_prior_exponent: float = 1.0,
+    responsibility_prior_head_exponent: float = 1.0,
+    responsibility_prior_tail_exponent: float = 1.0,
     responsibility_ess_floor: float = 0.0,
     responsibility_abstention: str = "none",
     responsibility_rejection_threshold: float = 0.0,
@@ -4651,6 +4688,8 @@ def _refresh_minibatch_weights(
         responsibility_posterior=responsibility_posterior,
         responsibility_temperature=responsibility_temperature,
         responsibility_prior_exponent=responsibility_prior_exponent,
+        responsibility_prior_head_exponent=responsibility_prior_head_exponent,
+        responsibility_prior_tail_exponent=responsibility_prior_tail_exponent,
         responsibility_ess_floor=responsibility_ess_floor,
         responsibility_abstention=responsibility_abstention,
         responsibility_rejection_threshold=responsibility_rejection_threshold,
@@ -4688,6 +4727,8 @@ def _refresh_minibatch_weights(
         responsibility_posterior=responsibility_posterior,
         responsibility_temperature=responsibility_temperature,
         responsibility_prior_exponent=responsibility_prior_exponent,
+        responsibility_prior_head_exponent=responsibility_prior_head_exponent,
+        responsibility_prior_tail_exponent=responsibility_prior_tail_exponent,
         responsibility_ess_floor=responsibility_ess_floor,
         responsibility_abstention=responsibility_abstention,
         responsibility_rejection_threshold=responsibility_rejection_threshold,
@@ -5376,6 +5417,8 @@ def _inner_weighted_em_steps(
     responsibility_posterior: str = "softmax_entropy",
     responsibility_temperature: float = 1.0,
     responsibility_prior_exponent: float = 1.0,
+    responsibility_prior_head_exponent: float = 1.0,
+    responsibility_prior_tail_exponent: float = 1.0,
     responsibility_ess_floor: float = 0.0,
     responsibility_abstention: str = "none",
     responsibility_rejection_threshold: float = 0.0,
@@ -6421,6 +6464,8 @@ def _inner_weighted_em_steps(
                 responsibility_posterior=responsibility_posterior,
                 responsibility_temperature=responsibility_temperature,
                 responsibility_prior_exponent=responsibility_prior_exponent,
+                responsibility_prior_head_exponent=responsibility_prior_head_exponent,
+                responsibility_prior_tail_exponent=responsibility_prior_tail_exponent,
                 responsibility_ess_floor=responsibility_ess_floor,
                 responsibility_abstention=responsibility_abstention,
                 responsibility_rejection_threshold=(
@@ -7419,6 +7464,12 @@ def _responsibility_diagnostics(
                     "age": max(round_index - row.round_added, 0),
                     "joint_logprob": _finite_or_none(row.joint_logprob),
                     "trace_logprob": _finite_or_none(row.trace_logprob),
+                    **({
+                        "prior_head_logprob": _finite_or_none(row.prior_head_logprob),
+                        "prior_tail_logprob": _finite_or_none(row.prior_tail_logprob),
+                        "prior_head_tokens": row.prior_head_tokens,
+                        "prior_tail_tokens": row.prior_tail_tokens,
+                    } if row.prior_head_logprob is not None else {}),
                     "answer_logprob": _finite_or_none(row.answer_logprob),
                     "proposal_trace_logprob": _finite_or_none(
                         row.proposal_trace_logprob
@@ -7887,8 +7938,15 @@ def _validate_ac_alg1_run_config(
     responsibility_posterior = config.responsibility_posterior
     responsibility_temperature = config.responsibility_temperature
     responsibility_prior_exponent = config.responsibility_prior_exponent
+    responsibility_prior_head_exponent = config.responsibility_prior_head_exponent
+    responsibility_prior_tail_exponent = config.responsibility_prior_tail_exponent
     if responsibility_prior_exponent != 1.0 and config.algorithm_profile != "q5_prior_exponent":
         raise ValueError("nondefault prior exponent requires q5_prior_exponent profile")
+    segmented_prior = validate_segment_exponents(
+        responsibility_prior_head_exponent, responsibility_prior_tail_exponent,
+    )
+    if segmented_prior and config.algorithm_profile != "q5_prior_segments":
+        raise ValueError("nondefault segment exponents require q5_prior_segments profile")
     responsibility_ess_floor = config.responsibility_ess_floor
     responsibility_abstention = config.responsibility_abstention
     responsibility_rejection_threshold = config.responsibility_rejection_threshold
@@ -9555,6 +9613,7 @@ def _validate_ac_alg1_run_config(
     elif algorithm_profile in {
         "barber_q5_control",
         "q5_prior_exponent",
+        "q5_prior_segments",
         "barber_q5_token_mean_followup",
     }:
         expected_responsibility_score = (
@@ -9631,6 +9690,18 @@ def _validate_ac_alg1_run_config(
                 f"{algorithm_profile} rejected a non-Q5 change: "
                 f"{mismatches}"
             )
+        if algorithm_profile == "q5_prior_segments":
+            if (responsibility_prior_head_exponent, responsibility_prior_tail_exponent) not in {
+                (1.0, 1.0), (0.5, 1.0), (1.0, 0.5), (0.75, 0.75),
+            }:
+                raise ValueError("q5_prior_segments permits only the declared positional screen")
+            if responsibility_answer_policy != "current" or responsibility_prior_exponent != 1.0:
+                raise ValueError("q5_prior_segments requires moving reader and unmodified global exponent")
+            if responsibility_ess_floor != 0.0 or proposal_temperature != 1.0:
+                raise ValueError("q5_prior_segments forbids ESS or sampling-temperature changes")
+            if (policy_kl_coef is not None or policy_anchor_mode != "fixed"
+                    or policy_anchor_target_ratio is not None or responsibility_abstention != "none"):
+                raise ValueError("q5_prior_segments forbids anchoring or abstention")
         if algorithm_profile == "q5_prior_exponent":
             if responsibility_prior_exponent not in {0.0, 0.5, 1.0}:
                 raise ValueError("q5_prior_exponent permits only 0, 0.5 or 1")
@@ -10609,6 +10680,8 @@ def _execute_ac_alg1_update(
     responsibility_posterior = config.responsibility_posterior
     responsibility_temperature = config.responsibility_temperature
     responsibility_prior_exponent = config.responsibility_prior_exponent
+    responsibility_prior_head_exponent = config.responsibility_prior_head_exponent
+    responsibility_prior_tail_exponent = config.responsibility_prior_tail_exponent
     responsibility_ess_floor = config.responsibility_ess_floor
     responsibility_abstention = config.responsibility_abstention
     responsibility_rejection_threshold = config.responsibility_rejection_threshold
@@ -10827,6 +10900,8 @@ def _execute_ac_alg1_update(
             responsibility_posterior=responsibility_posterior,
             responsibility_temperature=responsibility_temperature,
             responsibility_prior_exponent=responsibility_prior_exponent,
+            responsibility_prior_head_exponent=responsibility_prior_head_exponent,
+            responsibility_prior_tail_exponent=responsibility_prior_tail_exponent,
             responsibility_ess_floor=responsibility_ess_floor,
             responsibility_abstention=responsibility_abstention,
             responsibility_rejection_threshold=(
@@ -10983,6 +11058,8 @@ def _execute_ac_alg1_update(
         responsibility_posterior=responsibility_posterior,
         responsibility_temperature=responsibility_temperature,
         responsibility_prior_exponent=responsibility_prior_exponent,
+        responsibility_prior_head_exponent=responsibility_prior_head_exponent,
+        responsibility_prior_tail_exponent=responsibility_prior_tail_exponent,
         responsibility_ess_floor=responsibility_ess_floor,
         responsibility_abstention=responsibility_abstention,
         responsibility_rejection_threshold=responsibility_rejection_threshold,
@@ -11059,6 +11136,8 @@ def _execute_ac_alg1_update(
         responsibility_posterior=responsibility_posterior,
         responsibility_temperature=responsibility_temperature,
         responsibility_prior_exponent=responsibility_prior_exponent,
+        responsibility_prior_head_exponent=responsibility_prior_head_exponent,
+        responsibility_prior_tail_exponent=responsibility_prior_tail_exponent,
         responsibility_ess_floor=responsibility_ess_floor,
         responsibility_abstention=responsibility_abstention,
         responsibility_rejection_threshold=responsibility_rejection_threshold,
@@ -11219,6 +11298,8 @@ def _record_ac_alg1_round(
     responsibility_posterior = config.responsibility_posterior
     responsibility_temperature = config.responsibility_temperature
     responsibility_prior_exponent = config.responsibility_prior_exponent
+    responsibility_prior_head_exponent = config.responsibility_prior_head_exponent
+    responsibility_prior_tail_exponent = config.responsibility_prior_tail_exponent
     responsibility_ess_floor = config.responsibility_ess_floor
     responsibility_abstention = config.responsibility_abstention
     responsibility_rejection_threshold = config.responsibility_rejection_threshold
@@ -11366,6 +11447,8 @@ def _record_ac_alg1_round(
         "responsibility_posterior": responsibility_posterior,
         "responsibility_temperature": responsibility_temperature,
         "responsibility_prior_exponent": responsibility_prior_exponent,
+        "responsibility_prior_head_exponent": responsibility_prior_head_exponent,
+        "responsibility_prior_tail_exponent": responsibility_prior_tail_exponent,
         "responsibility_ess_floor": responsibility_ess_floor,
         "responsibility_abstention": responsibility_abstention,
         "responsibility_rejection_threshold": responsibility_rejection_threshold,
@@ -11491,6 +11574,8 @@ def _emit_ac_alg1_round_diagnostics(
     responsibility_posterior = config.responsibility_posterior
     responsibility_temperature = config.responsibility_temperature
     responsibility_prior_exponent = config.responsibility_prior_exponent
+    responsibility_prior_head_exponent = config.responsibility_prior_head_exponent
+    responsibility_prior_tail_exponent = config.responsibility_prior_tail_exponent
     responsibility_ess_floor = config.responsibility_ess_floor
     responsibility_abstention = config.responsibility_abstention
     responsibility_rejection_threshold = config.responsibility_rejection_threshold
@@ -11703,6 +11788,8 @@ def _emit_ac_alg1_round_diagnostics(
                 "posterior": responsibility_posterior,
                 "temperature": responsibility_temperature,
                 "prior_exponent": responsibility_prior_exponent,
+                "prior_head_exponent": responsibility_prior_head_exponent,
+                "prior_tail_exponent": responsibility_prior_tail_exponent,
                 "ess_floor_fraction": responsibility_ess_floor,
                 "abstention": {
                     "mode": responsibility_abstention,
@@ -12001,6 +12088,8 @@ def _run_ac_alg1_round(
     responsibility_score = config.responsibility_score
     responsibility_temperature = config.responsibility_temperature
     responsibility_prior_exponent = config.responsibility_prior_exponent
+    responsibility_prior_head_exponent = config.responsibility_prior_head_exponent
+    responsibility_prior_tail_exponent = config.responsibility_prior_tail_exponent
     responsibility_ess_floor = config.responsibility_ess_floor
     responsibility_policy = config.responsibility_policy
     responsibility_answer_policy = config.responsibility_answer_policy
@@ -12191,6 +12280,8 @@ def run_ac_alg1(
     responsibility_posterior: str = "softmax_entropy",
     responsibility_temperature: float = 1.0,
     responsibility_prior_exponent: float = 1.0,
+    responsibility_prior_head_exponent: float = 1.0,
+    responsibility_prior_tail_exponent: float = 1.0,
     responsibility_ess_floor: float = 0.0,
     responsibility_abstention: str = "none",
     responsibility_rejection_threshold: float = 0.0,

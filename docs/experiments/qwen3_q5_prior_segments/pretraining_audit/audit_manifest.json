@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "status": "partial_pretraining_audit",
+  "training_may_start": false,
+  "reason": "Semantic review and uniform reweighting complete; actual early/late rankings require token-resolved scoring on identical support before training.",
+  "script_sha256": "453a7e44a258335afe7939cc21ff198b648cb9b090f0f8fd0b1cbd7a50eb651b",
+  "annotations_sha256": "4add44904dee52eab65fbf00c0e77489f18372a1c30cf3f337a51376d4a1cb3b",
+  "verified_input_receipts": [
+    {
+      "source": "/Users/vigneshmohanarajan1/Desktop/MScThesis/ResultsArchive/beaker-amanojna/20260902T151747Z__qwen3_selected_method_posterity_68078ecc/artifacts/dump_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1201__AC-ALG1_s1201.json",
+      "sha256": "ebd70570bffe2836213ea8bff92a00a3b4bef6c6769bfddbb4f86233e4564860",
+      "receipt": "/Users/vigneshmohanarajan1/Desktop/MScThesis/ResultsArchive/beaker-amanojna/20260912_method_export_sources/replay_68078ecc/complete_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1201__AC-ALG1_s1201.json",
+      "receipt_sha256": "7b836fe32231870f89a9acdbcf932dda5ff5ba0e038909911c4dc9e92d663bff"
+    },
+    {
+      "source": "/Users/vigneshmohanarajan1/Desktop/MScThesis/ResultsArchive/beaker-amanojna/20260902T151747Z__qwen3_selected_method_posterity_68078ecc/artifacts/training_diagnostics_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1201__AC-ALG1_s1201.jsonl.gz",
+      "sha256": "7ed18604e85e02fc29faff15789ccbf1e9159e53b8c72493b35824d343c8bd27",
+      "receipt": "/Users/vigneshmohanarajan1/Desktop/MScThesis/ResultsArchive/beaker-amanojna/20260912_method_export_sources/replay_68078ecc/complete_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1201__AC-ALG1_s1201.json",
+      "receipt_sha256": "7b836fe32231870f89a9acdbcf932dda5ff5ba0e038909911c4dc9e92d663bff"
+    },
+    {
+      "source": "/Users/vigneshmohanarajan1/Desktop/MScThesis/ResultsArchive/beaker-amanojna/20260902T151747Z__qwen3_selected_method_posterity_68078ecc/artifacts/dump_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1213__AC-ALG1_s1213.json",
+      "sha256": "22f6b938b1231a0e1b463d4b48f10007d59edf3e7a841f020a2a6ceea08c25d5",
+      "receipt": "/Users/vigneshmohanarajan1/Desktop/MScThesis/ResultsArchive/beaker-amanojna/20260912_method_export_sources/replay_68078ecc/complete_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1213__AC-ALG1_s1213.json",
+      "receipt_sha256": "502d96243b83a88efbc235f32a5e78c68b567e7583f2200096b141e02483b334"
+    },
+    {
+      "source": "/Users/vigneshmohanarajan1/Desktop/MScThesis/ResultsArchive/beaker-amanojna/20260902T151747Z__qwen3_selected_method_posterity_68078ecc/artifacts/training_diagnostics_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1213__AC-ALG1_s1213.jsonl.gz",
+      "sha256": "251475f055a53138b83038cc9b08b4f8d28399ff8593908cd4cf7195f3b60283",
+      "receipt": "/Users/vigneshmohanarajan1/Desktop/MScThesis/ResultsArchive/beaker-amanojna/20260912_method_export_sources/replay_68078ecc/complete_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1213__AC-ALG1_s1213.json",
+      "receipt_sha256": "502d96243b83a88efbc235f32a5e78c68b567e7583f2200096b141e02483b334"
+    },
+    {
+      "source": "/Users/vigneshmohanarajan1/Desktop/MScThesis/ResultsArchive/beaker-amanojna/20260902T151747Z__qwen3_selected_method_posterity_68078ecc/artifacts/dump_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1217__AC-ALG1_s1217.json",
+      "sha256": "cb2fe0602ef5495b76dba6dd74593a27ecc886a2c9e62eab0dc53a50b1dc3eaf",
+      "receipt": "/Users/vigneshmohanarajan1/Desktop/MScThesis/ResultsArchive/beaker-amanojna/20260912_method_export_sources/replay_68078ecc/complete_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1217__AC-ALG1_s1217.json",
+      "receipt_sha256": "a9d5c27968ca023f431b3e60da988692fb31d9d08e56609a8f7efa8651b6c0b2"
+    },
+    {
+      "source": "/Users/vigneshmohanarajan1/Desktop/MScThesis/ResultsArchive/beaker-amanojna/20260902T151747Z__qwen3_selected_method_posterity_68078ecc/artifacts/training_diagnostics_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1217__AC-ALG1_s1217.jsonl.gz",
+      "sha256": "6d5117a54cbc94a9d1a0b1ddc983889c4893fc4dd782429d9a3a87895619ddc0",
+      "receipt": "/Users/vigneshmohanarajan1/Desktop/MScThesis/ResultsArchive/beaker-amanojna/20260912_method_export_sources/replay_68078ecc/complete_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1217__AC-ALG1_s1217.json",
+      "receipt_sha256": "a9d5c27968ca023f431b3e60da988692fb31d9d08e56609a8f7efa8651b6c0b2"
+    }
+  ],
+  "outputs": {
+    "saved_buffer_rankings.json": "a3ab54d1c1145164bd2b5a6b4fefa6fbb543a9a4d4a84f944a05fb161d26a25a",
+    "semantic_review.json": "d6a0e809c282bdb08e08161e898df16b2d6ba5e896dd62690795bb44d375aaf0"
+  },
+  "inference_performed": false,
+  "optimizer_steps": 0
+}

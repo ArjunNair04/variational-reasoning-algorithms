@@ -15,6 +15,35 @@
 
 ## Change record
 
+- **2026-09-14, fixed-checkpoint segment scoring:** added a receipt-bound
+  three-seed GPU inference-only audit of archived Q5 support, native token
+  reconstruction preflight, full token tapes and a pre-outcome validator/analyzer.
+  Corrected the draft mask description: historical h includes the retained
+  `####` marker. The audit reports both historical-mask and marker-fixed
+  reasoning results; no trainer arithmetic or historical run changes. The
+  nine-task training array remains blocked pending this boundary decision.
+  Verification: all 238 local tests pass, including token-mask reconstruction,
+  four-way identities, corruption rejection and the no-training runner contract.
+
+- **2026-09-14, pre-training semantic/ranking audit:** added outcome-blind
+  24-trace line annotations and a read-only 384-support ranking audit with
+  source hashes. Uniform075 changes five preferred traces; early/late scores
+  are not identifiable from archived totals. A fail-closed audit check blocks
+  training submission until token-resolved scoring is complete. No training,
+  model inference or remote mutation. See the positional-screen pre-training
+  report; regression tests cover ranking, missing-score bounds and the gate.
+  Final verification: 234 tests pass; all six audit input hashes match their
+  completion receipts; canonical views, nine tracking tests and MLflow refresh.
+
+- **2026-09-14, positional Q5 prior screen:** added isolated head/tail E-step
+  exponents, historical-prior floor-half masks, RNG-preserved segment diagnostics,
+  frozen nine-task YAML, runner, validator and paired analyzer. Default (1,1)
+  keeps the original scoring branch; prompts and joint M-step are unchanged.
+  Three new moving-reader settings reuse historical Q5 controls. The 300-text
+  audit is evaluation-only, not a semantic or training-buffer classification.
+  Local suite: 222 tests passed; AMN helper exit 255 prevented deployment.
+  See `qwen3_q5_prior_segments_20260914` and its protocol README.
+
 - **2026-09-13, Q5 exponent ingestion:** all 12 tasks, adapters and frozen paired
   analysis passed after the isolated dependency repair; compact outputs and
   hashes are mirrored locally. Moving tau0.5 is the sole three-seed nominee,
