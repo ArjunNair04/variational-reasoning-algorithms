@@ -3,10 +3,12 @@
 Run `7a31c9e2` contains nine new tasks, authorized on 15 September 2026.
 No standard-Q5 or moving-reader controls are rerun.
 
-Submitted as held payload **7414007** (tasks 1-9), with dependent validator
+Submitted and released as payload **7414007** (tasks 1-9), with dependent validator
 **7414008**, at immutable execution `2927112`. No concurrency cap. All local
 tests and cluster preflight gates passed, including revalidation of the nine
-moving comparison tasks and adapters. Tracking publication precedes release.
+moving comparison tasks and adapters. Both tracking pushes and canonical MLflow
+refresh succeeded before release. All nine tasks were verified ordinary queued;
+the validator remains dependency-held. This is not a completion claim.
 
 | Tasks | Cell | First-half weight | Second-half weight | Seeds |
 |---|---|---:|---:|---|

@@ -4,7 +4,7 @@
     {
       "registry_id": "qwen3_q5_prior_segments_frozen_20260915",
       "run_id": "7a31c9e2",
-      "status": "user_held_pending_release",
+      "status": "queued",
       "account": "amanojna",
       "config": "lm_study/experiments_qwen3_17b_q5_prior_segments_frozen.yaml",
       "submitter": "lm_study/submit_qwen3_17b_q5_prior_segments_frozen_ucl.sh",
@@ -62,7 +62,7 @@
           "role": "payload",
           "job_id": "7414007",
           "tasks": 9,
-          "state": "held"
+          "state": "queued"
         },
         {
           "role": "validator",

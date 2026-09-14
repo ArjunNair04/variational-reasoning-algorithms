@@ -15,6 +15,12 @@
 
 ## Change record
 
+- **2026-09-15, frozen positional release:** both tracking pushes and canonical
+  MLflow refresh succeeded before releasing only 7414007.1-9. All tasks verified
+  ordinary queued, validator 7414008 dependency-held, no concurrency ceiling.
+  Execution remains 2927112; close the AMN lease after publishing this record.
+  No results copied/deleted or other jobs changed.
+
 - **2026-09-15, frozen positional submission:** payload 7414007 has nine held
   tasks; validator 7414008 depends on it. Immutable execution 2927112, YAML
   hash, all nine coordinates, historical controls and moving-result revalidation
