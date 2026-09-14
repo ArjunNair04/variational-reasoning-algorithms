@@ -99,13 +99,15 @@
         "Completed audit uses final adapters and retokenized archived text, not historical intermediate checkpoint replay. No accuracy outcome is measured."
       ],
       "next_actions": [
+        "Approve and publish tracking metadata, then recheck and release only payload 7413571.",
         "Verify all nine payload receipts, logs, adapters and 32-round diagnostics plus the dependent validator.",
         "After verified completion and approved compact collection, run the frozen six paired contrasts; report Final Acc@1, strict final, AUC and compute. No automatic confirmation."
       ],
       "historical_pretraining_verification": "Full curated suite: 234 tests pass, including 12 focused pre-training audit tests. Outcome-blind semantic review covers 24 saved final evaluations; exact saved-factor uniform reweighting covers 384 question-rounds and 2987 trace rows. All six source hashes match completion receipts and original softmax weights reconstruct. Early/late scores remain unavailable and the submitter rejects the partial audit. AMN briefly reachable; subsequent checkpoint inventory returned exit 255. No model inference, training or submission. Canonical views, nine registry/importer tests and MLflow refresh pass.",
       "execution_revision": "037b1d38b484f207e5bff9cf437a3ea421860f53",
       "configuration_sha256": "c73b7c65c97aff185b3c73ab04019ac2ed1be9f31d1bd30fa17ebdd2c2a13084",
-      "execution_checkout": "/home/amanojna/vrl_hpc/audits/q5-prior-segments-037b1d3"
+      "execution_checkout": "/home/amanojna/vrl_hpc/audits/q5-prior-segments-037b1d3",
+      "release_blocker": "Approval layer denied external publication of job IDs and AMN paths. Explicit approval requested for both existing GitHub repositories; jobs remain held."
     },
     {
       "registry_id": "qwen3_q5_prior_exponent_reader_20260912",

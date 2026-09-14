@@ -15,6 +15,12 @@
 
 ## Change record
 
+- **2026-09-14, release pending publication approval:** 7413571/7413572 remain
+  held. The source and lease pushes succeeded, but exporting the later job IDs
+  and AMN paths was denied by the approval layer. Explicit export approval was
+  requested; do not bypass it or release before publishing tracking. Local
+  generated views, registry tests and canonical MLflow remain current.
+
 - **2026-09-14, positional screen submission:** payload 7413571 contains
   exactly nine held tasks; validator 7413572 depends only on that payload.
   Execution is pinned to 037b1d3, with no concurrency cap. Cluster control
