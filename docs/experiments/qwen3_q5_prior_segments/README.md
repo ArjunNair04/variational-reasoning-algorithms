@@ -1,11 +1,12 @@
 # Q5 positional rationale-prior weighting
 
-Status: implemented and locally tested; training paused before submission.
-The [pre-training audit](pretraining_findings_2026-09-14.md) completes the
-semantic review and uniform reweighting of saved buffers. Early/late rankings
-still require token-resolved scoring. The submitter checks this gate before
-qsub. AMN access was verified on 14 September; the three receipt-bound final
-adapters are present and a separate scoring-only deployment is being prepared.
+Status: [token-resolved scoring audit completed and validated](scoring_results_2026-09-14.md);
+training remains paused before submission. The preceding
+[pre-training audit](pretraining_findings_2026-09-14.md) records the semantic
+review and historical saved-score comparison. Job 7412300 adds fixed-final-
+checkpoint scoring on all 384 saved supports. The original partial manifest
+is preserved; it must not be manually edited to release training. Resolve the
+marker convention and update its tested protocol/gate before any training run.
 
 ## Question
 

@@ -1,5 +1,10 @@
 # Q5: what comes before calculation?
 
+This is the earlier partial audit. The subsequent
+[completed token-scoring report](scoring_results_2026-09-14.md) now supplies
+the actual early/late rankings under fixed final checkpoints. Its results do
+not overwrite the historical saved-score measurements below.
+
 ## Result
 
 An initial interpretation or planning phase is visible in some saved traces,

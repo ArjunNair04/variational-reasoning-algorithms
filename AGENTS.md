@@ -15,6 +15,15 @@
 
 ## Change record
 
+- **2026-09-14, scoring ingestion:** all three tasks of 7412300 passed the
+  prepared token/receipt/log validator; 384 supports and 2987 rows are mirrored
+  without checkpoints. Marker-fixed winner changes: early 38, late 43,
+  uniform 7; early/late disagreement 74. Retokenization affects 17 row lengths;
+  separately labelled exclusion sensitivity agrees. No accuracy measurement
+  or training release. See `scoring_results_2026-09-14.md` and the registry.
+  Verification: 238 local tests, nine canonical and ten coordination tracking
+  tests, current generated views and successful MLflow refresh.
+
 - **2026-09-14, scoring startup:** all three tasks of 7412300 are scheduler-
   running on seymour4; allocation-only logs do not yet establish scoring
   progress or a throughput ETA. This is a read-only scheduler snapshot.

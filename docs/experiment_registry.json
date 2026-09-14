@@ -4,7 +4,7 @@
     {
       "registry_id": "qwen3_q5_prior_segments_20260914",
       "run_id": "a2f46c91",
-      "status": "prepared_pretraining_audit_blocked",
+      "status": "prepared_training_pending_mask_decision",
       "account": "amanojna",
       "scheduler_jobs": [],
       "config": "lm_study/experiments_qwen3_17b_q5_prior_segments.yaml",
@@ -17,7 +17,7 @@
       "pretraining_analyzer": "analysis/audit_q5_prior_segments_pretraining.py",
       "scoring_only_audit": {
         "audit_id": "q5_segment_scoring_20260914",
-        "status": "running",
+        "status": "completed",
         "manifest": "docs/experiments/qwen3_q5_prior_segments/scoring_manifest.json",
         "runner": "lm_study/run_qwen3_17b_q5_segment_scoring_ucl.sh",
         "analyzer": "analysis/analyze_q5_segment_scoring.py",
@@ -27,7 +27,7 @@
             "job_id": "7412300",
             "role": "scoring_only",
             "tasks": 3,
-            "state": "running"
+            "state": "completed"
           }
         ],
         "checkpoint_scope": "Each seed's final Q5 adapter, fixed for all 128 archived question supports; retokenized saved candidates, not historical per-round replay",
@@ -37,24 +37,58 @@
         ],
         "new_generations": 0,
         "optimizer_steps": 0,
-        "verification": "238 local tests passed; live AMN access and all final adapters verified. Actual-tokenizer CPU preflight must pass before scoring submission. Training remains blocked.",
+        "verification": "Three completion receipts and full terminal logs, all 384 source coordinates and 2987 token rows pass the prepared analyzer. SHA-256, sizes, gzip parsing, model/adapter identity, masks, factor sums and four softmax rules verified. No optimizer steps or new generations.",
         "execution_revision": "802c174e0e1a20842b757ce8b25aea70d8730b6d",
         "result_root": "/home/amanojna/po_results/2026-09-14/q5-segment-scoring/q5-fixed-final-scoring__802c174",
-        "summary": "Live snapshot 2026-09-14 14:43 UTC: tasks 1-3 are r on gpu.q@seymour4.local, all scheduler starts 15:37:36 BST. Short logs contain GPU allocation only, with no Q5_SEGMENT_SCORING_START or scored-support lines; scheduler CPU usage is zero to reported precision. Treat as allocated/startup, not confirmed scoring progress; no defensible throughput ETA yet. Immutable execution 802c174 and all preflight checks remain recorded. Nine training tasks remain unsubmitted."
+        "summary": "All three scoring tasks verified complete: 384 supports/2987 finite token rows, receipts, full terminal logs and frozen analysis pass. With the answer marker held fixed, early/late/uniform attenuation changes the preferred trace on 38/43/7 supports; early versus late differs on 74/384 (19.27%). Mean maximum weights are 92.71/94.46/94.09% versus 95.48% control. Both marker conventions agree qualitatively; excluding 17 retokenization-length-affected supports gives 71/367 early-versus-late changes. This is positional ranking evidence, not an accuracy result. No training, new generation or official-test access. Nine training tasks remain unsubmitted pending marker convention and matching gate/protocol tests.",
+        "local_mirror": "../ResultsArchive/beaker-amanojna/20260914T154218Z__q5_segment_scoring_7412300",
+        "analysis_revision": "41b964e747d08c6588e9158615b642b02ebc2bc7",
+        "report": "docs/experiments/qwen3_q5_prior_segments/scoring_results_2026-09-14.md"
       },
       "expected_tasks": 9,
-      "seeds": [1201, 1213, 1217],
-      "head_tail_exponents": [[0.5, 1.0], [1.0, 0.5], [0.75, 0.75]],
+      "seeds": [
+        1201,
+        1213,
+        1217
+      ],
+      "head_tail_exponents": [
+        [
+          0.5,
+          1.0
+        ],
+        [
+          1.0,
+          0.5
+        ],
+        [
+          0.75,
+          0.75
+        ]
+      ],
       "answer_reader": "current",
       "control_run_id": "68078ecc",
       "control_cell": "Q5-AD-M-LR1e-5-U1-K16",
       "official_test_used": false,
       "result_root": "~/po_results/2026-09-14/q5-prior-segments/qwen3-q5-prior-segments__a2f46c91",
       "validator_marker": "~/po_results/auto_state/qwen3_q5_prior_segments_a2f46c91.ok",
-      "verification": "Full curated suite: 234 tests pass, including 12 focused pre-training audit tests. Outcome-blind semantic review covers 24 saved final evaluations; exact saved-factor uniform reweighting covers 384 question-rounds and 2987 trace rows. All six source hashes match completion receipts and original softmax weights reconstruct. Early/late scores remain unavailable and the submitter rejects the partial audit. AMN briefly reachable; subsequent checkpoint inventory returned exit 255. No model inference, training or submission. Canonical views, nine registry/importer tests and MLflow refresh pass.",
-      "pretraining_findings": ["7/24 reviewed evaluations have a separate initial plan/interpretation block; 17/24 calculate on their first line. This is one qualitative Codex review, not human-adjudicated training-buffer annotation.", "Uniform075 changes the top trace on 5/384 supports; mean ESS 1.098 to 1.134 and largest weight 95.90% to 94.55%. Half-specific rankings are not determined by total prior scores."],
-      "limitations": ["Token-position ablation, not semantic role labels", "Three reused development seeds and historical control", "Odd-length traces have an extra late token; uniform075 is only nominally matched", "Full positional ranking audit requires new token-resolved scoring before training; saved total scores are insufficient"],
-      "next_actions": ["Complete scoring-only early/late/uniform comparisons on identical support with verified checkpoint/token identity; if retokenizing archived text, declare a new fixed-checkpoint audit rather than historical replay", "Only after the pre-training gate passes, verify live AMN quota/jobs/control receipts, acquire pushed account lease and deploy immutable source", "Submit only nine new training tasks, register job IDs and then release", "After full validation, run frozen paired analysis and discuss any nominee; no automatic follow-up"]
+      "verification": "Three completion receipts and full terminal logs, all 384 source coordinates and 2987 token rows pass the prepared analyzer. SHA-256, sizes, gzip parsing, model/adapter identity, masks, factor sums and four softmax rules verified. No optimizer steps or new generations. Training remains gated on marker convention and matching protocol/runtime checks.",
+      "pretraining_findings": [
+        "7/24 reviewed evaluations have a separate initial plan/interpretation block; 17/24 calculate on their first line. This is one qualitative Codex review, not human-adjudicated training-buffer annotation.",
+        "Uniform075 changes the top trace on 5/384 supports; mean ESS 1.098 to 1.134 and largest weight 95.90% to 94.55%. Half-specific rankings are not determined by total prior scores."
+      ],
+      "limitations": [
+        "Token-position ablation, not semantic role labels",
+        "Three reused development seeds and historical control",
+        "Odd-length traces have an extra late token; uniform075 is only nominally matched",
+        "Completed audit uses final adapters and retokenized archived text, not historical intermediate checkpoint replay. No accuracy outcome is measured."
+      ],
+      "next_actions": [
+        "Review the completed four-way scoring report and choose the marker convention; recommended reasoning-only split keeps #### fixed.",
+        "Update and test the chosen protocol/runtime mask and receipt-bound training gate; never manually flip the old partial audit.",
+        "Only after those checks, verify live AMN quota/jobs/control receipts and acquire a pushed account lease before immutable deployment of the nine-task training screen.",
+        "After verified training completion, run the frozen paired accuracy/efficiency analysis; no automatic confirmation."
+      ],
+      "historical_pretraining_verification": "Full curated suite: 234 tests pass, including 12 focused pre-training audit tests. Outcome-blind semantic review covers 24 saved final evaluations; exact saved-factor uniform reweighting covers 384 question-rounds and 2987 trace rows. All six source hashes match completion receipts and original softmax weights reconstruct. Early/late scores remain unavailable and the submitter rejects the partial audit. AMN briefly reachable; subsequent checkpoint inventory returned exit 255. No model inference, training or submission. Canonical views, nine registry/importer tests and MLflow refresh pass."
     },
     {
       "registry_id": "qwen3_q5_prior_exponent_reader_20260912",
