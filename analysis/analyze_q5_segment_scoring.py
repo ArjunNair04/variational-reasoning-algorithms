@@ -10,7 +10,7 @@ import re
 
 import numpy as np
 
-from audit_q5_prior_segments_pretraining import SEEDS, sha256, softmax
+from audit_q5_prior_segments_pretraining import SEEDS, rank_correlation, sha256, softmax
 from score_q5_prior_segments import AUDIT_ID, MODEL_ID, MODEL_REVISION, SCOPES, SETTINGS, archived_supports, four_way, verify_inputs
 
 
@@ -63,12 +63,20 @@ def verify_record(record):
 
 def summarize(records):
     summary={}
+    lengths=[np.array([sum(len(t["segment_positions"]["reasoning_marker_fixed"][k])
+                          for k in ("head","tail")) for t in r["traces"]]) for r in records]
     for scope in SCOPES:
         cells={}
         for name in SETTINGS:
             w=[np.array(r["comparisons"][scope][name]["weights"]) for r in records]
+            correlations=[rank_correlation(x,n) for x,n in zip(w,lengths)]
+            valid=[x for x in correlations if x is not None]
             cells[name]={"mean_ess":float(np.mean([1/(x@x) for x in w])),
-                         "mean_largest_weight":float(np.mean([x.max() for x in w]))}
+                         "mean_largest_weight":float(np.mean([x.max() for x in w])),
+                         "mean_weight_length_spearman":float(np.mean(valid)) if valid else None,
+                         "defined_length_correlations":len(valid),
+                         "mean_top_trace_reasoning_tokens":float(np.mean([n[np.argmax(x)] for x,n in zip(w,lengths)])),
+                         "mean_weighted_reasoning_tokens":float(np.mean([x@n for x,n in zip(w,lengths)]))}
         contrasts={}
         for left,right in CONTRASTS:
             values=[(np.array(r["comparisons"][scope][left]["weights"]),

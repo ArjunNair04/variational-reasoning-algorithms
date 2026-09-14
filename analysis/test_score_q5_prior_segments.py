@@ -92,7 +92,13 @@ def test_token_tape_roundtrip_and_corruption():
            "reconstructed_objective_tokens":int(row.span.sum())}
     record={"traces":[trace],"comparisons":four_way([factors])}
     verify_record(record)
-    json.dumps(summarize([record]),allow_nan=False)
+    summary=summarize([record])
+    json.dumps(summary,allow_nan=False)
+    for scope in SCOPES:
+        for cell in summary[scope]["cells"].values():
+            assert cell["defined_length_correlations"] == 0
+            assert cell["mean_weight_length_spearman"] is None
+            assert cell["mean_weighted_reasoning_tokens"] == row.reasoning_token_count
     record["traces"][0]["factors"]["historical_prior"]["head"]+=1
     with pytest.raises(ValueError,match="factors"):
         verify_record(record)

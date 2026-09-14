@@ -24,6 +24,9 @@
   nine-task training array remains blocked pending this boundary decision.
   Verification: all 238 local tests pass, including token-mask reconstruction,
   four-way identities, corruption rejection and the no-training runner contract.
+  The pre-outcome analyzer also reports within-support weight/length rank
+  correlations and selected/weighted reasoning length; undefined correlations
+  remain missing, not zero.
 
 - **2026-09-14, pre-training semantic/ranking audit:** added outcome-blind
   24-trace line annotations and a read-only 384-support ranking audit with
