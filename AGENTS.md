@@ -15,6 +15,13 @@
 
 ## Change record
 
+- **2026-09-14, positional screen release:** the user explicitly approved
+  publishing job IDs and AMN paths to both existing repositories. Tracking
+  pushes succeeded; only 7413571.1-9 was released and verified ordinary queued.
+  Validator 7413572 remains dependency-held. Clean execution 037b1d3 and the
+  frozen YAML hash were rechecked; no code, results or other jobs were changed.
+  Refresh `qwen3_q5_prior_segments_20260914` views/tests/MLflow and close the lease.
+
 - **2026-09-14, release pending publication approval:** 7413571/7413572 remain
   held. The source and lease pushes succeeded, but exporting the later job IDs
   and AMN paths was denied by the approval layer. Explicit export approval was

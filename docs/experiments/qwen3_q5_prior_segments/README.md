@@ -2,10 +2,10 @@
 
 Status: [token-resolved scoring audit completed and validated](scoring_results_2026-09-14.md);
 the user approved the nine-task marker-fixed training screen on 14 September.
-Payload **7413571** (tasks 1-9) and dependent validator **7413572** are submitted;
-the payload is held until its tracking record is published. The approval layer
-blocked export of job IDs and AMN paths; explicit publication approval has been
-requested. No training task has been released. Execution remains
+Payload **7413571** (tasks 1-9) is released and was verified ordinary queued;
+validator **7413572** remains dependency-held until the payload finishes.
+The user explicitly approved publication of job IDs and AMN paths, and both
+tracking pushes succeeded before release. Execution remains
 at `037b1d3`; there is no artificial concurrency limit. The prepared analyzer
 will report all six paired contrasts after complete task-level validation.
 The preceding
