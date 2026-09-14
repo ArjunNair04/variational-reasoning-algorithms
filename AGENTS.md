@@ -15,6 +15,12 @@
 
 ## Change record
 
+- **2026-09-14, positional screen completion:** all nine 7413571 task logs have
+  terminal markers and no failure signatures. Validator 7413572 passed at
+  19:36 UTC with nine adapters and the expected run/commit/YAML identity.
+  No result artifacts copied or deleted. Collection and frozen paired analysis
+  remain pending; this is a terminal-status update, not completed ingestion.
+
 - **2026-09-14, positional screen release:** the user explicitly approved
   publishing job IDs and AMN paths to both existing repositories. Tracking
   pushes succeeded; only 7413571.1-9 was released and verified ordinary queued.
