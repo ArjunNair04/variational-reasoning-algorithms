@@ -15,6 +15,11 @@
 
 ## Change record
 
+- **2026-09-14, scoring submission:** AMN job 7412300 contains only three
+  scoring tasks at immutable 802c174. All 2987 native-tokenizer reconstructions
+  and the three source adapter hashes pass. The nine training tasks remain
+  unsubmitted; see the scoring-only subrecord in the positional-screen registry.
+
 - **2026-09-14, fixed-checkpoint segment scoring:** added a receipt-bound
   three-seed GPU inference-only audit of archived Q5 support, native token
   reconstruction preflight, full token tapes and a pre-outcome validator/analyzer.
