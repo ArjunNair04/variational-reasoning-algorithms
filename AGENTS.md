@@ -35,6 +35,15 @@
 
 ## Change record
 
+- **2026-10-02, learned posterior held submission:** immutable execution
+  `e662912` passed AMN's real tiny-Qwen fit/sample/backward smoke, adapter
+  isolation, RNG restoration, control identity and three-coordinate preflight.
+  Payload 7484770 has three user-held tasks; validator 7484771 depends on it.
+  YAML SHA-256 `0d3a9ea36479caebe31d7275c63b9b29b4ce3714bb37604ba235883a9963e1f6`.
+  Publish tracking before releasing only 7484770. No earlier jobs or results
+  were altered. Slow preflight startup was verified as NFS I/O wait, not an
+  SSH failure; waiting allowed it to complete without runtime changes.
+
 - **2026-10-02, learned posterior replacement:** user explicitly selected a
   distribution replacement rather than proposal-only learning. New profile
   `q5_learned_posterior` fits a separate persistent answer-conditioned LoRA

@@ -4,7 +4,7 @@
     {
       "registry_id": "qwen3_q5_learned_posterior_20261002",
       "run_id": "2d7c8a61",
-      "status": "prepared",
+      "status": "submitted_held",
       "account": "amanojna",
       "config": "lm_study/experiments_qwen3_17b_q5_learned_posterior.yaml",
       "submitter": "lm_study/submit_qwen3_17b_q5_learned_posterior_ucl.sh",
@@ -18,7 +18,15 @@
       "result_root": "~/po_results/2026-10-02/q5-learned-posterior/qwen3-q5-learned-posterior__2d7c8a61",
       "validator_marker": "~/po_results/auto_state/qwen3_q5_posterior_2d7c8a61.ok",
       "analysis_prepared_before_training": true,
-      "scheduler_jobs": [],
+      "scheduler_jobs": [
+        {"role": "payload", "job_id": "7484770", "tasks": 3, "state": "user_held"},
+        {"role": "validator", "job_id": "7484771", "depends_on": ["7484770"], "state": "dependency_held"}
+      ],
+      "execution_revision": "e662912d2bd9f39c4308a28b3257159489e237cf",
+      "configuration_sha256": "0d3a9ea36479caebe31d7275c63b9b29b4ce3714bb37604ba235883a9963e1f6",
+      "execution_checkout": "/home/amanojna/vrl_hpc/runs/q5-posterior-e662912",
+      "submission_receipt": "~/po_results/auto_state/qwen3_q5_posterior_2d7c8a61.submission.txt",
+      "cluster_preflight": "Passed: exact commit/YAML/control identity, runtime profile, analyzer design, all three task coordinates and offline real tiny-Qwen two-adapter fit/sample/backward smoke. Separate adapters and RNG restoration verified in AMN's pinned runtime.",
       "verification": "344 local tests pass; actual tiny-Qwen fit/generation/backward and adapter isolation, complete-round accounting, fail-closed analysis, all three YAML coordinates, runtime profile, offline smoke and shell syntax pass.",
       "artificial_concurrency_cap": null,
       "official_test_used": false,
@@ -29,7 +37,7 @@
         "Learns complete answer-conditioned targets and uses their rationale pushforward; no exact-posterior or ELBO-improvement claim.",
         "Extra sampling and backward compute; the earlier 5-15% estimate excluded these additional rollouts."
       ],
-      "next_actions": ["Pass local and AMN runtime/preflight checks, publish immutable tracking, then release only this three-task payload."]
+      "next_actions": ["Publish tracking before releasing only payload 7484770; require dependent validation before result claims."]
     },
     {
       "registry_id": "qwen3_q5_component_kernel_20261001",
