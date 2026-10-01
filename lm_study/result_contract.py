@@ -125,7 +125,11 @@ def adapter_artifacts(path: str | Path) -> list[Path]:
     config = root / "adapter_config.json"
     if not config.is_file() or config.is_symlink():
         raise ResultContractError(f"adapter config is missing: {config}")
-    return [config, *weights]
+    artifacts = [config, *weights]
+    posterior = root / "learned_posterior"
+    if posterior.exists():
+        artifacts.extend(adapter_artifacts(posterior))
+    return artifacts
 
 
 def atomic_write_json(path: str | Path, payload: dict[str, Any]) -> None:

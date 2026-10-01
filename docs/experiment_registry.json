@@ -2,6 +2,36 @@
   "schema_version": 1,
   "studies": [
     {
+      "registry_id": "qwen3_q5_learned_posterior_20261002",
+      "run_id": "2d7c8a61",
+      "status": "prepared",
+      "account": "amanojna",
+      "config": "lm_study/experiments_qwen3_17b_q5_learned_posterior.yaml",
+      "submitter": "lm_study/submit_qwen3_17b_q5_learned_posterior_ucl.sh",
+      "analyzer": "analysis/analyze_qwen3_q5_learned_posterior.py",
+      "validator": "analysis/analyze_qwen3_q5_learned_posterior.py",
+      "protocol": "docs/experiments/qwen3_q5_learned_posterior/README.md",
+      "expected_tasks": 3,
+      "seeds": [1201, 1213, 1217],
+      "cells": ["Q5-POSTERIOR-U1"],
+      "control": {"run_id": "f812ca40", "cell": "Q5-INDEPENDENT16", "job_id": "7483302", "tasks": [1, 2, 3]},
+      "result_root": "~/po_results/2026-10-02/q5-learned-posterior/qwen3-q5-learned-posterior__2d7c8a61",
+      "validator_marker": "~/po_results/auto_state/qwen3_q5_posterior_2d7c8a61.ok",
+      "analysis_prepared_before_training": true,
+      "scheduler_jobs": [],
+      "verification": "344 local tests pass; actual tiny-Qwen fit/generation/backward and adapter isolation, complete-round accounting, fail-closed analysis, all three YAML coordinates, runtime profile, offline smoke and shell syntax pass.",
+      "artificial_concurrency_cap": null,
+      "official_test_used": false,
+      "metric_order": ["Final extracted Acc@1", "strict final Acc@1", "normalized extracted Acc@1 AUC"],
+      "accounting_per_seed": {"main_steps": 32, "posterior_steps": 32, "main_generations": 2048, "posterior_generations": 2048},
+      "limitations": [
+        "Three reused development seeds; paired provenance checks required, not guaranteed bit-exact GPU replay.",
+        "Learns complete answer-conditioned targets and uses their rationale pushforward; no exact-posterior or ELBO-improvement claim.",
+        "Extra sampling and backward compute; the earlier 5-15% estimate excluded these additional rollouts."
+      ],
+      "next_actions": ["Pass local and AMN runtime/preflight checks, publish immutable tracking, then release only this three-task payload."]
+    },
+    {
       "registry_id": "qwen3_q5_component_kernel_20261001",
       "run_id": "b6c4e921",
       "status": "queued",

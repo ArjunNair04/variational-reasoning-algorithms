@@ -1,0 +1,195 @@
+# Generated; edit generate_qwen3_17b_q5_learned_posterior.py.
+run_id: 2d7c8a61
+tag_prefix: q3_q5_posterior
+diagnostic:
+  stage: three_seed_learned_distribution_replacement
+  design:
+    array_tasks: 3
+    cell_order:
+    - Q5-POSTERIOR-U1
+    paired_seeds:
+    - 1201
+    - 1213
+    - 1217
+  control:
+    run_id: f812ca40
+    cell_id: Q5-INDEPENDENT16
+    job_id: '7483302'
+    tasks:
+    - 1
+    - 2
+    - 3
+    execution_commit: 4900a9f8413e191e951d534f9fa4d179431defc9
+    config_sha256: 5cf9f3e9846930de233b56b02d7ded597ad3f983099784b73323ea34ce52c6ea
+    out: ~/po_results/2026-10-01/q5-prefix-continuations/qwen3-q5-prefix-continuations__f812ca40
+  round_zero:
+    run_id: 68078ecc
+    cell_id: CTRL-base
+    question_ids_sha256: 2e79c7dd90a05f47991da744720f7298635feea7cb592fe82d291a6542c2bf97
+    seeds:
+      1201:
+        final_extracted: 0.745
+        final_strict: 0.6125
+        evaluation_sha256: 2cc7ee4905613764c4cf6123ee66cd576175140891f2a74e3ee8ba2ebc5313a0
+      1213:
+        final_extracted: 0.7525
+        final_strict: 0.72
+        evaluation_sha256: 0de689cecbd30535557685d89e81139d3e94f788bfc4bf4b519ff3a0b02a11d3
+      1217:
+        final_extracted: 0.7675
+        final_strict: 0.5125
+        evaluation_sha256: c121a8b84f4169de2f0b9d66410fa7bad28806691e91cc0f7fa532e398b884f9
+    provenance: Recomputed from 400 per-question records per seed and checked against
+      archived completion-receipt SHA256 on 2026-10-01. Historical baseline only;
+      both trained cells are concurrent.
+  teacher: Unchanged moving-reader Q5 joint weights on the persistent unique FIFO-16
+    buffer. Main model supplies 16 answer-derived proposals per question. No gold
+    rationale.
+  posterior_fit:
+    updates_per_round: 1
+    learning_rate: 1.0e-05
+    optimizer: persistent Adam
+    initialization: exact copy of initial main LoRA
+    backbone: shared frozen Qwen3-1.7B
+    adapter: separate rank-16 attention+MLP
+    target: Q5-weighted rationale+marker+gold answer+EOS under the answer-derived
+      prompt
+    normalization: sum token log probability, per-question weights sum to one, average
+      over four questions
+  distribution: q_phi(h|q,a) is the pushforward of the learned completion distribution
+    through a fixed first-marker rationale map. It replaces, not reweights, the delta
+    mixture in the main M-step.
+  sampling:
+    draws_per_question: 16
+    temperature: 1.0
+    top_k: 0
+    top_p: 1.0
+    max_new_tokens: 256
+    timing: after posterior fit, before main update
+    mapping: Use the native first-marker prefix when alignable and nonempty. Otherwise
+      take decoded text before the first marker, append newline+#### and retokenize.
+      Empty outputs retain their mass as an empty rationale. Attach gold answer+EOS.
+      No rejection, resampling or correctness filter; log all repairs.
+  main_update: One joint weighted-MLE step under question-only prompts, using weight
+    1/16 for every fresh posterior draw, duplicates included. No Q5 rescoring. Posterior
+    samples never enter the persistent teacher buffer. Posterior parameters are frozen
+    during the main update and evaluation uses only the main adapter.
+  rng: Independent SHA256-derived fit and sample streams per round; fork_rng restores
+    CPU/CUDA states. Adapter initialization also isolated. Separate persistent optimizers.
+  accounting:
+    main_steps: 32
+    posterior_steps: 32
+    total_steps: 64
+    teacher_proposals: 2048
+    posterior_draws: 2048
+    total_training_generations: 4096
+  analysis_contract:
+  - Final extracted Acc@1, strict final, normalized Acc@1 AUC rounds 0-32, then strict
+    AUC.
+  - Require three paired seeds, receipt hashes, exact commit/YAML/runtime, all checkpoints,
+    identical validation support and training-question schedule. Validate both saved
+    adapters.
+  - Require exactly 32 posterior and 32 main updates; validate uniform M-step weights,
+    teacher joint logits, no posterior children in teacher buffers, separate RNG streams
+    and exact generation/token accounting.
+  - Report three per-seed differences and descriptive paired 95% t intervals. Nominate
+    only if mean final improves without mean strict-final loss. No automatic confirmation.
+  - Report teacher concentration, posterior diversity, boundary repairs, main/posterior
+    backward tokens, generation, phase timing and total GPU hours. Extra compute,
+    not a compute-matched comparison.
+  - This is distillation of a Q5 finite-buffer teacher into a learned completion law.
+    It does not optimize the entropy of the induced rationale law, guarantee a better
+    E-step, or establish exact posterior inference.
+  - Official test is not loaded; validation remains the fixed 400-question train-derived
+    pool.
+defaults:
+  task: gsm8k
+  model: qwen3-1.7b-base
+  rounds: 32
+  seeds: 3
+  seed_values:
+  - 1201
+  - 1213
+  - 1217
+  n_test: 400
+  train_partition: train
+  eval_partition: validation
+  answer_event_mode: strict_terminal_marker
+  answer_target_termination: none
+  evaluation_prompt: question
+  batch: 64
+  eval_batch: 32
+  G: 16
+  prompts: 128
+  shots: 3
+  shot_bank_size: 5
+  task_seed_from_run_seed: true
+  question_sampling: epoch_shuffle
+  grad_checkpoint: false
+  lora_r: 16
+  lora_alpha: 32
+  lora_target_set: attention_mlp
+  out: ~/po_results/2026-10-02/q5-learned-posterior/qwen3-q5-learned-posterior__2d7c8a61
+  eval_rounds:
+  - 1
+  - 2
+  - 4
+  - 8
+  - 16
+  - 24
+  - 32
+  dump_completions: 100
+  save_adapter: true
+  save_training_diagnostics: true
+  training_diagnostics_level: standard
+  training_diagnostics_trace_tape: false
+  training_diagnostics_gradient_questions: 0
+  training_diagnostics_probe_size: 0
+  checkpoint_every: 0
+  passk: 8
+  passk_n: 100
+algos:
+  AC-ALG1:
+  - algorithm_profile: q5_learned_posterior
+    answer_target_termination: eos
+    labelled_frac: 0.0
+    buffer_strategy: fifo
+    buffer_semantics: unique_set
+    buffer_lifecycle: persistent
+    proposal_prompt: answer_derive
+    proposal_mixture: single
+    proposal_filter: all
+    proposal_policy: current
+    responsibility_score: joint
+    responsibility_posterior: softmax_entropy
+    responsibility_temperature: 1.0
+    responsibility_ess_floor: 0.0
+    responsibility_policy: current
+    responsibility_answer_policy: current
+    responsibility_refresh: inner_step
+    variational_estimator: delta_joint
+    labelled_em_weight: 0.0
+    answer_only_em_weight: 1.0
+    supervised_weight: 0.0
+    policy_anchor_mode: fixed
+    labelled_numeric_constraint: 'off'
+    labelled_supervision: gold
+    digit_token_weight: 1.0
+    trace_representation: reasoning
+    latent_mstep_objective: joint
+    update_geometry: sum
+    step_acceptance: none
+    optimizer_state_scope: persistent
+    batch: 64
+    G: 16
+    cell_id: Q5-POSTERIOR-U1
+    lr: 1.0e-05
+    iters: 1
+    buffer_limit: 16
+    proposal_temperature: 1.0
+    policy_anchor_target_ratio: null
+    policy_anchor_beta_min: 0.0
+    policy_anchor_beta_max: 10.0
+    policy_anchor_ema: 0.9
+    policy_anchor_token_scope: objective
+    proposal_continuation_mode: independent

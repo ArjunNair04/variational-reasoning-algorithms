@@ -69,6 +69,7 @@ from ac_alg1_age_one_reuse import (
 from ac_alg1_uncertainty_allocation import allocate_uncertainty_budget
 from ac_alg1_prefix_continuations import sample_prefix_continuations
 from ac_alg1_component_kernel import component_kernel_support
+from ac_alg1_learned_posterior import LearnedPosterior
 from ac_alg1_prior_segments import (
     SEGMENT_SCOPE, segment_prior_logits, split_reasoning_marker_mask,
     validate_segment_exponents,
@@ -163,6 +164,7 @@ ALGORITHM_PROFILES = (
     "q5_prior_segments_frozen",
     "q5_prefix_continuations",
     "q5_component_kernel",
+    "q5_learned_posterior",
     "barber_q5_token_mean_followup",
     "l2r_common_factorial",
     "l2r_pis_rationale_kl_followup",
@@ -232,6 +234,7 @@ class _ACAlg1RuntimeState:
     policy_anchor_state: dict[str, float]
     training_diagnostic_state: dict[str, Any]
     initial_trainable_parameters: list[torch.Tensor] | None
+    learned_posterior: Any = None
 
 
 @dataclass
@@ -2366,6 +2369,27 @@ def _sampled_trace_row(
             raise ValueError("proposal trace contains nonfinite token log probabilities")
         row.proposal_trace_logprob = float(retained.sum().item())
     return row
+
+
+def _learned_posterior_row(tok, task, pid, completion, outer_round, trace_id):
+    """Total pushforward: retain a native boundary, otherwise canonicalise it.
+
+    No rejection or correctness filter is applied; malformed/empty completions
+    also keep their 1/S mass. Only the fallback is re-tokenised and flagged.
+    """
+    ids = torch.tensor(completion, dtype=torch.long)
+    text = tok.decode(completion, skip_special_tokens=True)
+    row = _sampled_trace_row(tok, task, pid, ids, torch.ones_like(ids, dtype=torch.bool),
+        text, outer_round, "learned_posterior", trace_id=trace_id,
+        answer_event_mode="strict_terminal_marker", answer_target_termination="eos")
+    if row is not None:
+        return row, "native_first_marker"
+    reasoning = text.split("####", 1)[0].rstrip()
+    h_ids = tok(reasoning + "\n####", add_special_tokens=False).input_ids
+    row = _trace_row_from_h_ids(tok, task, pid, h_ids, outer_round,
+        "learned_posterior", trace_id=trace_id,
+        answer_event_mode="strict_terminal_marker", answer_target_termination="eos")
+    return row, "canonical_boundary_repair"
 
 
 def _numeric_filter_accepts(row: TraceRow) -> bool:
@@ -5508,6 +5532,7 @@ def _inner_weighted_em_steps(
     diagnostics_probe_fn=None,
     diagnostic_state: dict[str, object] | None = None,
     component_kernel_epsilon: float = 0.0,
+    learned_posterior=None,
 ) -> tuple[dict[int, torch.Tensor], dict[int, torch.Tensor], dict[str, object]]:
     """Run repeated objective ascent and responsibility refreshes on one minibatch.
 
@@ -5660,6 +5685,22 @@ def _inner_weighted_em_steps(
             make_row=kernel_row, device=DEV,
         )
         kernel_support = (kernel_buffers, kernel_weights)
+    posterior_metadata = None
+    posterior_support = None
+    if learned_posterior is not None:
+        if (inner_steps != 1 or labelled_pids or supervised_weight != 0
+                or component_kernel_epsilon or mstep_sample_size
+                or variational_estimator != "delta_joint" or latent_mstep_objective != "joint"
+                or answer_target_termination != "eos"):
+            raise ValueError("learned posterior requires isolated Q5 U1")
+        pb, pw, posterior_metadata = learned_posterior.fit_and_sample(
+            model, tok, task, buffers, answer_only_weights, answer_only_pids,
+            seed=run_seed, outer_round=outer_round, draws=16,
+            build_prompt=lambda pid: _build_proposal_prompt(task.prompts[pid], task.gold_answer[pid], "answer_derive"),
+            make_row=lambda pid, ids, tid: _learned_posterior_row(tok, task, pid, ids, outer_round, tid),
+            score=seq_logprobs, device=DEV,
+        )
+        posterior_support = (pb, pw)
     if mstep_sampling_strategy not in MSTEP_SAMPLING_STRATEGIES:
         raise ValueError(
             f"unknown M-step sampling strategy {mstep_sampling_strategy!r}"
@@ -5732,6 +5773,8 @@ def _inner_weighted_em_steps(
         )
         if kernel_support is not None:
             mstep_buffers, mstep_combined_weights = kernel_support
+        if posterior_support is not None:
+            mstep_buffers, mstep_combined_weights = posterior_support
         mstep_labelled_weights = {
             int(pid): mstep_combined_weights[int(pid)]
             for pid in labelled_pids
@@ -6494,6 +6537,7 @@ def _inner_weighted_em_steps(
                 "support": dict(support_diagnostics),
                 "mstep_sampling": mstep_sampling,
                 **({"component_kernel": kernel_metadata} if kernel_metadata is not None else {}),
+                **({"learned_posterior": posterior_metadata} if posterior_metadata is not None else {}),
                 "gradient_attribution": question_gradient_attribution,
                 "behavioural_probe": behavioural_probe,
                 "attempts": step_attempts,
@@ -6684,6 +6728,8 @@ def _inner_weighted_em_steps(
     stats["inner_step_diagnostics"] = inner_step_records
     if kernel_metadata is not None:
         stats["component_kernel"] = kernel_metadata
+    if posterior_metadata is not None:
+        stats["learned_posterior"] = posterior_metadata
     stats["posterior_refresh_diagnostics"] = posterior_refresh_records
     stats["diagnostics_level"] = diagnostics_level
     stats["diagnostics_gradient_questions"] = diagnostics_gradient_questions
@@ -9705,6 +9751,7 @@ def _validate_ac_alg1_run_config(
         "q5_prior_segments_frozen",
         "q5_prefix_continuations",
         "q5_component_kernel",
+        "q5_learned_posterior",
         "barber_q5_token_mean_followup",
     }:
         expected_responsibility_score = (
@@ -9781,7 +9828,7 @@ def _validate_ac_alg1_run_config(
                 f"{algorithm_profile} rejected a non-Q5 change: "
                 f"{mismatches}"
             )
-        if algorithm_profile in {"q5_prefix_continuations", "q5_component_kernel"}:
+        if algorithm_profile in {"q5_prefix_continuations", "q5_component_kernel", "q5_learned_posterior"}:
             if (responsibility_answer_policy != "current" or responsibility_ess_floor != 0.0
                     or proposal_temperature != 1.0 or config.proposal_allocation_mode != "uniform"
                     or responsibility_abstention != "none" or config.mstep_sample_size != 0
@@ -9794,6 +9841,12 @@ def _validate_ac_alg1_run_config(
                 raise ValueError("prefix screen requires the fixed Q5-S16-B4-U1 budget")
             if algorithm_profile == "q5_component_kernel" and config.component_kernel_epsilon not in {0.0, 0.25}:
                 raise ValueError("component screen permits epsilon=0 or 0.25 only")
+            if algorithm_profile == "q5_learned_posterior" and (
+                    config.component_kernel_epsilon or config.proposal_continuation_mode != "independent"
+                    or responsibility_prior_exponent != 1.0
+                    or responsibility_prior_head_exponent != 1.0
+                    or responsibility_prior_tail_exponent != 1.0):
+                raise ValueError("learned posterior forbids additional kernel/prior changes")
         if algorithm_profile in {"q5_prior_segments", "q5_prior_segments_frozen"}:
             if (responsibility_prior_head_exponent, responsibility_prior_tail_exponent) not in {
                 (1.0, 1.0), (0.5, 1.0), (1.0, 0.5), (0.75, 0.75),
@@ -11291,9 +11344,15 @@ def _execute_ac_alg1_update(
         diagnostics_probe_fn=diagnostics_probe_fn,
         diagnostic_state=training_diagnostic_state,
         component_kernel_epsilon=config.component_kernel_epsilon,
+        learned_posterior=state.learned_posterior,
     )
     m_step_elapsed = time.perf_counter() - m_step_started
     kernel_metadata = stats.get("component_kernel")
+    posterior_metadata = stats.get("learned_posterior")
+    if posterior_metadata is not None:
+        total_generated += int(posterior_metadata["generated_draws"])
+        generation_elapsed += float(posterior_metadata["elapsed_seconds"])
+        m_step_elapsed = max(0.0, m_step_elapsed - float(posterior_metadata["elapsed_seconds"]))
     if kernel_metadata is not None:
         total_generated += int(kernel_metadata["generated_draws"])
         generation_elapsed += float(kernel_metadata["elapsed_seconds"])
@@ -11806,6 +11865,9 @@ def _emit_ac_alg1_round_diagnostics(
             labelled_sample_tokens + answer_only_sample_tokens
         )
         kernel_metadata = stats.get("component_kernel")
+        posterior_metadata = stats.get("learned_posterior")
+        if posterior_metadata is not None:
+            generated_tokens += int(posterior_metadata["generated_tokens"])
         if kernel_metadata is not None:
             generated_tokens += int(kernel_metadata["generated_tokens"])
         scored_tokens = sum(
@@ -11821,6 +11883,10 @@ def _emit_ac_alg1_round_diagnostics(
             int(step["support"].get("backward_eos_tokens", 0))
             for step in inner_step_diagnostics
         )
+        main_backward_tokens, main_backward_eos_tokens = backward_tokens, backward_eos_tokens
+        if posterior_metadata is not None:
+            backward_tokens += int(posterior_metadata["posterior_backward_tokens"])
+            backward_eos_tokens += int(posterior_metadata["posterior_backward_eos_tokens"])
         diagnostics_fn({
             "schema_version": (
                 12
@@ -11856,7 +11922,11 @@ def _emit_ac_alg1_round_diagnostics(
                 "proposal_temperature": proposal_temperature,
                 "trace_representation": trace_representation,
                 "this_round": len(labelled_sample_pid_row) + len(answer_only_sample_pid_row)
-                    + (int(kernel_metadata["generated_draws"]) if kernel_metadata is not None else 0),
+                    + (int(kernel_metadata["generated_draws"]) if kernel_metadata is not None else 0)
+                    + (int(posterior_metadata["generated_draws"]) if posterior_metadata is not None else 0),
+                **({"learned_posterior": posterior_metadata,
+                    "buffer_proposals_this_round": len(labelled_sample_pid_row) + len(answer_only_sample_pid_row)
+                    } if posterior_metadata is not None else {}),
                 **({"component_kernel": kernel_metadata,
                     "buffer_proposals_this_round": len(labelled_sample_pid_row) + len(answer_only_sample_pid_row)
                     } if kernel_metadata is not None else {}),
@@ -12123,6 +12193,9 @@ def _emit_ac_alg1_round_diagnostics(
             },
             "compute": {
                 "timings_seconds": {
+                    **({"posterior_fit": posterior_metadata["posterior_fit_seconds"],
+                        "posterior_generation": posterior_metadata["elapsed_seconds"]}
+                       if posterior_metadata is not None else {}),
                     "generation": generation_elapsed,
                     "e_step": e_step_elapsed,
                     "m_step": m_step_elapsed,
@@ -12158,6 +12231,11 @@ def _emit_ac_alg1_round_diagnostics(
                     "scored": int(scored_tokens),
                     "backward": int(backward_tokens),
                     "backward_eos": int(backward_eos_tokens),
+                    **({"main_backward": main_backward_tokens,
+                        "main_backward_eos": main_backward_eos_tokens,
+                        "posterior_backward": posterior_metadata["posterior_backward_tokens"],
+                        "posterior_backward_eos": posterior_metadata["posterior_backward_eos_tokens"]}
+                       if posterior_metadata is not None else {}),
                     "forward": None,
                 },
                 "throughput": {
@@ -12667,6 +12745,10 @@ def run_ac_alg1(
     if answer_event_mode == "strict_terminal_marker":
         _validate_strict_answer_event_tokenization(tok)
     opt = None
+    learned_posterior = (
+        LearnedPosterior(model, lr=lr, seed=seed)
+        if run_config.algorithm_profile == "q5_learned_posterior" else None
+    )
     rng = np.random.default_rng(seed)
 
     labelled_pool, answer_only_pool = _labelled_answer_only_pools(task, labelled_frac=labelled_frac)
@@ -12729,6 +12811,7 @@ def run_ac_alg1(
         policy_anchor_state=policy_anchor_state,
         training_diagnostic_state=training_diagnostic_state,
         initial_trainable_parameters=initial_trainable_parameters,
+        learned_posterior=learned_posterior,
     )
     for t in range(rounds):
         _run_ac_alg1_round(

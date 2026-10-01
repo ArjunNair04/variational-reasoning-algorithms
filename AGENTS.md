@@ -35,6 +35,25 @@
 
 ## Change record
 
+- **2026-10-02, learned posterior replacement:** user explicitly selected a
+  distribution replacement rather than proposal-only learning. New profile
+  `q5_learned_posterior` fits a separate persistent answer-conditioned LoRA
+  adapter once per round to Q5-weighted completion targets, then uses 16 fresh
+  equal-weight draws per question for the main M-step. Both adapters share only
+  the frozen backbone; preserve separate optimizers, RNG streams and saved
+  artifacts. Posterior draws never enter the teacher buffer or get rescored.
+  Malformed draws retain their mass through a declared deterministic boundary
+  map; log repairs and raw pre-repair correctness/format. This is distillation,
+  not entropy-optimised exact inference. Run `2d7c8a61` has three new tasks and
+  reuses validated controls 7483302.1-3. Count 4096 generations and 64 total
+  updates per seed, split by main/posterior. Generator, analysis, validator,
+  offline two-adapter runtime smoke and held submitter precede results. No
+  automatic confirmation, no official test access and no control reruns.
+  Local gate: all 344 tests pass, including real tiny-Qwen adapter isolation,
+  exact uniform-target gradients, complete-round cost accounting, total
+  boundary mapping and fail-closed analysis. All three YAML coordinates,
+  runtime profile, analyzer design, offline smoke and shell syntax pass.
+
 - **2026-10-01, kernel release:** tracking `86cd1ca` was published before
   releasing only 7484162.1-3; all three verified `qw`, without a concurrency
   cap. Validator 7484163 remains dependency-held. Existing 7483302/7483303
