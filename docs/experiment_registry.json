@@ -4,7 +4,7 @@
     {
       "registry_id": "qwen3_q5_component_kernel_20261001",
       "run_id": "b6c4e921",
-      "status": "validated_pending_submission",
+      "status": "submitted_held_pending_tracking_publication",
       "account": "amanojna",
       "config": "lm_study/experiments_qwen3_17b_q5_component_kernel.yaml",
       "submitter": "lm_study/submit_qwen3_17b_q5_component_kernel_ucl.sh",
@@ -18,7 +18,15 @@
       "result_root": "~/po_results/2026-10-01/q5-component-kernel/qwen3-q5-component-kernel__b6c4e921",
       "validator_marker": "~/po_results/auto_state/qwen3_q5_kernel_b6c4e921.ok",
       "analysis_prepared_before_training": true,
-      "scheduler_jobs": [],
+      "scheduler_jobs": [
+        {"role": "payload", "job_id": "7484162", "tasks": 3, "state": "user_held"},
+        {"role": "validator", "job_id": "7484163", "depends_on": ["7484162", "7483302"], "state": "dependency_held"}
+      ],
+      "execution_revision": "ffbabf4c30e1fad7c800ff1ab03da7f9dbdb103d",
+      "configuration_sha256": "2bce41428b11d8f57e1db1cba969e8e51c4f42d8c3da1e3b744673792a1b9da0",
+      "execution_checkout": "/home/amanojna/vrl_hpc/runs/q5-kernel-ffbabf4",
+      "submission_receipt": "~/po_results/auto_state/qwen3_q5_kernel_b6c4e921.submission.txt",
+      "cluster_preflight": "passed: immutable source/YAML, control checkout/YAML, runtime profile, analyzer design and all three task coordinates",
       "verification": "321 local tests pass, including native-token lineage, inherited gradients, CPU/CUDA RNG isolation logic, real tiny-Qwen generation/backward, complete-round cost accounting and a disabled-path comparison against deployed source 4900a9f. All three YAML coordinates, runtime profile, analyzer design and shell syntax pass.",
       "artificial_concurrency_cap": null,
       "official_test_used": false,
@@ -28,7 +36,7 @@
         "Adds continuation generation and backward work; not a compute-matched comparison.",
         "Fixed Q5 parent weights with continuation kernels are a valid variational choice, not a guaranteed bound-improving E-step."
       ],
-      "next_actions": ["Publish immutable source, run cluster preflight, submit only three new tasks and a dependent validator; publish tracking before releasing."]
+      "next_actions": ["Publish this tracking record, release only 7484162.1-3, and verify scheduler state.", "Require successful paired validator before result claims; no automatic learned-posterior or confirmation jobs."]
     },
     {
       "registry_id": "qwen3_q5_prefix_continuations_20261001",
