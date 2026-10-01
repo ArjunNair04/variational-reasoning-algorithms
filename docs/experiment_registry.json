@@ -2,6 +2,35 @@
   "schema_version": 1,
   "studies": [
     {
+      "registry_id": "qwen3_q5_component_kernel_20261001",
+      "run_id": "b6c4e921",
+      "status": "validated_pending_submission",
+      "account": "amanojna",
+      "config": "lm_study/experiments_qwen3_17b_q5_component_kernel.yaml",
+      "submitter": "lm_study/submit_qwen3_17b_q5_component_kernel_ucl.sh",
+      "analyzer": "analysis/analyze_qwen3_q5_component_kernel.py",
+      "validator": "analysis/analyze_qwen3_q5_component_kernel.py",
+      "protocol": "docs/experiments/qwen3_q5_component_kernel/README.md",
+      "expected_tasks": 3,
+      "seeds": [1201, 1213, 1217],
+      "cells": ["Q5-KERNEL25"],
+      "control": {"run_id": "f812ca40", "cell": "Q5-INDEPENDENT16", "job_id": "7483302", "tasks": [1, 2, 3]},
+      "result_root": "~/po_results/2026-10-01/q5-component-kernel/qwen3-q5-component-kernel__b6c4e921",
+      "validator_marker": "~/po_results/auto_state/qwen3_q5_kernel_b6c4e921.ok",
+      "analysis_prepared_before_training": true,
+      "scheduler_jobs": [],
+      "verification": "321 local tests pass, including native-token lineage, inherited gradients, CPU/CUDA RNG isolation logic, real tiny-Qwen generation/backward, complete-round cost accounting and a disabled-path comparison against deployed source 4900a9f. All three YAML coordinates, runtime profile, analyzer design and shell syntax pass.",
+      "artificial_concurrency_cap": null,
+      "official_test_used": false,
+      "metric_order": ["Final extracted Acc@1", "strict final Acc@1", "normalized extracted Acc@1 AUC"],
+      "limitations": [
+        "Three reused development seeds; default-path equivalence is tested but GPU arithmetic is not guaranteed bit-exact.",
+        "Adds continuation generation and backward work; not a compute-matched comparison.",
+        "Fixed Q5 parent weights with continuation kernels are a valid variational choice, not a guaranteed bound-improving E-step."
+      ],
+      "next_actions": ["Publish immutable source, run cluster preflight, submit only three new tasks and a dependent validator; publish tracking before releasing."]
+    },
+    {
       "registry_id": "qwen3_q5_prefix_continuations_20261001",
       "run_id": "f812ca40",
       "status": "queued",

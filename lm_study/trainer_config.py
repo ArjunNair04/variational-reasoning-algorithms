@@ -114,6 +114,7 @@ class ACAlg1RunConfig(_ConfigFromCall):
     proposal_policy: str
     proposal_temperature: float
     proposal_continuation_mode: str
+    component_kernel_epsilon: float
     proposal_allocation_mode: str
     proposal_initial_traces: int
     proposal_allocation_max_traces: int

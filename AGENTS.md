@@ -31,6 +31,25 @@
 
 ## Change record
 
+- **2026-10-01, fixed-weight Q5 kernels:** `component_kernel_epsilon=0.25`
+  and isolated `q5_component_kernel` profile implement a genuine component
+  change, separate from the running proposal-only screen. Each original Q5
+  parent keeps 75% of its mass; one half-prefix continuation inherits 25%.
+  Children are not rescored or stored. Invalid boundaries map back to the
+  parent without resampling. Preserve native IDs, answer+EOS and an isolated
+  per-round CPU/CUDA RNG stream. The profile permits only Q5 U1; no moving
+  kernel across inner updates. Epsilon zero preserves the old execution path.
+  Count added draws in total generation, reused prefixes only in backward
+  cost, and record lineage/fallback/changed mass. Run `b6c4e921` has three new
+  tasks, paired with existing 7483302.1-3 only after receipt/runtime checks.
+  Generated protocol, analyzer and held submitter are prepared before results.
+  No learned posterior network or new ELBO-ascent claim is introduced.
+  All 321 local tests pass, including an actual tiny-Qwen gradient comparison
+  and complete-round accounting; all three coordinate dry runs, runtime
+  profile, analyzer design and shell syntax pass. No new jobs submitted at
+  this implementation checkpoint. Preserve source `4900a9f` for the running
+  prefix study; deploy the kernel study in a different immutable checkout.
+
 - **2026-10-01, Q5 prefix release:** tracking commit `fd6725b` was published
   before releasing only 7483302.1-6. All six tasks were verified ordinary
   queued, with no artificial concurrency cap. Validator 7483303 is held solely

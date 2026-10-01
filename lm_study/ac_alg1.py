@@ -68,6 +68,7 @@ from ac_alg1_age_one_reuse import (
 )
 from ac_alg1_uncertainty_allocation import allocate_uncertainty_budget
 from ac_alg1_prefix_continuations import sample_prefix_continuations
+from ac_alg1_component_kernel import component_kernel_support
 from ac_alg1_prior_segments import (
     SEGMENT_SCOPE, segment_prior_logits, split_reasoning_marker_mask,
     validate_segment_exponents,
@@ -161,6 +162,7 @@ ALGORITHM_PROFILES = (
     "q5_prior_segments",
     "q5_prior_segments_frozen",
     "q5_prefix_continuations",
+    "q5_component_kernel",
     "barber_q5_token_mean_followup",
     "l2r_common_factorial",
     "l2r_pis_rationale_kl_followup",
@@ -5505,6 +5507,7 @@ def _inner_weighted_em_steps(
     diagnostics_gradient_questions: int = 0,
     diagnostics_probe_fn=None,
     diagnostic_state: dict[str, object] | None = None,
+    component_kernel_epsilon: float = 0.0,
 ) -> tuple[dict[int, torch.Tensor], dict[int, torch.Tensor], dict[str, object]]:
     """Run repeated objective ascent and responsibility refreshes on one minibatch.
 
@@ -5563,6 +5566,9 @@ def _inner_weighted_em_steps(
             highest-weight term plus sampled residual estimator.
         run_seed: Training seed used only to derive isolated M-step draws.
         outer_round: Zero-based outer round used only to derive those draws.
+        component_kernel_epsilon: Opt-in inherited mass for native-prefix
+            continuation kernels. Restricted to the registered single-step Q5
+            profile; kernels and weights are fixed before the M-step.
         update_geometry: ``sum`` for the original gradient, ``mgda`` for a
             raw common-descent direction, ``normalized_mgda`` for its
             scale-invariant counterpart, or ``answer_primary`` for a
@@ -5629,6 +5635,31 @@ def _inner_weighted_em_steps(
         raise ValueError("diagnostics_gradient_questions must be nonnegative")
     if mstep_sample_size < 0:
         raise ValueError("mstep_sample_size must be nonnegative")
+    if not math.isfinite(component_kernel_epsilon) or not 0 <= component_kernel_epsilon <= 1:
+        raise ValueError("component kernel epsilon must be finite in [0,1]")
+    kernel_support = None
+    kernel_metadata = None
+    if component_kernel_epsilon:
+        if (inner_steps != 1 or labelled_pids or supervised_weight != 0
+                or mstep_sample_size != 0 or variational_estimator != "delta_joint"
+                or latent_mstep_objective != "joint" or answer_target_termination != "eos"):
+            raise ValueError("component kernel requires the registered answer-only Q5 U1 objective")
+
+        def kernel_row(pid, completion, trace_id):
+            ids = torch.tensor(completion, dtype=torch.long)
+            return _sampled_trace_row(tok, task, pid, ids, torch.ones_like(ids, dtype=torch.bool),
+                tok.decode(completion, skip_special_tokens=True), outer_round, "component_kernel",
+                trace_id=trace_id, answer_event_mode="strict_terminal_marker",
+                answer_target_termination="eos")
+
+        kernel_buffers, kernel_weights, kernel_metadata = component_kernel_support(
+            model, tok, task, buffers, answer_only_weights, answer_only_pids,
+            epsilon=component_kernel_epsilon, seed=run_seed, outer_round=outer_round,
+            build_prompt=lambda pid: _build_proposal_prompt(
+                task.prompts[pid], task.gold_answer[pid], "answer_derive"),
+            make_row=kernel_row, device=DEV,
+        )
+        kernel_support = (kernel_buffers, kernel_weights)
     if mstep_sampling_strategy not in MSTEP_SAMPLING_STRATEGIES:
         raise ValueError(
             f"unknown M-step sampling strategy {mstep_sampling_strategy!r}"
@@ -5699,6 +5730,8 @@ def _inner_weighted_em_steps(
                 sampling_strategy=mstep_sampling_strategy,
             )
         )
+        if kernel_support is not None:
+            mstep_buffers, mstep_combined_weights = kernel_support
         mstep_labelled_weights = {
             int(pid): mstep_combined_weights[int(pid)]
             for pid in labelled_pids
@@ -6460,6 +6493,7 @@ def _inner_weighted_em_steps(
                 },
                 "support": dict(support_diagnostics),
                 "mstep_sampling": mstep_sampling,
+                **({"component_kernel": kernel_metadata} if kernel_metadata is not None else {}),
                 "gradient_attribution": question_gradient_attribution,
                 "behavioural_probe": behavioural_probe,
                 "attempts": step_attempts,
@@ -6648,6 +6682,8 @@ def _inner_weighted_em_steps(
             if policy_anchor_mode == "grad_ratio" else None
         )
     stats["inner_step_diagnostics"] = inner_step_records
+    if kernel_metadata is not None:
+        stats["component_kernel"] = kernel_metadata
     stats["posterior_refresh_diagnostics"] = posterior_refresh_records
     stats["diagnostics_level"] = diagnostics_level
     stats["diagnostics_gradient_questions"] = diagnostics_gradient_questions
@@ -7995,6 +8031,10 @@ def _validate_ac_alg1_run_config(
         raise ValueError("unknown proposal_continuation_mode")
     if config.proposal_continuation_mode != "independent" and config.algorithm_profile != "q5_prefix_continuations":
         raise ValueError("prefix branching requires q5_prefix_continuations profile")
+    if not math.isfinite(config.component_kernel_epsilon) or not 0 <= config.component_kernel_epsilon <= 1:
+        raise ValueError("component kernel epsilon must be finite in [0,1]")
+    if config.component_kernel_epsilon and config.algorithm_profile != "q5_component_kernel":
+        raise ValueError("component kernel requires q5_component_kernel profile")
     responsibility_ess_floor = config.responsibility_ess_floor
     responsibility_abstention = config.responsibility_abstention
     responsibility_rejection_threshold = config.responsibility_rejection_threshold
@@ -9664,6 +9704,7 @@ def _validate_ac_alg1_run_config(
         "q5_prior_segments",
         "q5_prior_segments_frozen",
         "q5_prefix_continuations",
+        "q5_component_kernel",
         "barber_q5_token_mean_followup",
     }:
         expected_responsibility_score = (
@@ -9740,7 +9781,7 @@ def _validate_ac_alg1_run_config(
                 f"{algorithm_profile} rejected a non-Q5 change: "
                 f"{mismatches}"
             )
-        if algorithm_profile == "q5_prefix_continuations":
+        if algorithm_profile in {"q5_prefix_continuations", "q5_component_kernel"}:
             if (responsibility_answer_policy != "current" or responsibility_ess_floor != 0.0
                     or proposal_temperature != 1.0 or config.proposal_allocation_mode != "uniform"
                     or responsibility_abstention != "none" or config.mstep_sample_size != 0
@@ -9751,6 +9792,8 @@ def _validate_ac_alg1_run_config(
                     or config.inner_steps != 1 or config.buffer_limit != 16
                     or config.rounds != 32 or config.lr != 1e-5):
                 raise ValueError("prefix screen requires the fixed Q5-S16-B4-U1 budget")
+            if algorithm_profile == "q5_component_kernel" and config.component_kernel_epsilon not in {0.0, 0.25}:
+                raise ValueError("component screen permits epsilon=0 or 0.25 only")
         if algorithm_profile in {"q5_prior_segments", "q5_prior_segments_frozen"}:
             if (responsibility_prior_head_exponent, responsibility_prior_tail_exponent) not in {
                 (1.0, 1.0), (0.5, 1.0), (1.0, 0.5), (0.75, 0.75),
@@ -11247,8 +11290,14 @@ def _execute_ac_alg1_update(
         diagnostics_gradient_questions=diagnostics_gradient_questions,
         diagnostics_probe_fn=diagnostics_probe_fn,
         diagnostic_state=training_diagnostic_state,
+        component_kernel_epsilon=config.component_kernel_epsilon,
     )
     m_step_elapsed = time.perf_counter() - m_step_started
+    kernel_metadata = stats.get("component_kernel")
+    if kernel_metadata is not None:
+        total_generated += int(kernel_metadata["generated_draws"])
+        generation_elapsed += float(kernel_metadata["elapsed_seconds"])
+        m_step_elapsed = max(0.0, m_step_elapsed - float(kernel_metadata["elapsed_seconds"]))
     diagnostic_probe_elapsed = (
         float(training_diagnostic_state["probe_elapsed_seconds"])
         - probe_elapsed_before_round
@@ -11504,6 +11553,8 @@ def _record_ac_alg1_round(
         "proposal_policy": proposal_policy,
         "proposal_temperature": proposal_temperature,
         "proposal_continuation_mode": config.proposal_continuation_mode,
+        **({"component_kernel_epsilon": config.component_kernel_epsilon}
+           if config.component_kernel_epsilon else {}),
         "proposal_allocation_mode": config.proposal_allocation_mode,
         "proposal_initial_traces": config.proposal_initial_traces,
         "proposal_allocation_max_traces": (
@@ -11754,6 +11805,9 @@ def _emit_ac_alg1_round_diagnostics(
         generated_tokens = sum(
             labelled_sample_tokens + answer_only_sample_tokens
         )
+        kernel_metadata = stats.get("component_kernel")
+        if kernel_metadata is not None:
+            generated_tokens += int(kernel_metadata["generated_tokens"])
         scored_tokens = sum(
             int(row.span.sum().item())
             for pid in [*labelled_pids, *answer_only_pids]
@@ -11801,7 +11855,11 @@ def _emit_ac_alg1_round_diagnostics(
                 "proposal_policy": proposal_policy,
                 "proposal_temperature": proposal_temperature,
                 "trace_representation": trace_representation,
-                "this_round": len(labelled_sample_pid_row) + len(answer_only_sample_pid_row),
+                "this_round": len(labelled_sample_pid_row) + len(answer_only_sample_pid_row)
+                    + (int(kernel_metadata["generated_draws"]) if kernel_metadata is not None else 0),
+                **({"component_kernel": kernel_metadata,
+                    "buffer_proposals_this_round": len(labelled_sample_pid_row) + len(answer_only_sample_pid_row)
+                    } if kernel_metadata is not None else {}),
                 "cumulative": total_generated,
                 "filter": {
                     "attempted": round_filter_attempted,
@@ -12344,6 +12402,7 @@ def run_ac_alg1(
     proposal_policy: str = "current",
     proposal_temperature: float = 1.0,
     proposal_continuation_mode: str = "independent",
+    component_kernel_epsilon: float = 0.0,
     proposal_allocation_mode: str = "uniform",
     proposal_initial_traces: int = 0,
     proposal_allocation_max_traces: int = 0,

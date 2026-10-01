@@ -321,6 +321,8 @@ KNOBS = (
          "JEPO symmetric clip after population-standard-deviation advantage scaling"),
     Knob("proposal_continuation_mode", str, "pcont",
          "Q5 proposal construction: independent or isolated native-token prefix_half branching"),
+    Knob("component_kernel_epsilon", float, "ckeps",
+         "Q5 fixed-weight M-step component-kernel mass; zero preserves point masses"),
 )
 
 # Kept as an extension point for non-overridable runtime metadata. Every
