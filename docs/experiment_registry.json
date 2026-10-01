@@ -2,6 +2,35 @@
   "schema_version": 1,
   "studies": [
     {
+      "registry_id": "qwen3_q5_prefix_continuations_20261001",
+      "run_id": "f812ca40",
+      "status": "prepared",
+      "account": "amanojna",
+      "config": "lm_study/experiments_qwen3_17b_q5_prefix_continuations.yaml",
+      "submitter": "lm_study/submit_qwen3_17b_q5_prefix_continuations_ucl.sh",
+      "analyzer": "analysis/analyze_qwen3_q5_prefix_continuations.py",
+      "validator": "analysis/analyze_qwen3_q5_prefix_continuations.py",
+      "protocol": "docs/experiments/qwen3_q5_prefix_continuations/README.md",
+      "expected_tasks": 6,
+      "seeds": [1201, 1213, 1217],
+      "cells": ["Q5-INDEPENDENT16", "Q5-PREFIX8x2"],
+      "result_root": "~/po_results/2026-10-01/q5-prefix-continuations/qwen3-q5-prefix-continuations__f812ca40",
+      "validator_marker": "~/po_results/auto_state/qwen3_q5_prefix_f812ca40.ok",
+      "analysis_prepared_before_training": true,
+      "verification": "291 local tests, six task-coordinate dry runs, runtime profiles, shell syntax and analyzer design checks pass. Tiny real-Qwen generation/backward tested without pretrained weights. Cluster runtime restore incomplete; no jobs submitted.",
+      "official_test_used": false,
+      "metric_order": ["Final extracted Acc@1", "strict final Acc@1", "normalized extracted Acc@1 AUC"],
+      "limitations": [
+        "Three development seeds; paired contemporaneous training controls, historical receipt-verified round-zero baseline.",
+        "Equal candidate count, not equal generated tokens or compute. Shared-prefix children are correlated.",
+        "Complete roots define the positional midpoint; no claim of semantic phase separation or replacement of the variational family."
+      ],
+      "next_actions": [
+        "Complete local verification and approved minimal AMN runtime restoration; verify checksums and runtime imports.",
+        "Pin and deploy source, perform cluster preflight, submit held payload and dependent validator, publish tracking before release."
+      ]
+    },
+    {
       "registry_id": "qwen3_q5_prior_segments_frozen_20260915",
       "run_id": "7a31c9e2",
       "status": "queued",

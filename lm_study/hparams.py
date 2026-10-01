@@ -319,6 +319,8 @@ KNOBS = (
          "JEPO penalty assigned to generations that violate the strict output format"),
     Knob("jepo_advantage_clip", float, "jepclip",
          "JEPO symmetric clip after population-standard-deviation advantage scaling"),
+    Knob("proposal_continuation_mode", str, "pcont",
+         "Q5 proposal construction: independent or isolated native-token prefix_half branching"),
 )
 
 # Kept as an extension point for non-overridable runtime metadata. Every

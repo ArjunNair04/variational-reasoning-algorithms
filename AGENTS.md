@@ -15,6 +15,30 @@
 
 ## Change record
 
+- **2026-10-01, Q5 prefix-continuation screen:** isolated
+  `proposal_continuation_mode=prefix_half` and profile `q5_prefix_continuations`.
+  Six planned tasks compare 16 independent proposals with 8 complete roots and
+  one native-token half-prefix continuation per root on seeds 1201/1213/1217.
+  Q5 weighting, reader, M-step, EOS and buffer stay fixed. Copied prefix tokens
+  are excluded from generation cost but included in scoring/training. This is
+  candidate support expansion, not a new variational family or independent
+  importance samples. Generated protocol, fail-closed paired analyzer and held
+  submission scripts precede results. All 291 local tests, six coordinate dry
+  runs, runtime profiles, analyzer design checks and shell syntax pass. Tests
+  include a tiny real Qwen forward/generation/backward path without downloading
+  weights. No jobs submitted as of this record.
+  NAS holds the old checkout/results; restored local code is a sparse checkout.
+  AMN's old runtime was removed after archival: restore only the approved
+  Python environment, Qwen3-1.7B cache and GSM8K cache. Four venv symlinks are
+  absent on SMB, and ten model-cache symlinks appear as duplicate regular
+  files. Copy manifest-listed regular files only and recreate exact recorded
+  link targets before checking imports; otherwise weights transfer twice.
+  The first copy was paused with its partial data preserved after about
+  400 MiB in 18 minutes; no completed runtime restore is claimed. Use the restored
+  `.codex-beaker-auto-ssh.sh` with `BEAKER_SSH_ALIAS=beaker_amn`, outside the
+  local socket sandbox. Source `/etc/profile.d/sge-binaries.sh` for qstat;
+  use `quota -s -f /home/amanojna` to avoid scanning unrelated mounts.
+
 - **2026-09-15, frozen positional release:** both tracking pushes and canonical
   MLflow refresh succeeded before releasing only 7414007.1-9. All tasks verified
   ordinary queued, validator 7414008 dependency-held, no concurrency ceiling.

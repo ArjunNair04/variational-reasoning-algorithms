@@ -1,0 +1,204 @@
+# Generated; edit generate_qwen3_17b_q5_prefix_continuations.py.
+run_id: f812ca40
+tag_prefix: q3_q5_prefix
+diagnostic:
+  stage: three_seed_prefix_continuation_screen
+  evidence_class: development_screen_concurrent_paired_control
+  design:
+    array_tasks: 6
+    cell_order:
+    - Q5-INDEPENDENT16
+    - Q5-PREFIX8x2
+    paired_seeds:
+    - 1201
+    - 1213
+    - 1217
+  round_zero:
+    run_id: 68078ecc
+    cell_id: CTRL-base
+    question_ids_sha256: 2e79c7dd90a05f47991da744720f7298635feea7cb592fe82d291a6542c2bf97
+    seeds:
+      1201:
+        final_extracted: 0.745
+        final_strict: 0.6125
+        evaluation_sha256: 2cc7ee4905613764c4cf6123ee66cd576175140891f2a74e3ee8ba2ebc5313a0
+      1213:
+        final_extracted: 0.7525
+        final_strict: 0.72
+        evaluation_sha256: 0de689cecbd30535557685d89e81139d3e94f788bfc4bf4b519ff3a0b02a11d3
+      1217:
+        final_extracted: 0.7675
+        final_strict: 0.5125
+        evaluation_sha256: c121a8b84f4169de2f0b9d66410fa7bad28806691e91cc0f7fa532e398b884f9
+    provenance: Recomputed from 400 per-question records per seed and checked against
+      archived completion-receipt SHA256 on 2026-10-01. Historical baseline only;
+      both trained cells are concurrent.
+  intervention: Keep 8 independent complete roots per question; draw one new suffix
+    from the first floor(n/2) native reasoning tokens of each root. Keep all roots
+    and children. Control draws 16 independent completions.
+  boundary: 'Reasoning ends before the first #### marker. A token overlapping the
+    marker is excluded. No answer-correctness or reader-score root selection. A missing/empty
+    usable prefix falls back to an independent draw and is counted.'
+  budget: 32 rounds x 4 questions x 16 complete candidates = 2048. Root generation
+    is charged in full. Each child has the original whole-response cap minus copied-prefix
+    length. Report suffix generation separately from copied and backward tokens; not
+    compute matched.
+  fixed_contract:
+    official_test_used: false
+    answer_target: answer_plus_eos
+    proposal: answer_derive
+    reader: current
+    mstep: unchanged_joint_weighted_mle
+  analysis_contract:
+  - Report Final extracted Acc@1 first, strict final second, normalized extracted
+    AUC rounds 0-32 third, then strict AUC.
+  - Show each same-seed treatment-minus-control difference and descriptive paired
+    95% t intervals. Three reused development seeds do not establish confirmation.
+  - Use the receipt-verified, same-seed historical frozen-base endpoints only for
+    round-zero AUC; evaluation hashes are frozen in round_zero. Both training cells
+    run concurrently.
+  - Report all outcomes; a positive mean final difference without a mean strict-final
+    loss nominates the treatment for discussion only. AUC and cost remain visible;
+    no automatic follow-up.
+  - Report parent/child trace identities, retained-prefix hashes, fallback and duplicate
+    rates, generated versus reused tokens, backward tokens, duration, ESS and weight
+    concentration.
+  - This changes candidate discovery, not the finite-support variational family. Children
+    share prefixes and are correlated; ESS is a weight-concentration statistic, not
+    a count of independent observations.
+  - The prefix boundary uses the fully generated root. This is a positional continuation
+    experiment, not an identified understanding/solving split.
+defaults:
+  task: gsm8k
+  model: qwen3-1.7b-base
+  rounds: 32
+  seeds: 3
+  seed_values:
+  - 1201
+  - 1213
+  - 1217
+  n_test: 400
+  train_partition: train
+  eval_partition: validation
+  answer_event_mode: strict_terminal_marker
+  answer_target_termination: none
+  evaluation_prompt: question
+  batch: 64
+  eval_batch: 32
+  G: 16
+  prompts: 128
+  shots: 3
+  shot_bank_size: 5
+  task_seed_from_run_seed: true
+  question_sampling: epoch_shuffle
+  grad_checkpoint: false
+  lora_r: 16
+  lora_alpha: 32
+  lora_target_set: attention_mlp
+  out: ~/po_results/2026-10-01/q5-prefix-continuations/qwen3-q5-prefix-continuations__f812ca40
+  eval_rounds:
+  - 1
+  - 2
+  - 4
+  - 8
+  - 16
+  - 24
+  - 32
+  dump_completions: 100
+  save_adapter: true
+  save_training_diagnostics: true
+  training_diagnostics_level: standard
+  training_diagnostics_trace_tape: false
+  training_diagnostics_gradient_questions: 0
+  training_diagnostics_probe_size: 0
+  checkpoint_every: 0
+  passk: 8
+  passk_n: 100
+algos:
+  AC-ALG1:
+  - algorithm_profile: q5_prefix_continuations
+    answer_target_termination: eos
+    labelled_frac: 0.0
+    buffer_strategy: fifo
+    buffer_semantics: unique_set
+    buffer_lifecycle: persistent
+    proposal_prompt: answer_derive
+    proposal_mixture: single
+    proposal_filter: all
+    proposal_policy: current
+    responsibility_score: joint
+    responsibility_posterior: softmax_entropy
+    responsibility_temperature: 1.0
+    responsibility_ess_floor: 0.0
+    responsibility_policy: current
+    responsibility_answer_policy: current
+    responsibility_refresh: inner_step
+    variational_estimator: delta_joint
+    labelled_em_weight: 0.0
+    answer_only_em_weight: 1.0
+    supervised_weight: 0.0
+    policy_anchor_mode: fixed
+    labelled_numeric_constraint: 'off'
+    labelled_supervision: gold
+    digit_token_weight: 1.0
+    trace_representation: reasoning
+    latent_mstep_objective: joint
+    update_geometry: sum
+    step_acceptance: none
+    optimizer_state_scope: persistent
+    batch: 64
+    G: 16
+    cell_id: Q5-INDEPENDENT16
+    lr: 1.0e-05
+    iters: 1
+    buffer_limit: 16
+    proposal_temperature: 1.0
+    policy_anchor_target_ratio: null
+    policy_anchor_beta_min: 0.0
+    policy_anchor_beta_max: 10.0
+    policy_anchor_ema: 0.9
+    policy_anchor_token_scope: objective
+    proposal_continuation_mode: independent
+  - algorithm_profile: q5_prefix_continuations
+    answer_target_termination: eos
+    labelled_frac: 0.0
+    buffer_strategy: fifo
+    buffer_semantics: unique_set
+    buffer_lifecycle: persistent
+    proposal_prompt: answer_derive
+    proposal_mixture: single
+    proposal_filter: all
+    proposal_policy: current
+    responsibility_score: joint
+    responsibility_posterior: softmax_entropy
+    responsibility_temperature: 1.0
+    responsibility_ess_floor: 0.0
+    responsibility_policy: current
+    responsibility_answer_policy: current
+    responsibility_refresh: inner_step
+    variational_estimator: delta_joint
+    labelled_em_weight: 0.0
+    answer_only_em_weight: 1.0
+    supervised_weight: 0.0
+    policy_anchor_mode: fixed
+    labelled_numeric_constraint: 'off'
+    labelled_supervision: gold
+    digit_token_weight: 1.0
+    trace_representation: reasoning
+    latent_mstep_objective: joint
+    update_geometry: sum
+    step_acceptance: none
+    optimizer_state_scope: persistent
+    batch: 64
+    G: 16
+    cell_id: Q5-PREFIX8x2
+    lr: 1.0e-05
+    iters: 1
+    buffer_limit: 16
+    proposal_temperature: 1.0
+    policy_anchor_target_ratio: null
+    policy_anchor_beta_min: 0.0
+    policy_anchor_beta_max: 10.0
+    policy_anchor_ema: 0.9
+    policy_anchor_token_scope: objective
+    proposal_continuation_mode: prefix_half

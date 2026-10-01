@@ -113,6 +113,7 @@ class ACAlg1RunConfig(_ConfigFromCall):
     proposal_filter: str
     proposal_policy: str
     proposal_temperature: float
+    proposal_continuation_mode: str
     proposal_allocation_mode: str
     proposal_initial_traces: int
     proposal_allocation_max_traces: int

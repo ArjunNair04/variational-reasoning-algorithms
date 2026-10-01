@@ -67,6 +67,7 @@ from ac_alg1_age_one_reuse import (
     select_age_one_reuse,
 )
 from ac_alg1_uncertainty_allocation import allocate_uncertainty_budget
+from ac_alg1_prefix_continuations import sample_prefix_continuations
 from ac_alg1_prior_segments import (
     SEGMENT_SCOPE, segment_prior_logits, split_reasoning_marker_mask,
     validate_segment_exponents,
@@ -159,6 +160,7 @@ ALGORITHM_PROFILES = (
     "q5_prior_exponent",
     "q5_prior_segments",
     "q5_prior_segments_frozen",
+    "q5_prefix_continuations",
     "barber_q5_token_mean_followup",
     "l2r_common_factorial",
     "l2r_pis_rationale_kl_followup",
@@ -2400,6 +2402,7 @@ def _add_model_traces_to_buffer(
     collect_proposal_outcomes: bool = False,
     record_proposal_density: bool = False,
     trace_index_offset: int = 0,
+    proposal_continuation_mode: str = "independent",
 ) -> tuple[list[int], list[str], list[int], int, int, dict]:
     """Sample model traces and append them to per-question buffers.
 
@@ -2443,6 +2446,16 @@ def _add_model_traces_to_buffer(
 
     if proposal_filter not in PROPOSAL_FILTERS:
         raise ValueError(f"unknown AC-ALG1 proposal_filter {proposal_filter!r}")
+    if proposal_continuation_mode not in {"independent", "prefix_half"}:
+        raise ValueError("unknown proposal continuation mode")
+    if proposal_continuation_mode != "independent" and (
+        record_proposal_density or proposal_mixture != "single"
+        or proposal_prompt != "answer_derive" or proposal_filter != "all"
+        or proposal_policy != "current" or source != "answer_only_sample"
+        or answer_event_mode != "strict_terminal_marker"
+        or answer_target_termination != "eos" or trace_representation != "reasoning"
+    ):
+        raise ValueError("prefix branching requires the isolated answer-only Q5 contract")
     if buffer_semantics not in BUFFER_SEMANTICS:
         raise ValueError(f"unknown AC-ALG1 buffer_semantics {buffer_semantics!r}")
     if proposal_policy not in ADAPTER_POLICY_MODES:
@@ -2535,13 +2548,21 @@ def _add_model_traces_to_buffer(
             row_source = f"{row_source}:{proposal_policy}"
         row_sources.append(row_source)
 
+    continuation_stats = None
     with _adapter_policy_context(model, proposal_policy):
         sample_kwargs = {"max_new": getattr(task, "max_new", 40)}
         if proposal_temperature != 1.0:
             sample_kwargs["temperature"] = proposal_temperature
         if record_proposal_density:
             sample_kwargs["return_token_logprobs"] = True
-        sampled = sample_multi(model, tok, prompts, **sample_kwargs)
+        if proposal_continuation_mode == "prefix_half":
+            *sampled, continuation_stats = sample_prefix_continuations(
+                model, tok, prompts, traces_per_question=traces_per_question,
+                max_new=sample_kwargs["max_new"], temperature=proposal_temperature,
+                sample_fn=sample_multi, device=DEV,
+            )
+        else:
+            sampled = sample_multi(model, tok, prompts, **sample_kwargs)
     if record_proposal_density:
         ids, comp_mask, texts, proposal_token_logprobs = sampled
     else:
@@ -2553,6 +2574,8 @@ def _add_model_traces_to_buffer(
         if collect_token_counts or collect_proposal_outcomes
         else []
     )
+    if continuation_stats is not None and (collect_token_counts or collect_proposal_outcomes):
+        measured_token_counts = list(continuation_stats["generated_tokens"])
     token_counts = measured_token_counts if collect_token_counts else []
     if int(trace_index_offset) < 0:
         raise ValueError("trace_index_offset must be nonnegative")
@@ -2603,6 +2626,13 @@ def _add_model_traces_to_buffer(
         "correct": correct,
         "admitted": accepted,
     }
+    if continuation_stats is not None:
+        continuation_stats["trace_ids"] = trace_ids
+        continuation_stats["parent_trace_ids"] = [
+            trace_ids[index] if index is not None else None
+            for index in continuation_stats["parent_indices"]
+        ]
+        filter_stats["continuations"] = continuation_stats
     rows_added = 0
     rows_evicted = 0
     set_duplicates = []
@@ -7961,6 +7991,10 @@ def _validate_ac_alg1_run_config(
     )
     if segmented_prior and config.algorithm_profile not in {"q5_prior_segments", "q5_prior_segments_frozen"}:
         raise ValueError("nondefault segment exponents require q5_prior_segments profile")
+    if config.proposal_continuation_mode not in {"independent", "prefix_half"}:
+        raise ValueError("unknown proposal_continuation_mode")
+    if config.proposal_continuation_mode != "independent" and config.algorithm_profile != "q5_prefix_continuations":
+        raise ValueError("prefix branching requires q5_prefix_continuations profile")
     responsibility_ess_floor = config.responsibility_ess_floor
     responsibility_abstention = config.responsibility_abstention
     responsibility_rejection_threshold = config.responsibility_rejection_threshold
@@ -9629,6 +9663,7 @@ def _validate_ac_alg1_run_config(
         "q5_prior_exponent",
         "q5_prior_segments",
         "q5_prior_segments_frozen",
+        "q5_prefix_continuations",
         "barber_q5_token_mean_followup",
     }:
         expected_responsibility_score = (
@@ -9705,6 +9740,17 @@ def _validate_ac_alg1_run_config(
                 f"{algorithm_profile} rejected a non-Q5 change: "
                 f"{mismatches}"
             )
+        if algorithm_profile == "q5_prefix_continuations":
+            if (responsibility_answer_policy != "current" or responsibility_ess_floor != 0.0
+                    or proposal_temperature != 1.0 or config.proposal_allocation_mode != "uniform"
+                    or responsibility_abstention != "none" or config.mstep_sample_size != 0
+                    or policy_kl_coef is not None or policy_anchor_mode != "fixed"
+                    or policy_anchor_target_ratio is not None or config.length_norm):
+                raise ValueError("prefix screen permits only the declared proposal change")
+            if (config.G_answer_only != 16 or config.U_batch != 4
+                    or config.inner_steps != 1 or config.buffer_limit != 16
+                    or config.rounds != 32 or config.lr != 1e-5):
+                raise ValueError("prefix screen requires the fixed Q5-S16-B4-U1 budget")
         if algorithm_profile in {"q5_prior_segments", "q5_prior_segments_frozen"}:
             if (responsibility_prior_head_exponent, responsibility_prior_tail_exponent) not in {
                 (1.0, 1.0), (0.5, 1.0), (1.0, 0.5), (0.75, 0.75),
@@ -10891,6 +10937,7 @@ def _execute_ac_alg1_update(
         proposal_filter=proposal_filter,
         proposal_policy=proposal_policy,
         proposal_temperature=proposal_temperature,
+        proposal_continuation_mode=config.proposal_continuation_mode,
         trace_representation=trace_representation,
         answer_event_mode=answer_event_mode,
         answer_target_termination=answer_target_termination,
@@ -10905,6 +10952,8 @@ def _execute_ac_alg1_update(
             }
         ),
     )
+    if config.proposal_continuation_mode == "prefix_half":
+        sampling_intervention = answer_only_filter_stats["continuations"]
     if proposal_allocation_mode != "uniform":
         _unused_labelled, provisional_weights = _refresh_minibatch_weights(
             model,
@@ -11454,6 +11503,7 @@ def _record_ac_alg1_round(
         "proposal_filter": proposal_filter,
         "proposal_policy": proposal_policy,
         "proposal_temperature": proposal_temperature,
+        "proposal_continuation_mode": config.proposal_continuation_mode,
         "proposal_allocation_mode": config.proposal_allocation_mode,
         "proposal_initial_traces": config.proposal_initial_traces,
         "proposal_allocation_max_traces": (
@@ -12293,6 +12343,7 @@ def run_ac_alg1(
     proposal_filter: str = "all",
     proposal_policy: str = "current",
     proposal_temperature: float = 1.0,
+    proposal_continuation_mode: str = "independent",
     proposal_allocation_mode: str = "uniform",
     proposal_initial_traces: int = 0,
     proposal_allocation_max_traces: int = 0,
