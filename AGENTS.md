@@ -31,6 +31,13 @@
 
 ## Change record
 
+- **2026-10-01, Q5 prefix release:** tracking commit `fd6725b` was published
+  before releasing only 7483302.1-6. All six tasks were verified ordinary
+  queued, with no artificial concurrency cap. Validator 7483303 is held solely
+  on 7483302 and runs the prepared validation/analysis. Execution stays at
+  `4900a9f`; subsequent commits are tracking-only. Home usage was 12,090 MiB
+  against a 51,200 MiB limit. No result or training-success claim yet.
+
 - **2026-10-01, AMN runtime recovery:** the approved Qwen3-1.7B runtime and
   small GSM8K cache are restored: all 32,317 regular files and 14 symlinks
   match the archived manifest. Model and wheel downloads were accepted only

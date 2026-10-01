@@ -4,7 +4,7 @@
     {
       "registry_id": "qwen3_q5_prefix_continuations_20261001",
       "run_id": "f812ca40",
-      "status": "submitted_held",
+      "status": "queued",
       "account": "amanojna",
       "config": "lm_study/experiments_qwen3_17b_q5_prefix_continuations.yaml",
       "submitter": "lm_study/submit_qwen3_17b_q5_prefix_continuations_ucl.sh",
@@ -18,11 +18,12 @@
       "validator_marker": "~/po_results/auto_state/qwen3_q5_prefix_f812ca40.ok",
       "analysis_prepared_before_training": true,
       "scheduler_jobs": [
-        {"role": "payload", "job_id": "7483302", "tasks": 6, "state": "user_held"},
+        {"role": "payload", "job_id": "7483302", "tasks": 6, "state": "queued"},
         {"role": "validator", "job_id": "7483303", "depends_on": "7483302", "state": "dependency_held"}
       ],
       "submission_receipt": "~/po_results/auto_state/qwen3_q5_prefix_f812ca40.submission.txt",
       "artificial_concurrency_cap": null,
+      "tracking_published_before_release": "fd6725b",
       "execution_revision": "4900a9f8413e191e951d534f9fa4d179431defc9",
       "configuration_sha256": "5cf9f3e9846930de233b56b02d7ded597ad3f983099784b73323ea34ce52c6ea",
       "execution_checkout": "/home/amanojna/vrl_hpc/runs/q5-prefix-4900a9f",
@@ -53,7 +54,7 @@
         "Complete roots define the positional midpoint; no claim of semantic phase separation or replacement of the variational family."
       ],
       "next_actions": [
-        "Publish this tracking record, then release only payload 7483302.",
+        "Check scheduler progress and task logs without changing healthy jobs.",
         "Require all six valid terminals and successful dependent validation/analysis before reporting results; no automatic follow-up."
       ]
     },
