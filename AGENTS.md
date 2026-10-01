@@ -35,6 +35,12 @@
 
 ## Change record
 
+- **2026-10-01, kernel release:** tracking `86cd1ca` was published before
+  releasing only 7484162.1-3; all three verified `qw`, without a concurrency
+  cap. Validator 7484163 remains dependency-held. Existing 7483302/7483303
+  were unchanged. Execution stays at `ffbabf4`; release commits contain only
+  tracking. This records submission, not successful training or an outcome.
+
 - **2026-10-01, kernel held submission:** immutable execution `ffbabf4`
   passed AMN preflight. Payload 7484162 contains only three `Q5-KERNEL25`
   tasks; validator 7484163 depends on it and existing control array 7483302.

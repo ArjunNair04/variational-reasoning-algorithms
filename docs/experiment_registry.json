@@ -4,7 +4,7 @@
     {
       "registry_id": "qwen3_q5_component_kernel_20261001",
       "run_id": "b6c4e921",
-      "status": "submitted_held_pending_tracking_publication",
+      "status": "queued",
       "account": "amanojna",
       "config": "lm_study/experiments_qwen3_17b_q5_component_kernel.yaml",
       "submitter": "lm_study/submit_qwen3_17b_q5_component_kernel_ucl.sh",
@@ -19,7 +19,7 @@
       "validator_marker": "~/po_results/auto_state/qwen3_q5_kernel_b6c4e921.ok",
       "analysis_prepared_before_training": true,
       "scheduler_jobs": [
-        {"role": "payload", "job_id": "7484162", "tasks": 3, "state": "user_held"},
+        {"role": "payload", "job_id": "7484162", "tasks": 3, "state": "queued"},
         {"role": "validator", "job_id": "7484163", "depends_on": ["7484162", "7483302"], "state": "dependency_held"}
       ],
       "execution_revision": "ffbabf4c30e1fad7c800ff1ab03da7f9dbdb103d",
@@ -27,6 +27,8 @@
       "execution_checkout": "/home/amanojna/vrl_hpc/runs/q5-kernel-ffbabf4",
       "submission_receipt": "~/po_results/auto_state/qwen3_q5_kernel_b6c4e921.submission.txt",
       "cluster_preflight": "passed: immutable source/YAML, control checkout/YAML, runtime profile, analyzer design and all three task coordinates",
+      "tracking_published_before_release": "86cd1ca",
+      "release_verification": "Only 7484162.1-3 was released; all three verified qw. Validator 7484163 remains dependency-held. Existing 7483302/7483303 were not changed.",
       "verification": "321 local tests pass, including native-token lineage, inherited gradients, CPU/CUDA RNG isolation logic, real tiny-Qwen generation/backward, complete-round cost accounting and a disabled-path comparison against deployed source 4900a9f. All three YAML coordinates, runtime profile, analyzer design and shell syntax pass.",
       "artificial_concurrency_cap": null,
       "official_test_used": false,
@@ -36,7 +38,7 @@
         "Adds continuation generation and backward work; not a compute-matched comparison.",
         "Fixed Q5 parent weights with continuation kernels are a valid variational choice, not a guaranteed bound-improving E-step."
       ],
-      "next_actions": ["Publish this tracking record, release only 7484162.1-3, and verify scheduler state.", "Require successful paired validator before result claims; no automatic learned-posterior or confirmation jobs."]
+      "next_actions": ["Require successful paired validator before result claims; no automatic learned-posterior or confirmation jobs."]
     },
     {
       "registry_id": "qwen3_q5_prefix_continuations_20261001",
