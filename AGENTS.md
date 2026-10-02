@@ -35,6 +35,14 @@
 
 ## Change record
 
+- **2026-10-02, learned posterior release:** explicit user approval covered
+  publishing job IDs and AMN paths. Tracking `2aa74c8` was published before
+  releasing only 7484770.1-3 at 01:35 UTC; all three verified `qw`. Validator
+  7484771 remains dependency-held on that payload. Clean execution `e662912`
+  and the frozen YAML hash were rechecked; execution source was not updated.
+  Home usage was 12,733 MiB against a 51,200 MiB limit. No concurrency cap,
+  control reruns, other job changes or result claims.
+
 - **2026-10-02, learned posterior held submission:** immutable execution
   `e662912` passed AMN's real tiny-Qwen fit/sample/backward smoke, adapter
   isolation, RNG restoration, control identity and three-coordinate preflight.
