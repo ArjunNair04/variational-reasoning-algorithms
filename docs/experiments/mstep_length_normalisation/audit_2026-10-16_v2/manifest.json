@@ -1,0 +1,13 @@
+{
+  "script_sha256": "330f546c5d06670c6d42fac984bfb02c0fa17c2692c5c477e599405daf03f3ae",
+  "source_spec_sha256": "42cb983ac19627b207e568115da8d1462f47da458447c7503cc01bab00e74fcf",
+  "outputs": {
+    "sources.json": "d41eb7e98cf597de675eb13765a13c0f6473619cbf809db1be0b21b8ca9839a1",
+    "summary.json": "821e8489876abc4dda20efff9ee85210a7b69cfcf4d2ec6de2485890eb798f1f",
+    "supports.jsonl": "132c004faeb7081c5b9d0c1d25db7715e3a00284daec203b861dcee3eff8e3f4",
+    "traces.jsonl": "56ad618afdfd1cf15680f476019be642bb800a8b415fe18a805ede2a16347188"
+  },
+  "training_may_start": false,
+  "inference_performed": false,
+  "optimizer_steps": 0
+}

@@ -1,0 +1,175 @@
+# Generated; edit generate_qwen3_17b_mstep_length_normalisation.py.
+run_id: d61a0c84
+tag_prefix: q3_mstep_length
+diagnostic:
+  stage: three_seed_mstep_length_screen
+  evidence_class: development_screen_historical_paired_controls
+  control_run_id: 68078ecc
+  control_commit: 4a9a9cafc6b17cc18e7c1da8a422e847daeb4746
+  control_cells:
+    Q5-MSTEP-TOKENMEAN: Q5-AD-M-LR1e-5-U1-K16
+    PIS-MSTEP-TOKENMEAN: PIS-Q-S8-B8-U4
+  design:
+    array_tasks: 6
+    cell_order:
+    - Q5-MSTEP-TOKENMEAN
+    - PIS-MSTEP-TOKENMEAN
+    paired_seeds:
+    - 1201
+    - 1213
+    - 1217
+  intervention: Replace sum_s w_s log p_theta(h_s,a+|q) with sum_s w_s log p_theta(h_s,a+|q)/T_s;
+    T_s counts shifted objective-mask positions including marker, answer and EOS,
+    excluding prompt and padding.
+  unchanged: Posterior formulas, answer/prior policies, refresh schedules, proposals,
+    buffers, question schedule, inner steps, Adam and learning rate, target boundaries
+    and evaluation.
+  audit: Receipt-bound audit of 192 historical rounds and 7868 retained rows; see
+    docs/experiments/mstep_length_normalisation. Arithmetic parser flags are not verified
+    errors. Q5 snapshots are post-update.
+  release_gate: Audit reviewed and result analyzer prepared; source-control runtime/provenance
+    equivalence and deployment wiring still required before submission. No automatic
+    release.
+  analysis_contract:
+  - Final extracted Acc@1 first, strict final second, normalized extracted AUC rounds
+    0-32 third; also strict AUC.
+  - Compare each method only with its own receipt-verified same-seed control; Q5 and
+    PIS retain different question/update budgets.
+  - Use final round 32, never select the best checkpoint; include every seed and paired
+    differences with descriptive 95% t intervals.
+  - Report lengths, posterior concentration, weight-length correlation, gradient norms,
+    applied update norms, formatting, backward/generated tokens and accelerator hours.
+  - Unchanged weights means unchanged E-step at identical parameters/support; subsequent
+    learned policies and their weights may differ.
+  - This changes relative per-trace loss scaling and overall objective scale. Adam
+    need not turn a 100-fold smaller loss into a 100-fold smaller update.
+  - Do not attribute gains solely to length preference without a separate scale-matched
+    follow-up; do not add that follow-up automatically.
+  - No official-test access, no new posterior temperature, no prompt change, no added
+    KL, no automatic confirmation.
+defaults:
+  task: gsm8k
+  model: qwen3-1.7b-base
+  rounds: 32
+  seeds: 3
+  seed_values:
+  - 1201
+  - 1213
+  - 1217
+  n_test: 400
+  train_partition: train
+  eval_partition: validation
+  answer_event_mode: strict_terminal_marker
+  answer_target_termination: none
+  evaluation_prompt: question
+  batch: 64
+  eval_batch: 32
+  G: 16
+  prompts: 128
+  shots: 3
+  shot_bank_size: 5
+  task_seed_from_run_seed: true
+  question_sampling: epoch_shuffle
+  grad_checkpoint: false
+  lora_r: 16
+  lora_alpha: 32
+  lora_target_set: attention_mlp
+  out: ~/po_results/2026-10-16/mstep-length-normalisation/qwen3-mstep-length__d61a0c84
+  eval_rounds:
+  - 1
+  - 2
+  - 4
+  - 8
+  - 16
+  - 24
+  - 32
+  dump_completions: 100
+  save_adapter: true
+  save_training_diagnostics: true
+  training_diagnostics_level: standard
+  training_diagnostics_trace_tape: false
+  training_diagnostics_gradient_questions: 0
+  training_diagnostics_probe_size: 0
+  checkpoint_every: 0
+  passk: 8
+  passk_n: 100
+algos:
+  AC-ALG1:
+  - algorithm_profile: mstep_length_normalisation
+    answer_target_termination: eos
+    labelled_frac: 0.0
+    buffer_strategy: fifo
+    buffer_semantics: unique_set
+    buffer_lifecycle: persistent
+    proposal_prompt: answer_derive
+    proposal_mixture: single
+    proposal_filter: all
+    proposal_policy: current
+    responsibility_score: joint
+    responsibility_posterior: softmax_entropy
+    responsibility_temperature: 1.0
+    responsibility_ess_floor: 0.0
+    responsibility_policy: current
+    responsibility_answer_policy: current
+    responsibility_refresh: inner_step
+    variational_estimator: delta_joint
+    labelled_em_weight: 0.0
+    answer_only_em_weight: 1.0
+    supervised_weight: 0.0
+    policy_anchor_mode: fixed
+    labelled_numeric_constraint: 'off'
+    labelled_supervision: gold
+    digit_token_weight: 1.0
+    trace_representation: reasoning
+    latent_mstep_objective: joint_token_mean
+    update_geometry: sum
+    step_acceptance: none
+    optimizer_state_scope: persistent
+    batch: 64
+    G: 16
+    cell_id: Q5-MSTEP-TOKENMEAN
+    lr: 1.0e-05
+    iters: 1
+    buffer_limit: 16
+    proposal_temperature: 1.0
+    policy_anchor_target_ratio: null
+    policy_anchor_beta_min: 0.0
+    policy_anchor_beta_max: 10.0
+    policy_anchor_ema: 0.9
+    policy_anchor_token_scope: objective
+  - algorithm_profile: mstep_length_normalisation
+    answer_target_termination: eos
+    lr: 1.0e-05
+    labelled_frac: 0.0
+    buffer_strategy: fifo
+    proposal_prompt: question
+    proposal_mixture: single
+    proposal_filter: all
+    proposal_policy: current
+    responsibility_score: joint
+    responsibility_posterior: softmax_entropy
+    responsibility_temperature: 1.0
+    responsibility_ess_floor: 0.0
+    responsibility_policy: current
+    responsibility_answer_policy: current
+    labelled_em_weight: 0.0
+    answer_only_em_weight: 1.0
+    supervised_weight: 0.0
+    policy_anchor_mode: fixed
+    labelled_numeric_constraint: 'off'
+    labelled_supervision: gold
+    digit_token_weight: 1.0
+    trace_representation: reasoning
+    latent_mstep_objective: joint_token_mean
+    update_geometry: sum
+    step_acceptance: none
+    optimizer_state_scope: persistent
+    cell_id: PIS-MSTEP-TOKENMEAN
+    batch: 64
+    G: 8
+    iters: 4
+    buffer_limit: 8
+    buffer_semantics: multiset_legacy
+    buffer_lifecycle: fresh_round
+    responsibility_refresh: outer_round
+    variational_estimator: prior_importance

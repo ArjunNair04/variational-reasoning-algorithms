@@ -1,0 +1,62 @@
+[
+  {
+    "method": "Q5",
+    "seed": 1201,
+    "run_id": "68078ecc",
+    "cell_id": "Q5-AD-M-LR1e-5-U1-K16",
+    "diagnostics": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/training_diagnostics_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1201__AC-ALG1_s1201.jsonl.gz",
+    "receipt": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/complete_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1201__AC-ALG1_s1201.json",
+    "diagnostics_sha256": "7ed18604e85e02fc29faff15789ccbf1e9159e53b8c72493b35824d343c8bd27",
+    "receipt_sha256": "7b836fe32231870f89a9acdbcf932dda5ff5ba0e038909911c4dc9e92d663bff"
+  },
+  {
+    "method": "Q5",
+    "seed": 1213,
+    "run_id": "68078ecc",
+    "cell_id": "Q5-AD-M-LR1e-5-U1-K16",
+    "diagnostics": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/training_diagnostics_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1213__AC-ALG1_s1213.jsonl.gz",
+    "receipt": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/complete_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1213__AC-ALG1_s1213.json",
+    "diagnostics_sha256": "251475f055a53138b83038cc9b08b4f8d28399ff8593908cd4cf7195f3b60283",
+    "receipt_sha256": "502d96243b83a88efbc235f32a5e78c68b567e7583f2200096b141e02483b334"
+  },
+  {
+    "method": "Q5",
+    "seed": 1217,
+    "run_id": "68078ecc",
+    "cell_id": "Q5-AD-M-LR1e-5-U1-K16",
+    "diagnostics": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/training_diagnostics_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1217__AC-ALG1_s1217.jsonl.gz",
+    "receipt": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/complete_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1217__AC-ALG1_s1217.json",
+    "diagnostics_sha256": "6d5117a54cbc94a9d1a0b1ddc983889c4893fc4dd782429d9a3a87895619ddc0",
+    "receipt_sha256": "a9d5c27968ca023f431b3e60da988692fb31d9d08e56609a8f7efa8651b6c0b2"
+  },
+  {
+    "method": "PIS",
+    "seed": 1201,
+    "run_id": "68078ecc",
+    "cell_id": "PIS-Q-S8-B8-U4",
+    "diagnostics": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/training_diagnostics_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_PIS-Q-S8-B8-U4_seed1201__AC-ALG1_s1201.jsonl.gz",
+    "receipt": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/complete_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_PIS-Q-S8-B8-U4_seed1201__AC-ALG1_s1201.json",
+    "diagnostics_sha256": "dc7f6c7bfb62aab5fe8ce2ce65308273afa7f0e81d9487ded0a865c063ee379c",
+    "receipt_sha256": "ba90333dff238dea45e8cb46b31c9261ea8ad4a1a77cbb2847f52abcfb5ab616"
+  },
+  {
+    "method": "PIS",
+    "seed": 1213,
+    "run_id": "68078ecc",
+    "cell_id": "PIS-Q-S8-B8-U4",
+    "diagnostics": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/training_diagnostics_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_PIS-Q-S8-B8-U4_seed1213__AC-ALG1_s1213.jsonl.gz",
+    "receipt": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/complete_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_PIS-Q-S8-B8-U4_seed1213__AC-ALG1_s1213.json",
+    "diagnostics_sha256": "0fa853ce6fb3a4d88072d55310592cb6a1d8597df94174efde34a0ad1821570b",
+    "receipt_sha256": "8d7c851d523b012465416c7b0398a519ba4b0b0333fa854beae914d8bcf4d8e5"
+  },
+  {
+    "method": "PIS",
+    "seed": 1217,
+    "run_id": "68078ecc",
+    "cell_id": "PIS-Q-S8-B8-U4",
+    "diagnostics": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/training_diagnostics_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_PIS-Q-S8-B8-U4_seed1217__AC-ALG1_s1217.jsonl.gz",
+    "receipt": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/complete_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_PIS-Q-S8-B8-U4_seed1217__AC-ALG1_s1217.json",
+    "diagnostics_sha256": "5e229c55cdd38fce7d6d7ea33a5b195d8c391bb3e29c566c582cb7eb9677cd25",
+    "receipt_sha256": "a5be2b56d8caf8738df364c0c19bd5ae375f3a9762c492f46668071d93405566"
+  }
+]

@@ -2,6 +2,36 @@
   "schema_version": 1,
   "studies": [
     {
+      "registry_id": "qwen3_mstep_length_normalisation_20261016",
+      "run_id": "d61a0c84",
+      "status": "prepared_not_submitted",
+      "account": "amanojna",
+      "config": "lm_study/experiments_qwen3_17b_mstep_length_normalisation.yaml",
+      "analyzer": "analysis/analyze_qwen3_mstep_length_normalisation.py",
+      "protocol": "docs/experiments/mstep_length_normalisation/README.md",
+      "expected_tasks": 6,
+      "seeds": [1201, 1213, 1217],
+      "cells": ["Q5-MSTEP-TOKENMEAN", "PIS-MSTEP-TOKENMEAN"],
+      "control_run_id": "68078ecc",
+      "control_cells": ["Q5-AD-M-LR1e-5-U1-K16", "PIS-Q-S8-B8-U4"],
+      "analysis_prepared_before_training": true,
+      "scheduler_jobs": [],
+      "pretraining_audit": "docs/experiments/mstep_length_normalisation/audit_2026-10-16_v2/summary.json",
+      "verification": "369 repository tests passed; real tiny-Qwen M-step objective/gradient, EOS, microbatch, RNG and fixed-weight checks. All 192 historical diagnostic rounds pass the prepared mechanism reconstruction.",
+      "metric_order": ["Final extracted Acc@1", "strict final Acc@1", "normalized extracted Acc@1 AUC"],
+      "limitations": [
+        "Historical Q5 weight snapshots are post-update, not exact pre-update training weights.",
+        "Arithmetic parser flags have false positives and are not a reasoning-error-rate estimate.",
+        "Length normalisation changes relative trace contributions and total objective scale; no learning-rate or posterior adjustment is included.",
+        "Three development seeds with historical controls; no bit-exact or confirmatory claim."
+      ],
+      "next_actions": [
+        "Restore authenticated AMN helper route; check existing jobs and quota once before deployment.",
+        "Complete immutable deployment and validator wiring with NAS-archived controls; verify runtime and question schedule equivalence.",
+        "Publish tracking before release; do not rerun controls or add automatic follow-up cells."
+      ]
+    },
+    {
       "registry_id": "qwen3_q5_learned_posterior_20261002",
       "run_id": "2d7c8a61",
       "status": "queued",

@@ -165,6 +165,7 @@ ALGORITHM_PROFILES = (
     "q5_prefix_continuations",
     "q5_component_kernel",
     "q5_learned_posterior",
+    "mstep_length_normalisation",
     "barber_q5_token_mean_followup",
     "l2r_common_factorial",
     "l2r_pis_rationale_kl_followup",
@@ -8043,6 +8044,34 @@ def _validate_ac_alg1_run_config(
     diagnostics_fn,
     diagnostics_probe_fn,
 ) -> tuple[ACAlg1RunConfig, bool]:
+    if config.algorithm_profile == "mstep_length_normalisation":
+        choices = {
+            "delta_joint": ("barber_q5_control", "answer_derive", 4, 16, 16, 1),
+            "prior_importance": ("l2r_common_factorial", "question", 8, 8, 8, 4),
+        }
+        if config.variational_estimator not in choices:
+            raise ValueError("M-step length screen permits only canonical Q5 or PIS")
+        profile, prompt, questions, proposals, capacity, steps = choices[config.variational_estimator]
+        expected = {
+            "latent_mstep_objective": "joint_token_mean", "proposal_prompt": prompt,
+            "rounds": 32, "L_batch": 0, "U_batch": questions,
+            "G_answer_only": proposals, "buffer_limit": capacity, "inner_steps": steps,
+            "lr": 1e-5, "proposal_temperature": 1.0,
+            "responsibility_answer_policy": "current", "responsibility_policy": "current",
+            "responsibility_refresh": "inner_step" if steps == 1 else "outer_round",
+            "answer_target_termination": "eos", "policy_kl_coef": None,
+        }
+        mismatches = {name: (getattr(config, name), value) for name, value in expected.items()
+                      if getattr(config, name) != value}
+        if mismatches:
+            raise ValueError(f"M-step length screen changed an undeclared setting: {mismatches}")
+        # Reuse the frozen control's full validation; only the M-step differs.
+        validated, allocation = _validate_ac_alg1_run_config(
+            replace(config, algorithm_profile=profile, latent_mstep_objective="joint"),
+            diagnostics_fn=diagnostics_fn, diagnostics_probe_fn=diagnostics_probe_fn,
+        )
+        return replace(validated, algorithm_profile=config.algorithm_profile,
+                       latent_mstep_objective=config.latent_mstep_objective), allocation
     algorithm_profile = config.algorithm_profile
     U_batch = config.U_batch
     length_norm = config.length_norm

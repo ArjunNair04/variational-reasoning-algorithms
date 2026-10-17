@@ -1,0 +1,52 @@
+{
+  "sources": [
+    {
+      "method": "Q5",
+      "seed": 1201,
+      "run_id": "68078ecc",
+      "cell_id": "Q5-AD-M-LR1e-5-U1-K16",
+      "diagnostics": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/training_diagnostics_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1201__AC-ALG1_s1201.jsonl.gz",
+      "receipt": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/complete_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1201__AC-ALG1_s1201.json"
+    },
+    {
+      "method": "Q5",
+      "seed": 1213,
+      "run_id": "68078ecc",
+      "cell_id": "Q5-AD-M-LR1e-5-U1-K16",
+      "diagnostics": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/training_diagnostics_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1213__AC-ALG1_s1213.jsonl.gz",
+      "receipt": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/complete_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1213__AC-ALG1_s1213.json"
+    },
+    {
+      "method": "Q5",
+      "seed": 1217,
+      "run_id": "68078ecc",
+      "cell_id": "Q5-AD-M-LR1e-5-U1-K16",
+      "diagnostics": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/training_diagnostics_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1217__AC-ALG1_s1217.jsonl.gz",
+      "receipt": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/complete_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_Q5-AD-M-LR1e-5-U1-K16_seed1217__AC-ALG1_s1217.json"
+    },
+    {
+      "method": "PIS",
+      "seed": 1201,
+      "run_id": "68078ecc",
+      "cell_id": "PIS-Q-S8-B8-U4",
+      "diagnostics": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/training_diagnostics_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_PIS-Q-S8-B8-U4_seed1201__AC-ALG1_s1201.jsonl.gz",
+      "receipt": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/complete_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_PIS-Q-S8-B8-U4_seed1201__AC-ALG1_s1201.json"
+    },
+    {
+      "method": "PIS",
+      "seed": 1213,
+      "run_id": "68078ecc",
+      "cell_id": "PIS-Q-S8-B8-U4",
+      "diagnostics": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/training_diagnostics_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_PIS-Q-S8-B8-U4_seed1213__AC-ALG1_s1213.jsonl.gz",
+      "receipt": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/complete_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_PIS-Q-S8-B8-U4_seed1213__AC-ALG1_s1213.json"
+    },
+    {
+      "method": "PIS",
+      "seed": 1217,
+      "run_id": "68078ecc",
+      "cell_id": "PIS-Q-S8-B8-U4",
+      "diagnostics": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/training_diagnostics_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_PIS-Q-S8-B8-U4_seed1217__AC-ALG1_s1217.jsonl.gz",
+      "receipt": "/Volumes/media/ResearchArchives/Beaker-direct-2026-09-30-223523/beaker_amn/home/po_results/2026-08-29/reproducibility/qwen3-selected-method-posterity__68078ecc/complete_gsm8k__q3_selected_method_posterity_68078ecc_AC-ALG1_PIS-Q-S8-B8-U4_seed1217__AC-ALG1_s1217.json"
+    }
+  ]
+}

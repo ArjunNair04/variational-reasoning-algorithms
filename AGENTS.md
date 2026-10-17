@@ -35,6 +35,28 @@
 
 ## Change record
 
+- **2026-10-16, M-step-only length screen preparation:** read six receipt-bound
+  historical Q5/PIS diagnostics directly from the mounted NAS, covering 192
+  rounds and 7,868 retained trace records. Original raw-answer joins are complete.
+  Q5 responsibilities are post-update snapshots, not pre-update training mass.
+  Arithmetic parser flags include unit/percentage/rounding false positives;
+  never turn their aggregate into a verified reasoning-error rate or filtering
+  rule. Source files and historical results are unchanged. The new isolated
+  `mstep_length_normalisation` profile uses existing `joint_token_mean` M-step
+  arithmetic and delegates to the frozen Q5/PIS validators; no E-step scoring,
+  posterior temperature, reader, refresh schedule, prompt, buffer or EOS changes.
+  Six planned tasks reuse three same-seed controls per method only after runtime
+  and provenance checks. Real tiny-Qwen tests check direct gradients, EOS masks,
+  per-trace rather than global normalisation, microbatch parity, unchanged
+  responsibilities and RNG state. The 369-test repository suite passes; the
+  prepared analyzer also reconstructs all 192 archived rounds; nine additional
+  analyzer tests and all six YAML coordinates pass. See
+  `docs/experiments/mstep_length_normalisation/README.md`. No jobs submitted.
+  The first approved AMN helper attempt returned 255 with no authenticated route.
+  NAS is mounted at `/Volumes/media`, separately from TimeMachine. Full old
+  control files are archived, not assumed present on AMN; finish deployment
+  wiring and cluster/runtime checks before submission or release.
+
 - **2026-10-02, learned posterior release:** explicit user approval covered
   publishing job IDs and AMN paths. Tracking `2aa74c8` was published before
   releasing only 7484770.1-3 at 01:35 UTC; all three verified `qw`. Validator
